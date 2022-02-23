@@ -12,6 +12,33 @@ class ChatPage extends StatelessWidget {
         title: const Text("APP"),
       ),
       body: ChatBotWidget(
+        botMessageWidget: (paragraph) {
+          return Container(
+            color: Colors.red,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: paragraph.texts,
+            ),
+          );
+        },
+        botOptionWidget: (text) {
+          return Container(
+            color: Colors.purple,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [text],
+            ),
+          );
+        },
+        userMessageWidget: (text) {
+          return Container(
+            color: Colors.blue,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [text],
+            ),
+          );
+        },
         chatBot: ChatBot(
           id: "myChatBot",
           initialStateId: "A",
@@ -32,6 +59,13 @@ class ChatPage extends StatelessWidget {
                   optionText: const Text("Go from A to B"),
                 ),
               ],
+              onEnterState: (machine) {
+                print("ENTROU NO ${machine.currentState!.id}");
+              },
+              onLeaveState: (machine, nextState) {
+                print(
+                    "Saiu de ${machine.currentState!.id} indo para ${nextState.id}");
+              },
             ),
             BotState(
               id: "B",
@@ -49,6 +83,9 @@ class ChatPage extends StatelessWidget {
                   optionText: const Text("Go from A to B"),
                 ),
               ],
+              onEnterState: (machine) {
+                print("ENTROU NO ${machine.currentState!.id}");
+              },
             )
           ],
         ),
