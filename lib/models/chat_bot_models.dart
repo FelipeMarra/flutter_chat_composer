@@ -20,29 +20,29 @@ class BotState extends ComposerState<BotOption> {
   ///Time to wait between showing [messages]
   final Duration displayInterval;
 
-  final Function(ChatBot stateMachine)? onEnterState;
-  final Function(ChatBot chatBot, BotState nextState)? onLeaveState;
+  final List<BotOption> options;
 
   BotState({
     required String id,
-    required List<BotOption> options,
+    required this.options,
     required this.messages,
     this.displayInterval = const Duration(seconds: 1),
-    this.onEnterState,
-    this.onLeaveState,
+    Function(ChatBot stateMachine)? onEnter,
+    Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
-            id: id,
-            transitions: options,
-            onEnter: (machine) {
-              if (onEnterState != null) {
-                onEnterState(machine as ChatBot);
-              }
-            },
-            onLeave: (machine, nextState) {
-              if (onLeaveState != null) {
-                onLeaveState(machine as ChatBot, nextState as BotState);
-              }
-            });
+          id: id,
+          transitions: options,
+          onEnter: (machine) {
+            if (onEnter != null) {
+              onEnter(machine as ChatBot);
+            }
+          },
+          onLeave: (machine, nextState) {
+            if (onLeave != null) {
+              onLeave(machine as ChatBot, nextState as BotState);
+            }
+          },
+        );
 }
 
 class BotOption extends Transition {

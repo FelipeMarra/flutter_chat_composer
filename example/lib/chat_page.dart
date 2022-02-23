@@ -59,10 +59,10 @@ class ChatPage extends StatelessWidget {
                   optionText: const Text("Go from A to B"),
                 ),
               ],
-              onEnterState: (machine) {
-                print("ENTROU NO ${machine.currentState!.id}");
+              onEnter: (machine) {
+                print("ENTROU NO ${machine.currentState!.messages}");
               },
-              onLeaveState: (machine, nextState) {
+              onLeave: (machine, nextState) {
                 print(
                     "Saiu de ${machine.currentState!.id} indo para ${nextState.id}");
               },
@@ -83,7 +83,7 @@ class ChatPage extends StatelessWidget {
                   optionText: const Text("Go from A to B"),
                 ),
               ],
-              onEnterState: (machine) {
+              onEnter: (machine) {
                 print("ENTROU NO ${machine.currentState!.id}");
               },
             )

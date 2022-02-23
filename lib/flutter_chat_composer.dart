@@ -30,7 +30,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
   void initState() {
     chat.add(widget.botMessageWidget(widget.chatBot.currentState!.messages[0]));
     chat.add(widget.botOptionWidget(
-        widget.chatBot.currentState!.transitions[0].optionText));
+        widget.chatBot.currentState!.options[0].optionText));
     super.initState();
   }
 
