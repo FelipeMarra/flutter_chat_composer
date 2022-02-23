@@ -14,14 +14,16 @@ class ChatBot extends StateMachine<BotState> {
 }
 
 class BotState extends ComposerState {
-  //TODO Make as a list of paragraphs, a paragraph is a list of texts
-  //that are in the same message, each messagem is showed separated
-  final List<Paragraph> messages;
+  ///A message is a list of texts, each messagem is showed separated
+  final List<Message> messages;
+  ///Time to wait between showing [messages]
+  final Duration displayInterval;
 
   BotState({
     required String id,
     required List<BotOption> options,
     required this.messages,
+    this.displayInterval = const Duration(seconds: 1),
     final Function(ComposerState? lastState, ComposerState currentState)?
         onEnter,
     final Function(ComposerState currentState, ComposerState nextState)?
@@ -45,9 +47,9 @@ class BotOption extends Transition {
         );
 }
 
-class Paragraph {
+class Message {
   List<Text> texts;
-  Paragraph({
+  Message({
     required this.texts,
   });
 }

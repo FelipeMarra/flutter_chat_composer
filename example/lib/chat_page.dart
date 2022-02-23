@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_composer/chat_machine.dart';
+import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 
 class ChatPage extends StatelessWidget {
@@ -19,7 +19,7 @@ class ChatPage extends StatelessWidget {
             BotState(
               id: "A",
               messages: [
-                Paragraph(
+                Message(
                   texts: [
                     const Text("Hello you're in state A"),
                   ],
@@ -36,7 +36,7 @@ class ChatPage extends StatelessWidget {
             BotState(
               id: "B",
               messages: [
-                Paragraph(
+                Message(
                   texts: [
                     const Text("Ok, now you're in state B"),
                   ],
