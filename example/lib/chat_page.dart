@@ -52,8 +52,8 @@ class ChatPage extends StatelessWidget {
                   ],
                 ),
               ],
-              options: [
-                BotOption(
+              transitions: [
+                BotTransition(
                   id: "A=>B",
                   to: "B",
                   optionText: const Text("Go from A to B"),
@@ -76,8 +76,8 @@ class ChatPage extends StatelessWidget {
                   ],
                 ),
               ],
-              options: [
-                BotOption(
+              transitions: [
+                BotTransition(
                   id: "B",
                   to: "A",
                   optionText: const Text("Go from A to B"),

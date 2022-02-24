@@ -13,25 +13,23 @@ class ChatBot extends StateMachine<BotState> {
         );
 }
 
-class BotState extends ComposerState<BotOption> {
+class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<Message> messages;
 
   ///Time to wait between showing [messages]
   final Duration displayInterval;
 
-  final List<BotOption> options;
-
   BotState({
     required String id,
-    required this.options,
+    required List<BotTransition> transitions,
     required this.messages,
     this.displayInterval = const Duration(seconds: 1),
     Function(ChatBot stateMachine)? onEnter,
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
-          transitions: options,
+          transitions: transitions,
           onEnter: (machine) {
             if (onEnter != null) {
               onEnter(machine as ChatBot);
@@ -45,10 +43,10 @@ class BotState extends ComposerState<BotOption> {
         );
 }
 
-class BotOption extends Transition {
+class BotTransition extends Transition {
   final Text optionText;
 
-  BotOption({
+  BotTransition({
     required String id,
     required String to,
     required this.optionText,
