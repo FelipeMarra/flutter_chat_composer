@@ -44,12 +44,12 @@ class BotState extends ComposerState<BotTransition> {
 }
 
 class BotTransition extends Transition {
-  final Text optionText;
+  final Message transitionMessage;
 
   BotTransition({
     required String id,
     required String to,
-    required this.optionText,
+    required this.transitionMessage,
   }) : super(
           id: id,
           to: to,

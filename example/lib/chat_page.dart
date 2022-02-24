@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 
+import 'my_chat_bot.dart';
+
 class ChatPage extends StatelessWidget {
   const ChatPage({Key? key}) : super(key: key);
 
@@ -12,84 +14,57 @@ class ChatPage extends StatelessWidget {
         title: const Text("APP"),
       ),
       body: ChatBotWidget(
-        botMessageWidget: (paragraph) {
-          return Container(
-            color: Colors.red,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: paragraph.texts,
-            ),
-          );
-        },
-        botOptionWidget: (text) {
-          return Container(
-            color: Colors.purple,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [text],
-            ),
-          );
-        },
-        userMessageWidget: (text) {
-          return Container(
-            color: Colors.blue,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [text],
-            ),
-          );
-        },
-        chatBot: ChatBot(
-          id: "myChatBot",
-          initialStateId: "A",
-          states: [
-            BotState(
-              id: "A",
-              messages: [
-                Message(
-                  texts: [
-                    const Text("Hello you're in state A"),
-                  ],
-                ),
-              ],
-              transitions: [
-                BotTransition(
-                  id: "A=>B",
-                  to: "B",
-                  optionText: const Text("Go from A to B"),
-                ),
-              ],
-              onEnter: (machine) {
-                print("ENTROU NO ${machine.currentState!.messages}");
-              },
-              onLeave: (machine, nextState) {
-                print(
-                    "Saiu de ${machine.currentState!.id} indo para ${nextState.id}");
-              },
-            ),
-            BotState(
-              id: "B",
-              messages: [
-                Message(
-                  texts: [
-                    const Text("Ok, now you're in state B"),
-                  ],
-                ),
-              ],
-              transitions: [
-                BotTransition(
-                  id: "B",
-                  to: "A",
-                  optionText: const Text("Go from A to B"),
-                ),
-              ],
-              onEnter: (machine) {
-                print("ENTROU NO ${machine.currentState!.id}");
-              },
-            )
-          ],
-        ),
+        botMessageWidget: _botMessageWidget,
+        botOptionWidget: _botTransitionWidget,
+        userMessageWidget: _userMessageWidget,
+        chatBot: MyChatBot().chatBot,
       ),
+    );
+  }
+
+  Widget _botMessageWidget(List<Message> messages) {
+    List<Widget> messagesWidget = [];
+
+    //Put all messages texts together
+    for (Message message in messages) {
+      messagesWidget.add(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: message.texts,
+        ),
+      );
+    }
+
+    return Container(
+      color: Colors.blue[200],
+      child: Column(
+        children: messagesWidget,
+      ),
+    );
+  }
+
+  Widget _botTransitionWidget(Message message) {
+    //Put all message texts together
+    return Container(
+      color: Colors.blue[400],
+      child: Column(children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: message.texts,
+        ),
+      ]),
+    );
+  }
+
+  Widget _userMessageWidget(Message message) {
+    return Container(
+      color: Colors.purple[200],
+      child: Column(children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: message.texts,
+        ),
+      ]),
     );
   }
 }
