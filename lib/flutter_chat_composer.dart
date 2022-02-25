@@ -8,14 +8,14 @@ export 'models/chat_bot_models.dart' show ChatBot, BotState, BotTransition;
 class ChatBotWidget extends StatefulWidget {
   final ChatBot chatBot;
   final Widget Function(List<Message>) botMessageWidget;
-  final Widget Function(Message) botOptionWidget;
+  final Widget Function(Message) botTransitionWidget;
   final Widget Function(Message) userMessageWidget;
 
   const ChatBotWidget({
     Key? key,
     required this.chatBot,
     required this.botMessageWidget,
-    required this.botOptionWidget,
+    required this.botTransitionWidget,
     required this.userMessageWidget,
   }) : super(key: key);
 
@@ -40,14 +40,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         if (snapshot.data == null) {
           return Container();
         }
-        //get message and options data
-        List<Message> messages = snapshot.data!.messages;
-        List<BotTransition> transitions = snapshot.data!.transitions;
-        //add them to the messages' list
-        chatWidgets.add(widget.botMessageWidget(messages));
-        for (BotTransition transition in transitions) {
-          chatWidgets.add(widget.botOptionWidget(transition.transitionMessage));
-        }
+
+        _processSnapshot(snapshot);
+
         //display the messages
         return SingleChildScrollView(
           child: ListView.builder(
@@ -60,5 +55,29 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         );
       },
     );
+  }
+
+  _processSnapshot(AsyncSnapshot<BotState> snapshot) {
+    BotState currentState = snapshot.data!;
+    //get message and options data
+    //add them to the messages' list
+    chatWidgets.add(widget.botMessageWidget(currentState.messages));
+    //process & add each bot transition
+    for (BotTransition transition in currentState.transitions) {
+      chatWidgets.add(
+        //TODO on mouse over change the widget
+        InkWell(
+          child: widget.botTransitionWidget(transition.message),
+          onTap: () async {
+            //add transition messages a the user's answer
+            setState(() {
+              chatWidgets.add(widget.userMessageWidget(transition.message));
+            });
+            //run the transition
+            await widget.chatBot.transitionTo(transition.to);
+          },
+        ),
+      );
+    }
   }
 }

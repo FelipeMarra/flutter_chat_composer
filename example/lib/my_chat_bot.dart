@@ -39,7 +39,7 @@ class MyChatBot {
         BotTransition(
           id: "A=>B",
           to: "B",
-          transitionMessage: Message(
+          message: Message(
             texts: [
               const Text("Very cool!"),
             ],
@@ -48,7 +48,7 @@ class MyChatBot {
         BotTransition(
           id: "A=>C",
           to: "C",
-          transitionMessage: Message(
+          message: Message(
             texts: [
               const Text("I don't like this state"),
             ],
@@ -85,14 +85,14 @@ class MyChatBot {
         BotTransition(
           id: "B=>D",
           to: "D",
-          transitionMessage: Message(texts: [
+          message: Message(texts: [
             const Text("Go from B to D"),
           ]),
         ),
         BotTransition(
           id: "B=>E",
           to: "E",
-          transitionMessage: Message(texts: [
+          message: Message(texts: [
             const Text("Go from B to E"),
           ]),
         ),
@@ -125,14 +125,14 @@ class MyChatBot {
         BotTransition(
           id: "C=>D",
           to: "C",
-          transitionMessage: Message(texts: [
+          message: Message(texts: [
             const Text("Go from C to D"),
           ]),
         ),
         BotTransition(
           id: "C=>E",
           to: "E",
-          transitionMessage: Message(texts: [
+          message: Message(texts: [
             const Text("Go from C to E"),
           ]),
         ),

@@ -15,7 +15,7 @@ class ChatPage extends StatelessWidget {
       ),
       body: ChatBotWidget(
         botMessageWidget: _botMessageWidget,
-        botOptionWidget: _botTransitionWidget,
+        botTransitionWidget: _botTransitionWidget,
         userMessageWidget: _userMessageWidget,
         chatBot: MyChatBot().chatBot,
       ),
