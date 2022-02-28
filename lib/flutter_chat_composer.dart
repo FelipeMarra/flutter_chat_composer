@@ -6,11 +6,27 @@ import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 export 'models/chat_bot_models.dart' show ChatBot, BotState, BotTransition;
 
 class ChatBotWidget extends StatefulWidget {
+  ///The [ChatBot] that will be displyed
   final ChatBot chatBot;
-  final Widget Function(List<Message>) botMessageWidget;
+
+  ///Widget that displays the [Message]s of the bot, see each group of messages
+  ///ass a paragraph
+  final Widget Function(Message) botMessageWidget;
+
+  ///Widget that displays the [Message] of each transition option
   final Widget Function(Message) botTransitionWidget;
+
+  ///Widget that displays the [Message] related to the transition choosen by the user
   final Widget Function(Message) userMessageWidget;
+
+  ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
   TextField Function(TextEditingController)? userOpenTextWidget;
+
+  ///SizedBox hight between messages of the same user
+  final double sameUserSpacing;
+
+  ///SizedBox hight betweewn messagen of different users
+  final double difUsersSpacing;
 
   ChatBotWidget({
     Key? key,
@@ -18,6 +34,8 @@ class ChatBotWidget extends StatefulWidget {
     required this.botMessageWidget,
     required this.botTransitionWidget,
     required this.userMessageWidget,
+    required this.sameUserSpacing,
+    required this.difUsersSpacing,
     this.userOpenTextWidget,
   }) : super(key: key);
 
@@ -59,12 +77,16 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     );
   }
 
-  _processSnapshot(AsyncSnapshot<BotState> snapshot) {
+  _processSnapshot(AsyncSnapshot<BotState> snapshot) async {
     BotState currentState = snapshot.data!;
     //get message and options data
     //add them to the messages' list
+    List<Message> messages = currentState.messages;
+    for (Message message in messages) {
+      chatWidgets.add(widget.botMessageWidget(message));
 
-    chatWidgets.add(widget.botMessageWidget(currentState.messages));
+      chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
+    }
 
     //test the text type we're dealing with
     if (currentState.runtimeType == BotStateOpenText) {
@@ -105,7 +127,6 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     //process & add each bot transition
     for (BotTransition transition in currentState.transitions) {
       chatWidgets.add(
-        //TODO on mouse over change the widget
         InkWell(
           child: widget.botTransitionWidget(transition.message!),
           onTap: () {

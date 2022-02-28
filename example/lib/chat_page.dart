@@ -18,28 +18,19 @@ class ChatPage extends StatelessWidget {
         botTransitionWidget: _botTransitionWidget,
         userMessageWidget: _userMessageWidget,
         userOpenTextWidget: _userOpenTextWidget,
+        sameUserSpacing: 10,
+        difUsersSpacing: 20,
         chatBot: MyChatBot().chatBot,
       ),
     );
   }
 
-  Widget _botMessageWidget(List<Message> messages) {
-    List<Widget> messagesWidget = [];
-
-    //Put all messages texts together
-    for (Message message in messages) {
-      messagesWidget.add(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: message.texts,
-        ),
-      );
-    }
-
+  Widget _botMessageWidget(Message message) {
     return Container(
       color: Colors.blue[200],
-      child: Column(
-        children: messagesWidget,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: message.texts,
       ),
     );
   }
@@ -70,10 +61,6 @@ class ChatPage extends StatelessWidget {
   }
 
   TextField _userOpenTextWidget(TextEditingController controller) {
-    controller.addListener(() {
-      print(controller.text);
-    });
-
     return TextField(
       controller: controller,
     );

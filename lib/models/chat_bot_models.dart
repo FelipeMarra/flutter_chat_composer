@@ -18,14 +18,13 @@ class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<Message> messages;
 
-  ///Time to wait between showing [messages]
-  final Duration displayInterval;
+  ///TODO: Time to wait between showing [messages]
+  //final Duration displayInterval;
 
   BotState({
     required String id,
     List<BotTransition>? transitions,
     required this.messages,
-    this.displayInterval = const Duration(seconds: 1),
     Function(ChatBot stateMachine)? onEnter,
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
@@ -52,16 +51,13 @@ class BotStateOpenText extends BotState {
     required String id,
     required List<BotTransition> transitions,
     required List<Message> messages,
-    //TODO
-    Duration displayInterval = const Duration(seconds: 1),
+    required this.decideTransition,
     Function(ChatBot stateMachine)? onEnter,
     Function(ChatBot chatBot, BotState nextState)? onLeave,
-    required this.decideTransition,
   }) : super(
           id: id,
           transitions: transitions,
           messages: messages,
-          displayInterval: displayInterval,
           onEnter: onEnter,
           onLeave: onLeave,
         );
