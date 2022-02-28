@@ -23,10 +23,10 @@ class ChatBotWidget extends StatefulWidget {
   TextField Function(TextEditingController)? userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
-  final double sameUserSpacing;
+  final double? sameUserSpacing;
 
   ///SizedBox hight betweewn messagen of different users
-  final double difUsersSpacing;
+  final double? difUsersSpacing;
 
   ChatBotWidget({
     Key? key,
@@ -34,8 +34,8 @@ class ChatBotWidget extends StatefulWidget {
     required this.botMessageWidget,
     required this.botTransitionWidget,
     required this.userMessageWidget,
-    required this.sameUserSpacing,
-    required this.difUsersSpacing,
+    this.sameUserSpacing,
+    this.difUsersSpacing,
     this.userOpenTextWidget,
   }) : super(key: key);
 
@@ -94,6 +94,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     } else {
       _processClosedText(currentState);
     }
+
+    chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
   }
 
   _processOpenText(BotStateOpenText currentState) {
@@ -124,19 +126,27 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
   }
 
   _processClosedText(currentState) {
+    List<BotTransition> transitions = currentState.transitions;
     //process & add each bot transition
-    for (BotTransition transition in currentState.transitions) {
+    for (var i = 0; i < transitions.length; i++) {
+      BotTransition transition = transitions[i];
+
       chatWidgets.add(
         InkWell(
           child: widget.botTransitionWidget(transition.message!),
           onTap: () {
             //add transition messages a the user's answer
             chatWidgets.add(widget.userMessageWidget(transition.message!));
+            chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
             //run the transition
             widget.chatBot.transitionTo(transition.to);
           },
         ),
       );
+      //Add spacing to all but the last transition
+      if (i != transitions.length - 1) {
+        chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
+      }
     }
   }
 }

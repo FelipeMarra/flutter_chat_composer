@@ -18,8 +18,8 @@ class ChatPage extends StatelessWidget {
         botTransitionWidget: _botTransitionWidget,
         userMessageWidget: _userMessageWidget,
         userOpenTextWidget: _userOpenTextWidget,
-        sameUserSpacing: 10,
-        difUsersSpacing: 20,
+        sameUserSpacing: 1,
+        difUsersSpacing: 10,
         chatBot: MyChatBot().chatBot,
       ),
     );
