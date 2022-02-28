@@ -10,13 +10,15 @@ class ChatBotWidget extends StatefulWidget {
   final Widget Function(List<Message>) botMessageWidget;
   final Widget Function(Message) botTransitionWidget;
   final Widget Function(Message) userMessageWidget;
+  TextField Function(TextEditingController)? userOpenTextWidget;
 
-  const ChatBotWidget({
+  ChatBotWidget({
     Key? key,
     required this.chatBot,
     required this.botMessageWidget,
     required this.botTransitionWidget,
     required this.userMessageWidget,
+    this.userOpenTextWidget,
   }) : super(key: key);
 
   @override
@@ -61,20 +63,56 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     BotState currentState = snapshot.data!;
     //get message and options data
     //add them to the messages' list
+
     chatWidgets.add(widget.botMessageWidget(currentState.messages));
+
+    //test the text type we're dealing with
+    if (currentState.runtimeType == BotStateOpenText) {
+      _processOpenText(currentState as BotStateOpenText);
+    } else {
+      _processClosedText(currentState);
+    }
+  }
+
+  _processOpenText(BotStateOpenText currentState) {
+    //add open user's text widget
+
+    chatWidgets.add(
+      IntrinsicHeight(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: widget.userOpenTextWidget!(currentState.textController),
+            ),
+            IconButton(
+              onPressed: () {
+                widget.chatBot.transitionTo(
+                  currentState.decideTransition(
+                    currentState.textController,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.send),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _processClosedText(currentState) {
     //process & add each bot transition
     for (BotTransition transition in currentState.transitions) {
       chatWidgets.add(
         //TODO on mouse over change the widget
         InkWell(
-          child: widget.botTransitionWidget(transition.message),
-          onTap: () async {
+          child: widget.botTransitionWidget(transition.message!),
+          onTap: () {
             //add transition messages a the user's answer
-            setState(() {
-              chatWidgets.add(widget.userMessageWidget(transition.message));
-            });
+            chatWidgets.add(widget.userMessageWidget(transition.message!));
             //run the transition
-            await widget.chatBot.transitionTo(transition.to);
+            widget.chatBot.transitionTo(transition.to);
           },
         ),
       );

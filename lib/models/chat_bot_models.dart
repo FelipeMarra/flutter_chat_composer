@@ -13,6 +13,7 @@ class ChatBot extends StateMachine<BotState> {
         );
 }
 
+//TODO support to async get messages
 class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<Message> messages;
@@ -22,14 +23,14 @@ class BotState extends ComposerState<BotTransition> {
 
   BotState({
     required String id,
-    required List<BotTransition> transitions,
+    List<BotTransition>? transitions,
     required this.messages,
     this.displayInterval = const Duration(seconds: 1),
     Function(ChatBot stateMachine)? onEnter,
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
-          transitions: transitions,
+          transitions: transitions ?? [],
           onEnter: (machine) {
             if (onEnter != null) {
               onEnter(machine as ChatBot);
@@ -43,13 +44,36 @@ class BotState extends ComposerState<BotTransition> {
         );
 }
 
+class BotStateOpenText extends BotState {
+  final TextEditingController textController = TextEditingController();
+  String Function(TextEditingController textController) decideTransition;
+
+  BotStateOpenText({
+    required String id,
+    required List<BotTransition> transitions,
+    required List<Message> messages,
+    //TODO
+    Duration displayInterval = const Duration(seconds: 1),
+    Function(ChatBot stateMachine)? onEnter,
+    Function(ChatBot chatBot, BotState nextState)? onLeave,
+    required this.decideTransition,
+  }) : super(
+          id: id,
+          transitions: transitions,
+          messages: messages,
+          displayInterval: displayInterval,
+          onEnter: onEnter,
+          onLeave: onLeave,
+        );
+}
+
 class BotTransition extends Transition {
-  final Message message;
+  final Message? message;
 
   BotTransition({
     required String id,
     required String to,
-    required this.message,
+    this.message,
   }) : super(
           id: id,
           to: to,

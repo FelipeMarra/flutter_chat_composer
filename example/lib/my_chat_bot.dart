@@ -19,16 +19,18 @@ class MyChatBot {
   ChatBot get chatBot => _chatBot();
 
   BotState _stateA() {
-    return BotState(
+    return BotStateOpenText(
       id: "A",
       messages: [
-        Message(texts: [
-          const Text("Wellcome to "),
-          const Text(
-            "State A.",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ]),
+        Message(
+          texts: [
+            const Text("Wellcome to "),
+            const Text(
+              "State A.",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         Message(
           texts: [
             const Text("Tell me, what do you think about this state?"),
@@ -39,22 +41,19 @@ class MyChatBot {
         BotTransition(
           id: "A=>B",
           to: "B",
-          message: Message(
-            texts: [
-              const Text("Very cool!"),
-            ],
-          ),
         ),
         BotTransition(
           id: "A=>C",
           to: "C",
-          message: Message(
-            texts: [
-              const Text("I don't like this state"),
-            ],
-          ),
         ),
       ],
+      decideTransition: (textController) {
+        if (textController.text.isNotEmpty) {
+          return "B";
+        } else {
+          return "C";
+        }
+      },
       onEnter: (machine) {
         print("Entered ${machine.currentState!.id}");
       },
@@ -77,9 +76,7 @@ class MyChatBot {
             ),
           ],
         ),
-        Message(texts: [
-          const Text("Where do you wanna go next?")
-        ])
+        Message(texts: [const Text("Where do you wanna go next?")])
       ],
       transitions: [
         BotTransition(
@@ -92,9 +89,11 @@ class MyChatBot {
         BotTransition(
           id: "B=>E",
           to: "E",
-          message: Message(texts: [
-            const Text("Go from B to E"),
-          ]),
+          message: Message(
+            texts: [
+              const Text("Go from B to E"),
+            ],
+          ),
         ),
       ],
       onEnter: (machine) {
@@ -117,24 +116,26 @@ class MyChatBot {
             const Text("As in Cool State"),
           ],
         ),
-        Message(texts: [
-          const Text("Where do you wanna go next?")
-        ])
+        Message(texts: [const Text("Where do you wanna go next?")])
       ],
       transitions: [
         BotTransition(
           id: "C=>D",
-          to: "C",
-          message: Message(texts: [
-            const Text("Go from C to D"),
-          ]),
+          to: "D",
+          message: Message(
+            texts: [
+              const Text("Go from C to D"),
+            ],
+          ),
         ),
         BotTransition(
           id: "C=>E",
           to: "E",
-          message: Message(texts: [
-            const Text("Go from C to E"),
-          ]),
+          message: Message(
+            texts: [
+              const Text("Go from C to E"),
+            ],
+          ),
         ),
       ],
       onEnter: (machine) {
@@ -158,7 +159,6 @@ class MyChatBot {
           ],
         ),
       ],
-      transitions: [],
       onEnter: (machine) {
         print("Entered ${machine.currentState!.id}");
       },
@@ -180,7 +180,6 @@ class MyChatBot {
           ],
         ),
       ],
-      transitions: [],
       onEnter: (machine) {
         print("Entered ${machine.currentState!.id}");
       },

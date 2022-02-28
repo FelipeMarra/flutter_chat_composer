@@ -11,12 +11,13 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("APP"),
+        title: const Text("ChatBot"),
       ),
       body: ChatBotWidget(
         botMessageWidget: _botMessageWidget,
         botTransitionWidget: _botTransitionWidget,
         userMessageWidget: _userMessageWidget,
+        userOpenTextWidget: _userOpenTextWidget,
         chatBot: MyChatBot().chatBot,
       ),
     );
@@ -65,6 +66,16 @@ class ChatPage extends StatelessWidget {
           children: message.texts,
         ),
       ]),
+    );
+  }
+
+  TextField _userOpenTextWidget(TextEditingController controller) {
+    controller.addListener(() {
+      print(controller.text);
+    });
+
+    return TextField(
+      controller: controller,
     );
   }
 }
