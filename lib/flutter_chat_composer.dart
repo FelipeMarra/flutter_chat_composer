@@ -6,7 +6,7 @@ import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 export 'models/chat_bot_models.dart' show ChatBot, BotState, BotTransition;
 
 class ChatBotWidget extends StatefulWidget {
-  ///The [ChatBot] that will be displyed
+  ///The [ChatBot] that will generate the chat
   final ChatBot chatBot;
 
   ///Widget that displays the [Message]s of the bot, see each group of messages
@@ -43,12 +43,6 @@ class ChatBotWidget extends StatefulWidget {
   State<ChatBotWidget> createState() => _ChatBotWidgetState();
 }
 
-///1 - Ao entrar em um estado:
-///Mostrar Mensagem Do Estado Atual
-///Mostar Opções Clicáveis do Estado Atual
-///
-///2 - Ao clicar na opção Mudar para o próximo estado, repetir 2
-///
 class _ChatBotWidgetState extends State<ChatBotWidget> {
   List<Widget> chatWidgets = [];
 

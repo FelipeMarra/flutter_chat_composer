@@ -58,7 +58,7 @@ class MyChatBot {
         print("Entered ${machine.currentState!.id}");
       },
       onLeave: (machine, nextState) {
-        print("Left ${machine.currentState!.id} indo para ${nextState.id}");
+        print("Left ${machine.currentState!.id} going to ${nextState.id}");
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:state_composer/state_composer.dart';
 
+///A [StateMachine] that represents the chat bot
 class ChatBot extends StateMachine<BotState> {
   ChatBot({
     required String id,
@@ -14,6 +15,8 @@ class ChatBot extends StateMachine<BotState> {
 }
 
 //TODO support to async get messages
+///Each state of the [ChatBot] that is composed of predetermined transitions
+///to be displayed in a menu style
 class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<Message> messages;
@@ -22,10 +25,17 @@ class BotState extends ComposerState<BotTransition> {
   //final Duration displayInterval;
 
   BotState({
+    ///The state's name (it's unique identifier)
     required String id,
+
+    ///Transitions options to go to the other states
     List<BotTransition>? transitions,
     required this.messages,
+
+    ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
@@ -43,16 +53,30 @@ class BotState extends ComposerState<BotTransition> {
         );
 }
 
+///A state of the [ChatBot] that will have a open text as the user's answer
 class BotStateOpenText extends BotState {
+  ///[TextEditingController] to be used inside you're [ChatBotWidget.userOpenTextWidget]
   final TextEditingController textController = TextEditingController();
+
+  ///Function that will take the user's input and return to what state the bot
+  ///will go
   String Function(TextEditingController textController) decideTransition;
 
   BotStateOpenText({
+    ///The state's name (it's unique identifier)
     required String id,
+
+    ///Transitions options to go to the other states
     required List<BotTransition> transitions,
+
+    ///A message is a list of texts, each messagem is showed separated
     required List<Message> messages,
     required this.decideTransition,
+
+    ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
@@ -63,6 +87,8 @@ class BotStateOpenText extends BotState {
         );
 }
 
+///A transition [to] another [BotState]
+///Should receive a message if it's not an [BotStateOpenText]'s transition
 class BotTransition extends Transition {
   final Message? message;
 
@@ -76,6 +102,7 @@ class BotTransition extends Transition {
         );
 }
 
+///A list of texts to be displyed as a paragraph
 class Message {
   List<Text> texts;
   Message({
