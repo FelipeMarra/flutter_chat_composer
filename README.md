@@ -21,9 +21,15 @@ ChatBot(
     ],
 );
 ```
-
-Each state can be of open or closed text. A closed text one will take transitions with predefined
-messages to be displayed. A open text one have a function that comes with the text field's controller that will be used to decide the next state
+### State Properties
+Will have the id and onEnter/onLeave functions, like in  <a href="https://github.com/FelipeMarra/state-composer">state_composer<a>. But also
+a list of messages that will be displayed on enter the state. Each message is a list of texts allowing better personalization.
+    
+### State Types
+Each state can be of open or closed text.<br>
+A closed text one will take transitions with predefined messages to be displayed and when the option is selected user's [ChatBotWidget.userMessageWidget] will
+be displayed. <br>
+A open text one have a function that comes with the text field's controller that will be used to decide the next state <br>
 
 ### Open Text Example
 ``` dart 
