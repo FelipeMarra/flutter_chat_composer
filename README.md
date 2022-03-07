@@ -37,19 +37,20 @@ A open text one have a function that comes with the text field's controller that
     return BotStateOpenText(
       id: "A",
       messages: [
-        Message(
-          texts: [
-            const Text("Wellcome to "),
-            const Text(
-              "State A.",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "Wellcome to "),
+              TextSpan(
+                text: "State A.",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
-        Message(
-          texts: [
-            const Text("Tell me, what do you think about this state?"),
-          ],
+        RichText(
+          text: const TextSpan(
+              text: "Tell me, what do you think about this state?"),
         ),
       ],
       transitions: [
@@ -84,32 +85,34 @@ A open text one have a function that comes with the text field's controller that
     return BotState(
       id: "B",
       messages: [
-        Message(
-          texts: [
-            const Text("Ok, so now you're in "),
-            const Text(
-              "State B!",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "Ok, so now you're in "),
+              TextSpan(
+                text: "State B!",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
-        Message(texts: [const Text("Where do you wanna go next?")])
+        RichText(
+          text: const TextSpan(text: "Where do you wanna go next?"),
+        ),
       ],
       transitions: [
         BotTransition(
           id: "B=>D",
           to: "D",
-          message: Message(texts: [
-            const Text("Go from B to D"),
-          ]),
+          message: RichText(
+            text: const TextSpan(text: "Go from B to D"),
+          ),
         ),
         BotTransition(
           id: "B=>E",
           to: "E",
-          message: Message(
-            texts: [
-              const Text("Go from B to E"),
-            ],
+          message: RichText(
+            text: const TextSpan(text: "Go from B to E"),
           ),
         ),
       ],
