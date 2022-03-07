@@ -58,13 +58,15 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         _processSnapshot(snapshot);
 
         //display the messages
-        return SingleChildScrollView(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: chatWidgets.length,
-            itemBuilder: (context, index) {
-              return chatWidgets[index];
-            },
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: chatWidgets.length,
+              itemBuilder: (context, index) {
+                return chatWidgets[index];
+              },
+            ),
           ),
         );
       },
