@@ -20,7 +20,8 @@ class ChatBotWidget extends StatefulWidget {
   final Widget Function(RichText) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-  Widget Function(TextEditingController)? userOpenTextWidget;
+  Widget Function(TextEditingController textController, Function onSend)?
+      userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -103,17 +104,14 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: widget.userOpenTextWidget!(currentState.textController),
-            ),
-            IconButton(
-              onPressed: () {
-                widget.chatBot.transitionTo(
-                  currentState.decideTransition(
-                    currentState.textController,
-                  ),
-                );
-              },
-              icon: const Icon(Icons.send),
+              child: widget.userOpenTextWidget!(
+                currentState.textController,
+                () {
+                  widget.chatBot.transitionTo(
+                    currentState.decideTransition(currentState.textController),
+                  );
+                },
+              ),
             ),
           ],
         ),

@@ -60,9 +60,20 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  Widget _userOpenTextWidget(TextEditingController controller) {
-    return TextField(
-      controller: controller,
+  Widget _userOpenTextWidget(
+      TextEditingController controller, Function onSend) {
+    return Row(
+      children: [
+        Flexible(
+          child: TextField(
+            controller: controller,
+          ),
+        ),
+        IconButton(
+          onPressed: () => onSend(),
+          icon: const Icon(Icons.send),
+        )
+      ],
     );
   }
 }
