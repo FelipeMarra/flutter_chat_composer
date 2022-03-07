@@ -3,7 +3,7 @@ library flutter_chat_composer;
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 
-export 'models/chat_bot_models.dart' show ChatBot, BotState, BotTransition;
+export 'models/chat_bot_models.dart';
 
 class ChatBotWidget extends StatefulWidget {
   ///The [ChatBot] that will generate the chat
