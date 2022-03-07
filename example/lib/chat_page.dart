@@ -25,36 +25,36 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  Widget _botMessageWidget(Message message) {
+  Widget _botMessageWidget(RichText message) {
     return Container(
       color: Colors.blue[200],
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: message.texts,
+        children: [message],
       ),
     );
   }
 
-  Widget _botTransitionWidget(Message message) {
+  Widget _botTransitionWidget(RichText message) {
     //Put all message texts together
     return Container(
       color: Colors.blue[400],
       child: Column(children: [
         Row(
           mainAxisSize: MainAxisSize.min,
-          children: message.texts,
+          children: [message],
         ),
       ]),
     );
   }
 
-  Widget _userMessageWidget(Message message) {
+  Widget _userMessageWidget(RichText message) {
     return Container(
       color: Colors.purple[200],
       child: Column(children: [
         Row(
           mainAxisSize: MainAxisSize.min,
-          children: message.texts,
+          children: [message],
         ),
       ]),
     );

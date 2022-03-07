@@ -11,13 +11,13 @@ class ChatBotWidget extends StatefulWidget {
 
   ///Widget that displays the [Message]s of the bot, see each group of messages
   ///ass a paragraph
-  final Widget Function(Message) botMessageWidget;
+  final Widget Function(RichText) botMessageWidget;
 
   ///Widget that displays the [Message] of each transition option
-  final Widget Function(Message) botTransitionWidget;
+  final Widget Function(RichText) botTransitionWidget;
 
   ///Widget that displays the [Message] related to the transition choosen by the user
-  final Widget Function(Message) userMessageWidget;
+  final Widget Function(RichText) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
   TextField Function(TextEditingController)? userOpenTextWidget;
@@ -77,8 +77,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     BotState currentState = snapshot.data!;
     //get message and options data
     //add them to the messages' list
-    List<Message> messages = currentState.messages;
-    for (Message message in messages) {
+    List<RichText> messages = currentState.messages;
+    for (RichText message in messages) {
       chatWidgets.add(widget.botMessageWidget(message));
 
       chatWidgets.add(SizedBox(height: widget.sameUserSpacing));

@@ -22,19 +22,20 @@ class MyChatBot {
     return BotStateOpenText(
       id: "A",
       messages: [
-        Message(
-          texts: [
-            const Text("Wellcome to "),
-            const Text(
-              "State A.",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "Wellcome to "),
+              TextSpan(
+                text: "State A.",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
-        Message(
-          texts: [
-            const Text("Tell me, what do you think about this state?"),
-          ],
+        RichText(
+          text: const TextSpan(
+              text: "Tell me, what do you think about this state?"),
         ),
       ],
       transitions: [
@@ -67,32 +68,34 @@ class MyChatBot {
     return BotState(
       id: "B",
       messages: [
-        Message(
-          texts: [
-            const Text("Ok, so now you're in "),
-            const Text(
-              "State B!",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "Ok, so now you're in "),
+              TextSpan(
+                text: "State B!",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
-        Message(texts: [const Text("Where do you wanna go next?")])
+        RichText(
+          text: const TextSpan(text: "Where do you wanna go next?"),
+        ),
       ],
       transitions: [
         BotTransition(
           id: "B=>D",
           to: "D",
-          message: Message(texts: [
-            const Text("Go from B to D"),
-          ]),
+          message: RichText(
+            text: const TextSpan(text: "Go from B to D"),
+          ),
         ),
         BotTransition(
           id: "B=>E",
           to: "E",
-          message: Message(
-            texts: [
-              const Text("Go from B to E"),
-            ],
+          message: RichText(
+            text: const TextSpan(text: "Go from B to E"),
           ),
         ),
       ],
@@ -106,35 +109,35 @@ class MyChatBot {
     return BotState(
       id: "C",
       messages: [
-        Message(
-          texts: [
-            const Text("Ok, so now you're in "),
-            const Text(
-              "State C! ",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const Text("As in Cool State"),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "Ok, so now you're in "),
+              TextSpan(
+                text: "State C! ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: "As in Cool State"),
+            ],
+          ),
         ),
-        Message(texts: [const Text("Where do you wanna go next?")])
+        RichText(
+          text: const TextSpan(text: "Where do you wanna go next?"),
+        ),
       ],
       transitions: [
         BotTransition(
           id: "C=>D",
           to: "D",
-          message: Message(
-            texts: [
-              const Text("Go from C to D"),
-            ],
+          message: RichText(
+            text: const TextSpan(text: "Go from C to D"),
           ),
         ),
         BotTransition(
           id: "C=>E",
           to: "E",
-          message: Message(
-            texts: [
-              const Text("Go from C to E"),
-            ],
+          message: RichText(
+            text: const TextSpan(text: "Go from C to E"),
           ),
         ),
       ],
@@ -148,15 +151,17 @@ class MyChatBot {
     return BotState(
       id: "D",
       messages: [
-        Message(
-          texts: [
-            const Text("I'm tyred of creating states. "),
-            const Text(
-              "State D ",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const Text("Is the last one"),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "I'm tyred of creating states. "),
+              TextSpan(
+                text: "State D ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: "Is the last one"),
+            ],
+          ),
         ),
       ],
       onEnter: (machine) {
@@ -169,15 +174,17 @@ class MyChatBot {
     return BotState(
       id: "E",
       messages: [
-        Message(
-          texts: [
-            const Text("I'm tyred of creating states. "),
-            const Text(
-              "State E ",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const Text("Is the last one"),
-          ],
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(text: "I'm tyred of creating states. "),
+              TextSpan(
+                text: "State E ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: "Is the last one"),
+            ],
+          ),
         ),
       ],
       onEnter: (machine) {
