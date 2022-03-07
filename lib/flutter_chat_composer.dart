@@ -20,7 +20,7 @@ class ChatBotWidget extends StatefulWidget {
   final Widget Function(RichText) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-  TextField Function(TextEditingController)? userOpenTextWidget;
+  Widget Function(TextEditingController)? userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;

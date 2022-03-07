@@ -60,7 +60,7 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  TextField _userOpenTextWidget(TextEditingController controller) {
+  Widget _userOpenTextWidget(TextEditingController controller) {
     return TextField(
       controller: controller,
     );
