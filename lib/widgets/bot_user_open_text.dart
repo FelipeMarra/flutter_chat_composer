@@ -26,6 +26,12 @@ class _BotUserOpenText extends State<BotUserOpenText> {
   bool wasPressed = false;
 
   @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget child;
 
