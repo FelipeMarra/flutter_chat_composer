@@ -4,7 +4,7 @@ import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 class BotUserOpenText extends StatefulWidget {
   final Icon icon;
   final Function? onPressed;
-  final Widget textField;
+  final Widget? textField;
   final TextEditingController controller;
   final Widget Function(RichText) userMessageWidget;
   final ChatBot chatBot;
@@ -12,9 +12,9 @@ class BotUserOpenText extends StatefulWidget {
     Key? key,
     required this.chatBot,
     required this.userMessageWidget,
-    required this.textField,
     required this.controller,
     required this.icon,
+    this.textField,
     this.onPressed,
   }) : super(key: key);
 
@@ -44,7 +44,17 @@ class _BotUserOpenText extends State<BotUserOpenText> {
     } else {
       child = Row(
         children: [
-          Flexible(child: widget.textField),
+          Row(
+            children: [
+              Flexible(child: Container()),
+              Flexible(
+                child: widget.textField ??
+                    TextField(
+                      controller: widget.controller,
+                    ),
+              ),
+            ],
+          ),
           IconButton(
             onPressed: () {
               //change to the user text widget

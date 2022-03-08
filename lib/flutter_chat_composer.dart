@@ -2,6 +2,7 @@ library flutter_chat_composer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/models/chat_bot_models.dart';
+import 'package:flutter_chat_composer/widgets/bot_message_widget.dart';
 import 'package:flutter_chat_composer/widgets/bot_user_open_text.dart';
 
 export 'models/chat_bot_models.dart';
@@ -12,16 +13,16 @@ class ChatBotWidget extends StatefulWidget {
 
   ///Widget that displays the [Message]s of the bot, see each group of messages
   ///ass a paragraph
-  final Widget Function(RichText) botMessageWidget;
+  final BotMessageWidget Function(RichText message) botMessageWidget;
 
   ///Widget that displays the [Message] of each transition option
-  final Widget Function(RichText) botTransitionWidget;
+  final Widget Function(RichText message) botTransitionWidget;
 
   ///Widget that displays the [Message] related to the transition choosen by the user
-  final Widget Function(RichText) userMessageWidget;
+  final Widget Function(RichText message) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-  BotUserOpenText? userOpenTextWidget;
+  final BotUserOpenText? userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -29,7 +30,7 @@ class ChatBotWidget extends StatefulWidget {
   ///SizedBox hight betweewn messagen of different users
   final double? difUsersSpacing;
 
-  ChatBotWidget({
+  const ChatBotWidget({
     Key? key,
     required this.chatBot,
     required this.botMessageWidget,
@@ -80,7 +81,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     //add them to the messages' list
     List<RichText> messages = currentState.messages();
     for (RichText message in messages) {
-      chatWidgets.add(widget.botMessageWidget(message));
+      chatWidgets.add(BotMessageWidget(message: message,));
 
       chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
     }
