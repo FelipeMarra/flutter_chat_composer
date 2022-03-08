@@ -55,9 +55,6 @@ class BotState extends ComposerState<BotTransition> {
 
 ///A state of the [ChatBot] that will have a open text as the user's answer
 class BotStateOpenText extends BotState {
-  ///[TextEditingController] to be used inside you're [ChatBotWidget.userOpenTextWidget]
-  final TextEditingController textController = TextEditingController();
-
   ///Function that will take the user's input and return to what state the bot
   ///will go
   String Function(TextEditingController textController) decideTransition;

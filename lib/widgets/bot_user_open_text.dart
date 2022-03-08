@@ -59,9 +59,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
               BotStateOpenText currentState =
                   widget.chatBot.currentState! as BotStateOpenText;
               widget.chatBot.transitionTo(
-                currentState.decideTransition(
-                  currentState.textController,
-                ),
+                currentState.decideTransition(widget.controller),
               );
             },
             icon: widget.icon,
