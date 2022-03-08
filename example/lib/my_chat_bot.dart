@@ -21,7 +21,7 @@ class MyChatBot {
   BotState _stateA() {
     return BotStateOpenText(
       id: "A",
-      messages: [
+      messages: () => [
         RichText(
           text: const TextSpan(
             children: [
@@ -67,7 +67,7 @@ class MyChatBot {
   BotState _stateB() {
     return BotState(
       id: "B",
-      messages: [
+      messages: () => [
         RichText(
           text: const TextSpan(
             children: [
@@ -108,7 +108,7 @@ class MyChatBot {
   BotState _stateC() {
     return BotState(
       id: "C",
-      messages: [
+      messages: () => [
         RichText(
           text: const TextSpan(
             children: [
@@ -150,7 +150,7 @@ class MyChatBot {
   BotState _stateD() {
     return BotState(
       id: "D",
-      messages: [
+      messages: () => [
         RichText(
           text: const TextSpan(
             children: [
@@ -173,7 +173,7 @@ class MyChatBot {
   BotState _stateE() {
     return BotState(
       id: "E",
-      messages: [
+      messages: () => [
         RichText(
           text: const TextSpan(
             children: [

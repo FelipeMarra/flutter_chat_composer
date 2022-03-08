@@ -19,7 +19,7 @@ class ChatBot extends StateMachine<BotState> {
 ///to be displayed in a menu style
 class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
-  final List<RichText> messages;
+  final List<RichText> Function() messages;
 
   ///TODO: Time to wait between showing [messages]
   //final Duration displayInterval;
@@ -67,7 +67,7 @@ class BotStateOpenText extends BotState {
     required List<BotTransition> transitions,
 
     ///A message is a list of texts, each messagem is showed separated
-    required List<RichText> messages,
+    required List<RichText> Function() messages,
     required this.decideTransition,
 
     ///Function executed when the state is entered

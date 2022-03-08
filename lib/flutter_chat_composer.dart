@@ -78,7 +78,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     BotState currentState = snapshot.data!;
     //get message and options data
     //add them to the messages' list
-    List<RichText> messages = currentState.messages;
+    List<RichText> messages = currentState.messages();
     for (RichText message in messages) {
       chatWidgets.add(widget.botMessageWidget(message));
 
