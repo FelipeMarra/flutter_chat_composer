@@ -1,11 +1,16 @@
 library flutter_chat_composer;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_composer/models/chat_bot_models.dart';
-import 'package:flutter_chat_composer/widgets/bot_message_widget.dart';
-import 'package:flutter_chat_composer/widgets/bot_user_open_text.dart';
+
+import 'models/chat_bot_models.dart';
+import 'widgets/bot_message_widget.dart';
+import 'widgets/bot_user_open_text.dart';
+import 'widgets/user_message_widget.dart';
 
 export 'models/chat_bot_models.dart';
+export 'widgets/bot_message_widget.dart';
+export 'widgets/user_message_widget.dart';
+export 'widgets/bot_user_open_text.dart';
 
 class ChatBotWidget extends StatefulWidget {
   ///The [ChatBot] that will generate the chat
@@ -13,13 +18,13 @@ class ChatBotWidget extends StatefulWidget {
 
   ///Widget that displays the [Message]s of the bot, see each group of messages
   ///ass a paragraph
-  final BotMessageWidget Function(RichText message) botMessageWidget;
+  final BotMessageWidget Function(RichText message)? botMessageWidget;
 
   ///Widget that displays the [Message] of each transition option
   final Widget Function(RichText message) botTransitionWidget;
 
   ///Widget that displays the [Message] related to the transition choosen by the user
-  final Widget Function(RichText message) userMessageWidget;
+  final Widget Function(RichText message)? userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
   final BotUserOpenText? userOpenTextWidget;
@@ -33,9 +38,9 @@ class ChatBotWidget extends StatefulWidget {
   const ChatBotWidget({
     Key? key,
     required this.chatBot,
-    required this.botMessageWidget,
+    this.botMessageWidget,
     required this.botTransitionWidget,
-    required this.userMessageWidget,
+    this.userMessageWidget,
     this.sameUserSpacing,
     this.difUsersSpacing,
     this.userOpenTextWidget,
@@ -81,7 +86,11 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     //add them to the messages' list
     List<RichText> messages = currentState.messages();
     for (RichText message in messages) {
-      chatWidgets.add(BotMessageWidget(message: message,));
+      chatWidgets.add(
+        widget.botMessageWidget != null
+            ? widget.botMessageWidget!(message)
+            : BotMessageWidget(message: message),
+      );
 
       chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
     }
@@ -105,7 +114,14 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: widget.userOpenTextWidget!,
+              child: widget.userOpenTextWidget ??
+                  BotUserOpenText(
+                    chatBot: widget.chatBot,
+                    userMessageWidget: (message) =>
+                        UserMessageWidget(message: message),
+                    controller: TextEditingController(),
+                    icon: const Icon(Icons.send),
+                  ),
             ),
           ],
         ),
@@ -124,7 +140,11 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           child: widget.botTransitionWidget(transition.message!),
           onTap: () {
             //add transition messages a the user's answer
-            chatWidgets.add(widget.userMessageWidget(transition.message!));
+            chatWidgets.add(
+              widget.botMessageWidget != null
+                  ? widget.userMessageWidget!(transition.message!)
+                  : UserMessageWidget(message: transition.message!),
+            );
             chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
             //run the transition
             widget.chatBot.transitionTo(transition.to);
