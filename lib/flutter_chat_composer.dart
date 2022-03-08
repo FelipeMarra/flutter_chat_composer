@@ -107,7 +107,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
   _processOpenText(BotStateOpenText currentState) {
     //add open user's text widget
-    TextEditingController controller = TextEditingController();
+
     chatWidgets.add(
       IntrinsicHeight(
         child: Row(
@@ -117,24 +117,10 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
               child: widget.userOpenTextWidget ??
                   BotUserOpenText(
                     chatBot: widget.chatBot,
-                    controller: controller,
-                    textField: Row(
-                      children: [
-                        Flexible(child: Container()),
-                        Flexible(
-                          child: TextField(
-                            controller: controller,
-                          ),
-                        ),
-                      ],
-                    ),
                     userMessageWidget: (message) =>
                         UserMessageWidget(message: message),
-                    icon: Icon(
-                      Icons.send,
-                      color: Colors.grey[500],
-                      size: 18,
-                    ),
+                    controller: TextEditingController(),
+                    icon: const Icon(Icons.send),
                   ),
             ),
           ],
