@@ -46,7 +46,9 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                 wasPressed = true;
               });
               //run user's on pressed function
-              widget.onPressed!();
+              if (widget.onPressed != null) {
+                widget.onPressed!();
+              }
               //transition the machine
               BotStateOpenText currentState =
                   widget.chatBot.currentState! as BotStateOpenText;
