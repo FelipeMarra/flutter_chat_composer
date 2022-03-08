@@ -21,7 +21,7 @@ class ChatBotWidget extends StatefulWidget {
   final Widget Function(RichText) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-  BotUserOpenText Function()? userOpenTextWidget;
+  BotUserOpenText? userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -104,7 +104,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: widget.userOpenTextWidget!(),
+              child: widget.userOpenTextWidget!,
             ),
           ],
         ),

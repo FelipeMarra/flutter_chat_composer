@@ -5,12 +5,11 @@ import 'package:flutter_chat_composer/widgets/bot_user_open_text.dart';
 import 'my_chat_bot.dart';
 
 class ChatPage extends StatelessWidget {
-  ChatPage({Key? key}) : super(key: key);
-
-  final ChatBot chatBot = MyChatBot().chatBot;
+  const ChatPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ChatBot chatBot = MyChatBot().chatBot;
     return Scaffold(
       appBar: AppBar(
         title: const Text("ChatBot"),
@@ -19,7 +18,7 @@ class ChatPage extends StatelessWidget {
         botMessageWidget: _botMessageWidget,
         botTransitionWidget: _botTransitionWidget,
         userMessageWidget: _userMessageWidget,
-        userOpenTextWidget: _userOpenTextWidget,
+        userOpenTextWidget: _userOpenTextWidget(chatBot),
         sameUserSpacing: 1,
         difUsersSpacing: 10,
         chatBot: chatBot,
@@ -62,7 +61,7 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  BotUserOpenText _userOpenTextWidget() {
+  BotUserOpenText _userOpenTextWidget(ChatBot chatBot) {
     TextEditingController controller = TextEditingController();
     return BotUserOpenText(
       chatBot: chatBot,
