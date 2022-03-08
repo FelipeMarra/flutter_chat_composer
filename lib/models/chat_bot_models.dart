@@ -51,6 +51,15 @@ class BotState extends ComposerState<BotTransition> {
             }
           },
         );
+
+  void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
+  }
 }
 
 ///A state of the [ChatBot] that will have a open text as the user's answer
@@ -93,8 +102,5 @@ class BotTransition extends Transition {
     required String id,
     required String to,
     this.message,
-  }) : super(
-          id: id,
-          to: to,
-        );
+  }) : super(id: id, to: to);
 }

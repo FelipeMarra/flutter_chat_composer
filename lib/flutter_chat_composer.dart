@@ -76,6 +76,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
   _processSnapshot(AsyncSnapshot<BotState> snapshot) async {
     BotState currentState = snapshot.data!;
+    currentState.rebuildAllChildren(context);
     //get message and options data
     //add them to the messages' list
     List<RichText> messages = currentState.messages;
