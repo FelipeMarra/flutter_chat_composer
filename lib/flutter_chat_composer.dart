@@ -60,14 +60,20 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
         //display the messages
         return Scaffold(
-          body: SingleChildScrollView(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: chatWidgets.length,
-              itemBuilder: (context, index) {
-                return chatWidgets[index];
-              },
-            ),
+          body: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: chatWidgets.length,
+                  itemBuilder: (context, index) {
+                    return chatWidgets[index];
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
