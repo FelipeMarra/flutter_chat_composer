@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
+import 'package:flutter_chat_composer/widgets/bot_user_open_text.dart';
 
 import 'my_chat_bot.dart';
 
 class ChatPage extends StatelessWidget {
-  const ChatPage({Key? key}) : super(key: key);
+  ChatPage({Key? key}) : super(key: key);
+
+  final ChatBot chatBot = MyChatBot().chatBot;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class ChatPage extends StatelessWidget {
         userOpenTextWidget: _userOpenTextWidget,
         sameUserSpacing: 1,
         difUsersSpacing: 10,
-        chatBot: MyChatBot().chatBot,
+        chatBot: chatBot,
       ),
     );
   }
@@ -60,20 +62,19 @@ class ChatPage extends StatelessWidget {
     );
   }
 
-  Widget _userOpenTextWidget(
-      TextEditingController controller, Function onSend) {
-    return Row(
-      children: [
-        Flexible(
-          child: TextField(
-            controller: controller,
-          ),
-        ),
-        IconButton(
-          onPressed: () => onSend(),
-          icon: const Icon(Icons.send),
-        )
-      ],
+  BotUserOpenText _userOpenTextWidget() {
+    TextEditingController controller = TextEditingController();
+    return BotUserOpenText(
+      chatBot: chatBot,
+      userMessageWidget: _userMessageWidget,
+      textField: TextField(
+        controller: controller,
+      ),
+      controller: controller,
+      icon: const Icon(Icons.send),
+      onPressed: () {
+        print("Icon Button BotUserOpenText PRESSED");
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ library flutter_chat_composer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/models/chat_bot_models.dart';
+import 'package:flutter_chat_composer/widgets/bot_user_open_text.dart';
 
 export 'models/chat_bot_models.dart';
 
@@ -20,8 +21,7 @@ class ChatBotWidget extends StatefulWidget {
   final Widget Function(RichText) userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-  Widget Function(TextEditingController textController, Function onSend)?
-      userOpenTextWidget;
+  BotUserOpenText Function()? userOpenTextWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -104,14 +104,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Flexible(
-              child: widget.userOpenTextWidget!(
-                currentState.textController,
-                () {
-                  widget.chatBot.transitionTo(
-                    currentState.decideTransition(currentState.textController),
-                  );
-                },
-              ),
+              child: widget.userOpenTextWidget!(),
             ),
           ],
         ),
