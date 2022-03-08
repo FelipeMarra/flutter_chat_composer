@@ -4,7 +4,7 @@ import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 class BotUserOpenText extends StatefulWidget {
   final Icon icon;
   final Function? onPressed;
-  final Widget? textField;
+  final TextField? textField;
   final TextEditingController controller;
   final Widget Function(RichText) userMessageWidget;
   final ChatBot chatBot;
@@ -44,36 +44,44 @@ class _BotUserOpenText extends State<BotUserOpenText> {
     } else {
       child = Row(
         children: [
-          Row(
-            children: [
-              Flexible(child: Container()),
-              Flexible(
-                child: widget.textField ??
-                    TextField(
-                      controller: widget.controller,
-                    ),
-              ),
-            ],
+          Flexible(child: Container()),
+          Flexible(
+            child: Row(
+              children: [
+                Flexible(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: widget.textField ??
+                            TextField(
+                              controller: widget.controller,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    //change to the user text widget
+                    setState(() {
+                      wasPressed = true;
+                    });
+                    //run user's on pressed function
+                    if (widget.onPressed != null) {
+                      widget.onPressed!();
+                    }
+                    //transition the machine
+                    BotStateOpenText currentState =
+                        widget.chatBot.currentState! as BotStateOpenText;
+                    widget.chatBot.transitionTo(
+                      currentState.decideTransition(widget.controller),
+                    );
+                  },
+                  icon: widget.icon,
+                )
+              ],
+            ),
           ),
-          IconButton(
-            onPressed: () {
-              //change to the user text widget
-              setState(() {
-                wasPressed = true;
-              });
-              //run user's on pressed function
-              if (widget.onPressed != null) {
-                widget.onPressed!();
-              }
-              //transition the machine
-              BotStateOpenText currentState =
-                  widget.chatBot.currentState! as BotStateOpenText;
-              widget.chatBot.transitionTo(
-                currentState.decideTransition(widget.controller),
-              );
-            },
-            icon: widget.icon,
-          )
         ],
       );
     }
