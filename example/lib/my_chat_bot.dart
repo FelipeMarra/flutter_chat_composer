@@ -35,7 +35,8 @@ class MyChatBot {
         ),
         RichText(
           text: const TextSpan(
-              text: "If you say something you're going to single choice state B, else you're going to openText satate c?"),
+              text:
+                  "If you say something you're going to single choice state B, else you're going to openText satate c?"),
         ),
       ],
       transitions: [
@@ -124,6 +125,15 @@ class MyChatBot {
               RichText(
                 text: const TextSpan(text: "Where do you wanna go next?"),
               ),
+              RichText(
+                text: const TextSpan(text: "Just making it bigger"),
+              ),
+              RichText(
+                text: const TextSpan(text: "Even"),
+              ),
+              RichText(
+                text: const TextSpan(text: "Even bigger"),
+              ),
             ],
         options: [
           BotOption(
@@ -144,6 +154,21 @@ class MyChatBot {
           BotOption(
             message: RichText(
               text: const TextSpan(text: "Option 4"),
+            ),
+          ),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 5"),
+            ),
+          ),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 6"),
+            ),
+          ),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 7"),
             ),
           ),
         ],

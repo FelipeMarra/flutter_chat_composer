@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/utils/check_box_widget.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'models/chat_bot_models.dart';
 import 'widgets/bot_message_widget.dart';
@@ -59,7 +60,7 @@ class ChatBotWidget extends StatefulWidget {
 }
 
 class _ChatBotWidgetState extends State<ChatBotWidget> {
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _scrollController = ItemScrollController();
 
   List<Widget> chatWidgets = [];
 
@@ -74,25 +75,22 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
         _processSnapshot(snapshot);
 
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.offset + MediaQuery.of(context).size.height,
+        if (_scrollController.isAttached) {
+          _scrollController.scrollTo(
+            index: chatWidgets.length - 1,
             duration: const Duration(milliseconds: 500),
-            curve: Curves.ease,
           );
         }
 
         //display the messages
         return Scaffold(
-          body: SingleChildScrollView(
-            controller: _scrollController,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: chatWidgets.length,
-              itemBuilder: (context, index) {
-                return chatWidgets[index];
-              },
-            ),
+          body: ScrollablePositionedList.builder(
+            shrinkWrap: true,
+            itemScrollController: _scrollController,
+            itemCount: chatWidgets.length,
+            itemBuilder: (context, index) {
+              return chatWidgets[index];
+            },
           ),
         );
       },
