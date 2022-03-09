@@ -105,16 +105,16 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     //test the text type we're dealing with
     if (currentState.runtimeType == BotStateOpenText) {
       _processOpenText(currentState as BotStateOpenText);
-    } else if (currentState.runtimeType == BotStateCheckBox) {
-      _processMultipleChoice(currentState as BotStateCheckBox);
+    } else if (currentState.runtimeType == BotStateMultipleChoice) {
+      _processMultipleChoice(currentState as BotStateMultipleChoice);
     } else {
-      _processClosedText(currentState);
+      _processSingleChoice(currentState);
     }
 
     chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
   }
 
-  _processMultipleChoice(BotStateCheckBox currentState) {
+  _processMultipleChoice(BotStateMultipleChoice currentState) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     //default widget
     chatWidgets.add(
@@ -183,7 +183,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     );
   }
 
-  _processClosedText(currentState) {
+  _processSingleChoice(currentState) {
     List<BotTransition> transitions = currentState.transitions;
     //process & add each bot transition
     for (var i = 0; i < transitions.length; i++) {

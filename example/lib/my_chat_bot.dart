@@ -105,8 +105,8 @@ class MyChatBot {
     );
   }
 
-  BotStateCheckBox _stateC() {
-    return BotStateCheckBox(
+  BotStateMultipleChoice _stateC() {
+    return BotStateMultipleChoice(
         id: "C",
         messages: () => [
               RichText(

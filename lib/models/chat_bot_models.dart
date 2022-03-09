@@ -23,7 +23,6 @@ class BotState extends ComposerState<BotTransition> {
 
   ///TODO: Time to wait between showing [messages]
   //final Duration displayInterval;
-
   BotState({
     required this.messages,
 
@@ -87,7 +86,7 @@ class BotStateOpenText extends BotState {
 }
 
 ///A state of the [ChatBot] that will allow to select multiple choices as the answer
-class BotStateCheckBox extends BotState {
+class BotStateMultipleChoice extends BotState {
   ///Function that will take the user's selection and return to what state that
   ///the bot will go to
   final String Function(List<BotOption> selectedOptions) decideTransition;
@@ -95,7 +94,7 @@ class BotStateCheckBox extends BotState {
   ///Options that will be displayed
   final List<BotOption> options;
 
-  BotStateCheckBox({
+  BotStateMultipleChoice({
     required this.options,
     required this.decideTransition,
 
