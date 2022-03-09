@@ -95,12 +95,9 @@ class BotStateCheckBox extends BotState {
   ///Options that will be displayed
   final List<BotOption> options;
 
-  final bool isMultipleChoices;
-
   BotStateCheckBox({
     required this.options,
     required this.decideTransition,
-    this.isMultipleChoices = false,
 
     ///The state's name (it's unique identifier)
     required String id,
