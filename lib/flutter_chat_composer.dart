@@ -77,7 +77,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         if (_scrollController.hasClients) {
           _scrollController.animateTo(
             _scrollController.offset + MediaQuery.of(context).size.height,
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 500),
             curve: Curves.ease,
           );
         }
