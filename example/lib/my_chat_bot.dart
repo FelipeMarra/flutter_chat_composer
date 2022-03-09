@@ -105,46 +105,55 @@ class MyChatBot {
     );
   }
 
-  BotState _stateC() {
-    return BotState(
-      id: "C",
-      messages: () => [
-        RichText(
-          text: const TextSpan(
-            children: [
-              TextSpan(text: "Ok, so now you're in "),
-              TextSpan(
-                text: "State C! ",
-                style: TextStyle(fontWeight: FontWeight.bold),
+  BotStateCheckBox _stateC() {
+    return BotStateCheckBox(
+        id: "C",
+        messages: () => [
+              RichText(
+                text: const TextSpan(
+                  children: [
+                    TextSpan(text: "Ok, so now you're in "),
+                    TextSpan(
+                      text: "State C! ",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: "As in Cool State"),
+                  ],
+                ),
               ),
-              TextSpan(text: "As in Cool State"),
+              RichText(
+                text: const TextSpan(text: "Where do you wanna go next?"),
+              ),
             ],
+        options: [
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 1"),
+            ),
           ),
-        ),
-        RichText(
-          text: const TextSpan(text: "Where do you wanna go next?"),
-        ),
-      ],
-      transitions: [
-        BotTransition(
-          id: "C=>D",
-          to: "D",
-          message: RichText(
-            text: const TextSpan(text: "Go from C to D"),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 2"),
+            ),
           ),
-        ),
-        BotTransition(
-          id: "C=>E",
-          to: "E",
-          message: RichText(
-            text: const TextSpan(text: "Go from C to E"),
+        ],
+        transitions: [
+          BotTransition(
+            id: "C=>D",
+            to: "D",
           ),
-        ),
-      ],
-      onEnter: (machine) {
-        print("Entered ${machine.currentState!.id}");
-      },
-    );
+          BotTransition(
+            id: "C=>E",
+            to: "E",
+          ),
+        ],
+        decideTransition: (options) {
+          if (options.length > 1) {
+            return "D";
+          } else {
+            return "E";
+          }
+        });
   }
 
   BotState _stateD() {

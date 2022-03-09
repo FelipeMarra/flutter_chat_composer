@@ -25,12 +25,13 @@ class BotState extends ComposerState<BotTransition> {
   //final Duration displayInterval;
 
   BotState({
+    required this.messages,
+
     ///The state's name (it's unique identifier)
     required String id,
 
     ///Transitions options to go to the other states
     List<BotTransition>? transitions,
-    required this.messages,
 
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
@@ -60,6 +61,8 @@ class BotStateOpenText extends BotState {
   String Function(TextEditingController textController) decideTransition;
 
   BotStateOpenText({
+    required this.decideTransition,
+
     ///The state's name (it's unique identifier)
     required String id,
 
@@ -68,7 +71,6 @@ class BotStateOpenText extends BotState {
 
     ///A message is a list of texts, each messagem is showed separated
     required List<RichText> Function() messages,
-    required this.decideTransition,
 
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
@@ -82,6 +84,57 @@ class BotStateOpenText extends BotState {
           onEnter: onEnter,
           onLeave: onLeave,
         );
+}
+
+///A state of the [ChatBot] that will allow to select multiple choices as the answer
+class BotStateCheckBox extends BotState {
+  ///Function that will take the user's selection and return to what state that
+  ///the bot will go to
+  final String Function(List<BotOption> selectedOptions) decideTransition;
+
+  ///Options that will be displayed
+  final List<BotOption> options;
+
+  final bool isMultipleChoices;
+
+  BotStateCheckBox({
+    required this.options,
+    required this.decideTransition,
+    this.isMultipleChoices = false,
+
+    ///The state's name (it's unique identifier)
+    required String id,
+
+    ///Transitions options to go to the other states
+    required List<BotTransition> transitions,
+
+    ///A message is a list of texts, each messagem is showed separated
+    required List<RichText> Function() messages,
+
+    ///Function executed when the state is entered
+    Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
+    Function(ChatBot chatBot, BotState nextState)? onLeave,
+  }) : super(
+          id: id,
+          transitions: transitions,
+          messages: messages,
+          onEnter: onEnter,
+          onLeave: onLeave,
+        );
+}
+
+class BotOption {
+  final RichText? message;
+  final Function(BotOption option)? onChange;
+  bool selected;
+
+  BotOption({
+    required this.message,
+    this.onChange,
+    this.selected = false,
+  });
 }
 
 ///A transition [to] another [BotState]

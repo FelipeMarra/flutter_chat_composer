@@ -1,6 +1,7 @@
 library flutter_chat_composer;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_composer/utils/check_box_widget.dart';
 
 import 'models/chat_bot_models.dart';
 import 'widgets/bot_message_widget.dart';
@@ -29,6 +30,10 @@ class ChatBotWidget extends StatefulWidget {
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
   final BotUserOpenText? userOpenTextWidget;
 
+  ///A state of the [ChatBot] that will allow to select multiple choices as the answer
+  //TODO final MultipleCheckboxFormField Function(BotStateCheckBox currentState)?
+  //    botMultipleChoiceMessage;
+
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
 
@@ -44,6 +49,7 @@ class ChatBotWidget extends StatefulWidget {
     this.sameUserSpacing,
     this.difUsersSpacing,
     this.userOpenTextWidget,
+    //this.botMultipleChoiceMessage,
   }) : super(key: key);
 
   @override
@@ -89,6 +95,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       chatWidgets.add(
         widget.botMessageWidget != null
             ? widget.botMessageWidget!(message)
+            //default widget
             : BotMessageWidget(message: message),
       );
 
@@ -98,6 +105,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     //test the text type we're dealing with
     if (currentState.runtimeType == BotStateOpenText) {
       _processOpenText(currentState as BotStateOpenText);
+    } else if (currentState.runtimeType == BotStateCheckBox) {
+      _processMultipleChoice(currentState as BotStateCheckBox);
     } else {
       _processClosedText(currentState);
     }
@@ -105,9 +114,53 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
   }
 
+  _processMultipleChoice(BotStateCheckBox currentState) {
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    //default widget
+    chatWidgets.add(
+      Form(
+        key: _formKey,
+        child: MultipleCheckboxFormField(
+          options: currentState.options,
+          onChangeAll: (indexes) {
+            for (int index in indexes) {
+              BotOption currentOption = currentState.options[index];
+              if (currentOption.onChange != null) {
+                currentOption.onChange!(currentOption);
+              }
+            }
+          },
+          onFinalize: (List<int> indexes) {
+            //validation
+            if (_formKey.currentState?.validate() == false) {
+              return;
+            }
+            //convert in user answer
+            List<BotOption> options = [];
+            for (int index in indexes) {
+              BotOption currentOption = currentState.options[index];
+              options.add(currentOption);
+              //add transition messages a the user's answer
+              chatWidgets.add(
+                widget.userMessageWidget != null
+                    ? widget.userMessageWidget!(currentOption.message!)
+                    //default widget
+                    : UserMessageWidget(message: currentOption.message!),
+              );
+            }
+            String nextState = currentState.decideTransition(options);
+            widget.chatBot.transitionTo(nextState);
+
+            //dipose key
+            _formKey.currentState!.dispose();
+          },
+        ),
+      ),
+    );
+  }
+
   _processOpenText(BotStateOpenText currentState) {
     //add open user's text widget
-
     chatWidgets.add(
       IntrinsicHeight(
         child: Row(
@@ -115,6 +168,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           children: [
             Flexible(
               child: widget.userOpenTextWidget ??
+                  //default widget
                   BotUserOpenText(
                     chatBot: widget.chatBot,
                     userMessageWidget: (message) =>
@@ -141,8 +195,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           onTap: () {
             //add transition messages a the user's answer
             chatWidgets.add(
-              widget.botMessageWidget != null
+              widget.userMessageWidget != null
                   ? widget.userMessageWidget!(transition.message!)
+                  //default widget
                   : UserMessageWidget(message: transition.message!),
             );
             chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
