@@ -18,7 +18,7 @@ class MyChatBot {
 
   ChatBot get chatBot => _chatBot();
 
-  BotState _stateA() {
+  BotStateOpenText _stateA() {
     return BotStateOpenText(
       id: "A",
       messages: () => [
@@ -35,7 +35,7 @@ class MyChatBot {
         ),
         RichText(
           text: const TextSpan(
-              text: "Tell me, what do you think about this state?"),
+              text: "If you say something you're going to single choice state B, else you're going to openText satate c?"),
         ),
       ],
       transitions: [
@@ -134,6 +134,16 @@ class MyChatBot {
           BotOption(
             message: RichText(
               text: const TextSpan(text: "Option 2"),
+            ),
+          ),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 3"),
+            ),
+          ),
+          BotOption(
+            message: RichText(
+              text: const TextSpan(text: "Option 4"),
             ),
           ),
         ],
