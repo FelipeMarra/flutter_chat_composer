@@ -1,5 +1,7 @@
 library flutter_chat_composer;
 
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/utils/check_box_widget.dart';
 
@@ -74,7 +76,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
         if (_scrollController.hasClients) {
           _scrollController.animateTo(
-            _scrollController.offset + 1000,
+            _scrollController.offset + MediaQuery.of(context).size.height,
             duration: const Duration(milliseconds: 200),
             curve: Curves.ease,
           );
