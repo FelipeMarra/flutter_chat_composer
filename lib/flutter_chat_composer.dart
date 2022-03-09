@@ -57,6 +57,8 @@ class ChatBotWidget extends StatefulWidget {
 }
 
 class _ChatBotWidgetState extends State<ChatBotWidget> {
+  final ScrollController _scrollController = ScrollController();
+
   List<Widget> chatWidgets = [];
 
   @override
@@ -70,9 +72,18 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
         _processSnapshot(snapshot);
 
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.offset + 1000,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+        }
+
         //display the messages
         return Scaffold(
           body: SingleChildScrollView(
+            controller: _scrollController,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: chatWidgets.length,
