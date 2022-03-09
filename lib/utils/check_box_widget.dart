@@ -116,47 +116,61 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const ClampingScrollPhysics(),
-          itemCount: widget.options.length,
-          itemBuilder: (context, index) {
-            BotOption option = widget.options[index];
+        Flexible(
+          child: Column(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemCount: widget.options.length,
+                itemBuilder: (context, index) {
+                  BotOption option = widget.options[index];
 
-            return CheckboxFormField(
-                checkboxListTile: widget.checkboxListTile,
-                option: option,
-                value: valueSelection(index),
-                onChange: widget.disabled
-                    ? null
-                    : (value) {
-                        setState(() {
-                          updateSelected(index, value);
-                        });
+                  return CheckboxFormField(
+                      checkboxListTile: widget.checkboxListTile,
+                      option: option,
+                      value: valueSelection(index),
+                      onChange: widget.disabled
+                          ? null
+                          : (value) {
+                              setState(() {
+                                updateSelected(index, value);
+                              });
+                            },
+                      validator: (value) {
+                        if (widget.multipleChoices) {
+                          if (selection.isEmpty) {
+                            return "Selecione uma opção";
+                          }
+                        } else {
+                          if (selected == -1) {
+                            return "Selecione uma opção";
+                          }
+                        }
+
+                        return null;
+                      });
+                },
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        widget.onFinalize(selection);
                       },
-                validator: (value) {
-                  if (widget.multipleChoices) {
-                    if (selection.isEmpty) {
-                      return "Selecione uma opção";
-                    }
-                  } else {
-                    if (selected == -1) {
-                      return "Selecione uma opção";
-                    }
-                  }
-
-                  return null;
-                });
-          },
+                      child: const Text("Ok"),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        TextButton(
-          onPressed: () {
-            widget.onFinalize(selection);
-          },
-          child: const Text("Ok"),
-        ),
+        Flexible(child: Container()),
       ],
     );
   }
