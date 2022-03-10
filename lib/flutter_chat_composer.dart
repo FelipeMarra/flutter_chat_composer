@@ -1,7 +1,5 @@
 library flutter_chat_composer;
 
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/utils/check_box_widget.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -61,78 +59,130 @@ class ChatBotWidget extends StatefulWidget {
 
 class _ChatBotWidgetState extends State<ChatBotWidget> {
   final ItemScrollController _scrollController = ItemScrollController();
-
-  List<Widget> chatWidgets = [];
+  List<BotState> history = [];
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: widget.chatBot.stateStream,
       builder: (context, AsyncSnapshot<BotState> snapshot) {
-        if (snapshot.data == null) {
-          return Container();
-        }
+        bool conection = snapshot.connectionState == ConnectionState.active;
+        if (conection && snapshot.hasData) {
+          history.add(snapshot.data!);
 
-        _processSnapshot(snapshot);
+          _scrollToLast();
 
-        if (_scrollController.isAttached) {
-          _scrollController.scrollTo(
-            index: chatWidgets.length - 1,
-            duration: const Duration(milliseconds: 500),
+          //display the messages
+          return ScrollablePositionedList.separated(
+            shrinkWrap: true,
+            itemScrollController: _scrollController,
+            itemCount: history.length,
+            itemBuilder: _itemBuilder,
+            separatorBuilder: (BuildContext context, int index) => SizedBox(
+              height: widget.difUsersSpacing,
+            ),
           );
         }
 
-        //display the messages
-        return Scaffold(
-          body: ScrollablePositionedList.builder(
-            shrinkWrap: true,
-            itemScrollController: _scrollController,
-            itemCount: chatWidgets.length,
-            itemBuilder: (context, index) {
-              return chatWidgets[index];
-            },
-          ),
-        );
+        return Container();
       },
     );
   }
 
-  _processSnapshot(AsyncSnapshot<BotState> snapshot) async {
-    BotState currentState = snapshot.data!;
+  void _scrollToLast() async {
+    if (_scrollController.isAttached) {
+      await Future.delayed(const Duration(milliseconds: 5));
+      _scrollController.scrollTo(
+        index: history.length - 1,
+        duration: const Duration(milliseconds: 400),
+      );
+    }
+  }
+
+  Column _itemBuilder(context, index) {
+    BotState currentState = history[index];
+    Type currentType = currentState.runtimeType;
+    List<Widget> widgets = [];
+
     //get message and options data
     //add them to the messages' list
     List<RichText> messages = currentState.messages();
     for (RichText message in messages) {
-      chatWidgets.add(
+      widgets.add(
         widget.botMessageWidget != null
             ? widget.botMessageWidget!(message)
             //default widget
             : BotMessageWidget(message: message),
       );
 
-      chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
+      widgets.add(SizedBox(height: widget.sameUserSpacing));
     }
 
-    //test the text type we're dealing with
-    if (currentState.runtimeType == BotStateOpenText) {
-      _processOpenText(currentState as BotStateOpenText);
-    } else if (currentState.runtimeType == BotStateMultipleChoice) {
-      _processMultipleChoice(currentState as BotStateMultipleChoice);
+    if (currentType == BotStateOpenText) {
+      widgets.add(_processOpenText(currentState as BotStateOpenText));
+    } else if (currentType == BotStateMultipleChoice) {
+      widgets.addAll(
+        _processMultipleChoice(currentState as BotStateMultipleChoice),
+      );
     } else {
-      _processSingleChoice(currentState);
+      widgets.addAll(_processSingleChoice(currentState));
     }
 
-    chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: widgets,
+    );
   }
 
-  _processMultipleChoice(BotStateMultipleChoice currentState) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    //default widget
-    chatWidgets.add(
-      Form(
-        key: _formKey,
-        child: MultipleCheckboxFormField(
+  List<Widget> _processMultipleChoice(BotStateMultipleChoice currentState) {
+    List<Widget> widgets = [];
+    bool enabled = currentState.optionsSelectedByUser.isEmpty;
+
+    if (enabled) {
+      final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+      //default widget
+      widgets.add(
+        Form(
+          key: _formKey,
+          child: MultipleCheckboxFormField(
+            options: currentState.options,
+            onChangeAll: (indexes) {
+              for (int index in indexes) {
+                BotOption currentOption = currentState.options[index];
+                if (currentOption.onChange != null) {
+                  currentOption.onChange!(currentOption);
+                }
+              }
+            },
+            onFinalize: (List<int> indexes) {
+              //validation
+              if (_formKey.currentState!.validate()) {
+                List<BotOption> options = [];
+
+                for (int index in indexes) {
+                  options.add(currentState.options[index]);
+                  currentState.optionsSelectedByUser.add(index);
+                  BotStateMultipleChoice a =
+                      history.last as BotStateMultipleChoice;
+                }
+
+                String nextState = currentState.decideTransition(options);
+                widget.chatBot.transitionTo(nextState);
+
+                return true;
+              } else {
+                return false;
+              }
+            },
+          ),
+        ),
+      );
+    } else {
+      widgets.add(
+        MultipleCheckboxFormField(
+          disabled: true,
           options: currentState.options,
+          intialValues: currentState.optionsSelectedByUser,
           onChangeAll: (indexes) {
             for (int index in indexes) {
               BotOption currentOption = currentState.options[index];
@@ -141,86 +191,91 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
               }
             }
           },
-          onFinalize: (List<int> indexes) {
-            //validation
-            if (_formKey.currentState?.validate() == false) {
-              return;
-            }
-            //convert in user answer
-            List<BotOption> options = [];
-            for (int index in indexes) {
-              BotOption currentOption = currentState.options[index];
-              options.add(currentOption);
-              //add transition messages a the user's answer
-              chatWidgets.add(
-                widget.userMessageWidget != null
-                    ? widget.userMessageWidget!(currentOption.message!)
-                    //default widget
-                    : UserMessageWidget(message: currentOption.message!),
-              );
-            }
-            String nextState = currentState.decideTransition(options);
-            widget.chatBot.transitionTo(nextState);
-
-            //dipose key
-            _formKey.currentState!.dispose();
-          },
         ),
-      ),
-    );
+      );
+      //convert in user answer
+      List<BotOption> options = [];
+
+      for (int index in currentState.optionsSelectedByUser) {
+        BotOption currentOption = currentState.options[index];
+        options.add(currentOption);
+        //add transition messages a the user's answer
+        widgets.add(
+          widget.userMessageWidget != null
+              ? widget.userMessageWidget!(currentOption.message!)
+              //default widget
+              : UserMessageWidget(message: currentOption.message!),
+        );
+      }
+    }
+    return widgets;
   }
 
-  _processOpenText(BotStateOpenText currentState) {
+  Widget _processOpenText(BotStateOpenText currentState) {
     //add open user's text widget
-    chatWidgets.add(
-      IntrinsicHeight(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: widget.userOpenTextWidget ??
-                  //default widget
-                  BotUserOpenText(
-                    chatBot: widget.chatBot,
-                    userMessageWidget: (message) =>
-                        UserMessageWidget(message: message),
-                    controller: TextEditingController(),
-                    icon: const Icon(Icons.send),
-                  ),
-            ),
-          ],
-        ),
+    //TODO optimize to rebuild so we dont have to create a new controller etc
+    TextEditingController controller = TextEditingController(
+      text: currentState.userText,
+    );
+
+    Widget child = IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: widget.userOpenTextWidget ??
+                //default widget
+                BotUserOpenText(
+                  wasPressed: currentState.userText.isNotEmpty,
+                  chatBot: widget.chatBot,
+                  userMessageWidget: (message) =>
+                      UserMessageWidget(message: message),
+                  controller: controller,
+                  icon: const Icon(Icons.send),
+                ),
+          ),
+        ],
       ),
     );
+
+    controller.addListener(() => currentState.userText = controller.text);
+
+    return child;
   }
 
-  _processSingleChoice(currentState) {
+  List<Widget> _processSingleChoice(currentState) {
+    List<Widget> widgets = [];
+
     List<BotTransition> transitions = currentState.transitions;
     //process & add each bot transition
     for (var i = 0; i < transitions.length; i++) {
       BotTransition transition = transitions[i];
 
-      chatWidgets.add(
-        InkWell(
-          child: widget.botTransitionWidget(transition.message!),
-          onTap: () {
-            //add transition messages a the user's answer
-            chatWidgets.add(
-              widget.userMessageWidget != null
-                  ? widget.userMessageWidget!(transition.message!)
-                  //default widget
-                  : UserMessageWidget(message: transition.message!),
-            );
-            chatWidgets.add(SizedBox(height: widget.difUsersSpacing));
-            //run the transition
-            widget.chatBot.transitionTo(transition.to);
-          },
-        ),
-      );
-      //Add spacing to all but the last transition
-      if (i != transitions.length - 1) {
-        chatWidgets.add(SizedBox(height: widget.sameUserSpacing));
+      if (transition.message != null) {
+        widgets.add(
+          InkWell(
+            child: widget.botTransitionWidget(transition.message!),
+            onTap: () {
+              //add transition messages a the user's answer
+              widgets.add(
+                widget.userMessageWidget != null
+                    ? widget.userMessageWidget!(transition.message!)
+                    //default widget
+                    : UserMessageWidget(message: transition.message!),
+              );
+              widgets.add(SizedBox(height: widget.difUsersSpacing));
+              //run the transition
+              widget.chatBot.transitionTo(transition.to);
+            },
+          ),
+        );
+        //Add spacing to all but the last transition
+        if (i != transitions.length - 1) {
+          widgets.add(SizedBox(height: widget.sameUserSpacing));
+        }
       }
     }
+
+    return widgets;
   }
 }

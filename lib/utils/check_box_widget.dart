@@ -45,15 +45,14 @@ class CheckboxFormField extends FormField<bool> {
 //TODO change to multiple choices only
 class MultipleCheckboxFormField extends StatefulWidget {
   final List<BotOption> options;
-
   CheckboxListTile? checkboxListTile;
   // TODO Widget? button;
   void Function(int)? onChangeSelected;
-  bool Function(List<int>) onFinalize;
+  bool Function(List<int>)? onFinalize;
   int? intialValue;
   void Function(List<int>)? onChangeAll;
   List<int>? intialValues;
-  bool multipleChoices = false;
+  bool disabled;
 
   MultipleCheckboxFormField({
     Key? key,
@@ -61,11 +60,10 @@ class MultipleCheckboxFormField extends StatefulWidget {
     this.checkboxListTile,
     //this.button,
     required this.onChangeAll,
-    required this.onFinalize,
+    this.onFinalize,
     this.intialValues,
-  }) : super(key: key) {
-    multipleChoices = true;
-  }
+    this.disabled = false,
+  }) : super(key: key);
 
   @override
   _MultipleCheckboxFormFieldState createState() =>
@@ -73,8 +71,6 @@ class MultipleCheckboxFormField extends StatefulWidget {
 }
 
 class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
-  bool disabled = false;
-
   List<int> selection = [];
 
   void updateSelected(int index, bool isMarked) {
@@ -117,7 +113,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                     checkboxListTile: widget.checkboxListTile,
                     option: option,
                     value: valueSelection(index),
-                    onChange: disabled
+                    onChange: widget.disabled
                         ? null
                         : (value) {
                             setState(() {
@@ -139,13 +135,13 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: disabled
+                      onPressed: widget.disabled
                           ? null
                           : () {
-                              bool isValid = widget.onFinalize(selection);
+                              bool isValid = widget.onFinalize!(selection);
                               if (isValid) {
                                 setState(() {
-                                  disabled = true;
+                                  widget.disabled = true;
                                 });
                               }
                             },

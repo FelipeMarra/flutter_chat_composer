@@ -21,10 +21,14 @@ class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<RichText> Function() messages;
 
+  ///Message selected by the user for storage purposes
+  final int? userSelectedMessage;
+
   ///TODO: Time to wait between showing [messages]
   //final Duration displayInterval;
   BotState({
     required this.messages,
+    this.userSelectedMessage,
 
     ///The state's name (it's unique identifier)
     required String id,
@@ -58,6 +62,9 @@ class BotStateOpenText extends BotState {
   ///Function that will take the user's input and return to what state the bot
   ///will go
   String Function(TextEditingController textController) decideTransition;
+
+  ///Text typed by the user for storage purposes
+  String userText = "";
 
   BotStateOpenText({
     required this.decideTransition,
@@ -93,6 +100,9 @@ class BotStateMultipleChoice extends BotState {
 
   ///Options that will be displayed
   final List<BotOption> options;
+
+  ///Options the user selected for storage purposes
+  List<int> optionsSelectedByUser = [];
 
   BotStateMultipleChoice({
     required this.options,

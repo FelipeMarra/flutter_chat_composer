@@ -8,6 +8,8 @@ class BotUserOpenText extends StatefulWidget {
   final TextEditingController controller;
   final Widget Function(RichText) userMessageWidget;
   final ChatBot chatBot;
+  final bool wasPressed;
+
   const BotUserOpenText({
     Key? key,
     required this.chatBot,
@@ -16,6 +18,7 @@ class BotUserOpenText extends StatefulWidget {
     required this.icon,
     this.textField,
     this.onPressed,
+    this.wasPressed = false,
   }) : super(key: key);
 
   @override
@@ -23,13 +26,19 @@ class BotUserOpenText extends StatefulWidget {
 }
 
 class _BotUserOpenText extends State<BotUserOpenText> {
-  bool wasPressed = false;
+  late bool wasPressed;
 
   @override
-  void dispose() {
-    widget.controller.dispose();
-    super.dispose();
+  void initState() {
+    wasPressed = widget.wasPressed;
+    super.initState();
   }
+
+  // @override
+  // void dispose() {
+  //   widget.controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
