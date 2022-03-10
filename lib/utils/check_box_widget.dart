@@ -45,12 +45,11 @@ class CheckboxFormField extends FormField<bool> {
 //TODO change to multiple choices only
 class MultipleCheckboxFormField extends StatefulWidget {
   final List<BotOption> options;
-  final bool disabled;
 
   CheckboxListTile? checkboxListTile;
   // TODO Widget? button;
   void Function(int)? onChangeSelected;
-  void Function(List<int>) onFinalize;
+  bool Function(List<int>) onFinalize;
   int? intialValue;
   void Function(List<int>)? onChangeAll;
   List<int>? intialValues;
@@ -59,7 +58,6 @@ class MultipleCheckboxFormField extends StatefulWidget {
   MultipleCheckboxFormField({
     Key? key,
     required this.options,
-    this.disabled = false,
     this.checkboxListTile,
     //this.button,
     required this.onChangeAll,
@@ -75,42 +73,29 @@ class MultipleCheckboxFormField extends StatefulWidget {
 }
 
 class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
-  int selected = -1;
+  bool disabled = false;
+
   List<int> selection = [];
 
   void updateSelected(int index, bool isMarked) {
-    if (widget.multipleChoices) {
-      if (isMarked && !selection.contains(index)) {
-        selection.add(index);
-      } else if (!isMarked && selection.contains(index)) {
-        selection.remove(index);
-      }
-      widget.onChangeAll!(selection);
-    } else {
-      selected = index;
-      if (isMarked) widget.onChangeSelected!(selected);
+    if (isMarked && !selection.contains(index)) {
+      selection.add(index);
+    } else if (!isMarked && selection.contains(index)) {
+      selection.remove(index);
     }
+    widget.onChangeAll!(selection);
   }
 
   bool valueSelection(int index) {
-    if (widget.multipleChoices) {
-      return selection.contains(index);
-    } else {
-      return selected == index ? true : false;
-    }
+    return selection.contains(index);
   }
 
   @override
   void initState() {
-    if (widget.multipleChoices) {
-      if (widget.intialValues != null) {
-        selection = widget.intialValues ?? [];
-      }
-    } else {
-      if (widget.intialValue != null && selected == -1) {
-        selected = widget.intialValue ?? -1;
-      }
+    if (widget.intialValues != null) {
+      selection = widget.intialValues ?? [];
     }
+
     super.initState();
   }
 
@@ -129,29 +114,24 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                   BotOption option = widget.options[index];
 
                   return CheckboxFormField(
-                      checkboxListTile: widget.checkboxListTile,
-                      option: option,
-                      value: valueSelection(index),
-                      onChange: widget.disabled
-                          ? null
-                          : (value) {
-                              setState(() {
-                                updateSelected(index, value);
-                              });
-                            },
-                      validator: (value) {
-                        if (widget.multipleChoices) {
-                          if (selection.isEmpty) {
-                            return "Selecione uma opção";
-                          }
-                        } else {
-                          if (selected == -1) {
-                            return "Selecione uma opção";
-                          }
-                        }
+                    checkboxListTile: widget.checkboxListTile,
+                    option: option,
+                    value: valueSelection(index),
+                    onChange: disabled
+                        ? null
+                        : (value) {
+                            setState(() {
+                              updateSelected(index, value);
+                            });
+                          },
+                    validator: (value) {
+                      if (selection.isEmpty) {
+                        return "Selecione uma opção";
+                      }
 
-                        return null;
-                      });
+                      return null;
+                    },
+                  );
                 },
               ),
               Row(
@@ -159,9 +139,16 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () {
-                        widget.onFinalize(selection);
-                      },
+                      onPressed: disabled
+                          ? null
+                          : () {
+                              bool isValid = widget.onFinalize(selection);
+                              if (isValid) {
+                                setState(() {
+                                  disabled = true;
+                                });
+                              }
+                            },
                       child: const Text("Ok"),
                     ),
                   ),
