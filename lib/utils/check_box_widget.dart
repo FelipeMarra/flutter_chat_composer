@@ -99,61 +99,78 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        Flexible(child: Container()),
         Flexible(
-          child: Column(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemCount: widget.options.length,
-                itemBuilder: (context, index) {
-                  BotOption option = widget.options[index];
-
-                  return CheckboxFormField(
-                    checkboxListTile: widget.checkboxListTile,
-                    option: option,
-                    value: valueSelection(index),
-                    onChange: widget.disabled
-                        ? null
-                        : (value) {
-                            setState(() {
-                              updateSelected(index, value);
-                            });
-                          },
-                    validator: (value) {
-                      if (selection.isEmpty) {
-                        return "Selecione uma opção";
-                      }
-
-                      return null;
-                    },
-                  );
-                },
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 222, 235, 255),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(20),
+                bottomLeft: Radius.circular(20),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: widget.disabled
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                )
+              ],
+            ),
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: widget.options.length,
+                  itemBuilder: (context, index) {
+                    BotOption option = widget.options[index];
+
+                    return CheckboxFormField(
+                      checkboxListTile: widget.checkboxListTile,
+                      option: option,
+                      value: valueSelection(index),
+                      onChange: widget.disabled
                           ? null
-                          : () {
-                              bool isValid = widget.onFinalize!(selection);
-                              if (isValid) {
-                                setState(() {
-                                  widget.disabled = true;
-                                });
-                              }
+                          : (value) {
+                              setState(() {
+                                updateSelected(index, value);
+                              });
                             },
-                      child: const Text("Ok"),
+                      validator: (value) {
+                        if (selection.isEmpty) {
+                          return "Selecione uma opção";
+                        }
+
+                        return null;
+                      },
+                    );
+                  },
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: widget.disabled
+                            ? null
+                            : () {
+                                bool isValid = widget.onFinalize!(selection);
+                                if (isValid) {
+                                  setState(() {
+                                    widget.disabled = true;
+                                  });
+                                }
+                              },
+                        child: const Text("Ok"),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-        Flexible(child: Container()),
       ],
     );
   }

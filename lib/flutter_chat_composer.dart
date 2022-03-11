@@ -108,8 +108,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
     if (currentType != BotStateImage) {
       //get message and options data
-      //add them to the messages' list
       List<RichText> messages = currentState.messages();
+      //add them to the messages' list
       for (RichText message in messages) {
         widgets.add(
           widget.botMessageWidget != null
@@ -185,23 +185,6 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         ),
       );
     } else {
-      //disabled checkbox
-      widgets.add(
-        MultipleCheckboxFormField(
-          disabled: true,
-          options: currentState.options,
-          intialValues: currentState.optionsSelectedByUser,
-          onChangeAll: (indexes) {
-            for (int index in indexes) {
-              BotOption currentOption = currentState.options[index];
-              if (currentOption.onChange != null) {
-                currentOption.onChange!(currentOption);
-              }
-            }
-          },
-        ),
-      );
-      //user's answers
       for (int index in currentState.optionsSelectedByUser) {
         BotOption currentOption = currentState.options[index];
 

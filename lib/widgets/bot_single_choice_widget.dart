@@ -15,8 +15,9 @@ class BotSingleChoiceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        Flexible(child: Container()),
         Flexible(
           child: InkWell(
             onTap: () => onPress(),
@@ -24,28 +25,28 @@ class BotSingleChoiceWidget extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: boxDecoration ??
                   BoxDecoration(
-                      color: Colors.purple[100],
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                        )
-                      ]),
+                    color: Color.fromARGB(255, 222, 235, 255),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                      )
+                    ],
+                  ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [Flexible(child: message)],
               ),
             ),
           ),
         ),
-        Flexible(child: Container())
       ],
     );
   }

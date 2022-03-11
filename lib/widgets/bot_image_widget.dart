@@ -18,6 +18,7 @@ class BotImageWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
+          flex: 1,
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: boxDecoration ??
@@ -38,10 +39,7 @@ class BotImageWidget extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: image,
-                  //fit: FlexFit.tight,
-                ),
+                image,
                 Column(
                   children: label,
                 ),
@@ -49,7 +47,10 @@ class BotImageWidget extends StatelessWidget {
             ),
           ),
         ),
-        Flexible(child: Container())
+        Flexible(
+          flex: 3,
+          child: Container(),
+        )
       ],
     );
   }

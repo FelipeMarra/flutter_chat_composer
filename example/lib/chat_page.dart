@@ -19,7 +19,7 @@ class ChatPage extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: ChatBotWidget(
           chatBot: chatBot,
-          sameUserSpacing: 1,
+          sameUserSpacing: 5,
           difUsersSpacing: 10,
         ),
       ),

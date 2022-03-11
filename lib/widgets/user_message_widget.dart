@@ -4,11 +4,8 @@ class UserMessageWidget extends StatelessWidget {
   final RichText message;
   final BoxDecoration? boxDecoration;
 
-  const UserMessageWidget({
-    Key? key,
-    required this.message,
-    this.boxDecoration
-  }) : super(key: key);
+  const UserMessageWidget({Key? key, required this.message, this.boxDecoration})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +16,22 @@ class UserMessageWidget extends StatelessWidget {
         Flexible(
           child: Container(
             padding: const EdgeInsets.all(10),
-            decoration: boxDecoration ?? BoxDecoration(
-                color: Colors.blueAccent[100],
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
+            decoration: boxDecoration ??
+                BoxDecoration(
+                  color: const Color.fromARGB(255, 159, 196, 255),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                    )
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 2,
-                  )
-                ]),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
