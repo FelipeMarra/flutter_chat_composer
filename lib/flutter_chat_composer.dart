@@ -170,6 +170,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                 for (int index in indexes) {
                   options.add(currentState.options[index]);
                   currentState.optionsSelectedByUser.add(index);
+                  currentState.optionsSelectedByUser.sort();
                 }
 
                 String nextState = currentState.decideTransition(options);
