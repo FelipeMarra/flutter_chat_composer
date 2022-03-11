@@ -184,6 +184,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         ),
       );
     } else {
+      //disabled checkbox
       widgets.add(
         MultipleCheckboxFormField(
           disabled: true,
@@ -199,19 +200,19 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           },
         ),
       );
-      //convert in user answer
-      List<BotOption> options = [];
-
+      //user's answers
       for (int index in currentState.optionsSelectedByUser) {
         BotOption currentOption = currentState.options[index];
-        options.add(currentOption);
-        //add transition messages a the user's answer
+
+        //add transition messages as the user's answer
         widgets.add(
           widget.userMessageWidget != null
               ? widget.userMessageWidget!(currentOption.message!)
               //default widget
               : UserMessageWidget(message: currentOption.message!),
         );
+
+        widgets.add(SizedBox(height: widget.sameUserSpacing));
       }
     }
     return widgets;
@@ -280,7 +281,6 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
             child = BotSingleChoiceWidget(
               message: message,
               onPress: () {
-                print("ON press chat composer side");
                 //save the answer
                 currentState.userSelectedMessage = i;
                 //run the transition
