@@ -251,10 +251,13 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
   List<Widget> _processImage(BotStateImage currentState) {
     List<Widget> widgets = [];
-    widgets.add(BotImageWidget(
-      label: currentState.label(),
-      image: currentState.image(),
-    ));
+    widgets.add(
+      BotImageWidget(
+        label: currentState.label(),
+        image: currentState.image(),
+      ),
+    );
+    widgets.add(SizedBox(height: widget.sameUserSpacing));
     return widgets;
   }
 
