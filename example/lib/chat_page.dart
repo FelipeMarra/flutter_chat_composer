@@ -19,24 +19,10 @@ class ChatPage extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: ChatBotWidget(
           chatBot: chatBot,
-          botTransitionWidget: _botTransitionWidget,
           sameUserSpacing: 1,
           difUsersSpacing: 10,
         ),
       ),
-    );
-  }
-
-  Widget _botTransitionWidget(RichText message) {
-    //Put all message texts together
-    return Container(
-      color: Colors.blue[400],
-      child: Column(children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [message],
-        ),
-      ]),
     );
   }
 }

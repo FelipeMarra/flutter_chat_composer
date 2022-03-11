@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 
 class MyChatBot2 {
@@ -20,6 +20,7 @@ class MyChatBot2 {
         _stateF(),
         _stateG(),
         _stateH(),
+        _stateHImage(),
         _stateI(),
         _stateJ(),
         _stateK(),
@@ -496,8 +497,8 @@ class MyChatBot2 {
     );
   }
 
-  BotState _stateH() {
-    return BotState(
+  BotStateSingleChoice _stateH() {
+    return BotStateSingleChoice(
       id: "H",
       messages: () => [
         RichText(
@@ -507,22 +508,51 @@ class MyChatBot2 {
           ]),
         ),
         RichText(
-          text: TextSpan(
+          text: const TextSpan(
             children: [
-              const TextSpan(
+              TextSpan(
                   text:
                       "Com base nas suas respostas o smartphone que mais se adequa ao seu uso é "),
-              TextSpan(
-                text: smartPhoneModel,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
             ],
           ),
         ),
       ],
       transitions: [
-        BotTransition(id: "H=>I", to: "I"),
+        BotTransition(id: "H=>HImage", to: "HImage"),
       ],
+      onEnter: (machine) async {
+        await Future.delayed(const Duration(seconds: 1));
+        machine.transitionTo("HImage");
+      },
+    );
+  }
+
+  BotStateImage _stateHImage() {
+    return BotStateImage(
+      id: "HImage",
+      image: () => Image.network(
+          "https://store.storeimages.cdn-apple.com/8756/as-images.apple.com/is/iphone-13-pro-blue-select?wid=940&hei=1112&fmt=png-alpha&.v=1645552346275",
+          fit: BoxFit.fill, loadingBuilder: (BuildContext context, Widget child,
+              ImageChunkEvent? loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      }),
+      label: () => [
+        RichText(
+          text: TextSpan(
+            text: smartPhoneModel,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+      transition: BotTransition(id: "HImage=>I", to: "I"),
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
         machine.transitionTo("I");
@@ -530,8 +560,8 @@ class MyChatBot2 {
     );
   }
 
-  BotState _stateI() {
-    return BotState(
+  BotStateSingleChoice _stateI() {
+    return BotStateSingleChoice(
       id: "I",
       messages: () => [
         RichText(
@@ -564,13 +594,13 @@ class MyChatBot2 {
     );
   }
 
-  BotState _stateJ() {
-    return BotState(
+  BotStateSingleChoice _stateJ() {
+    return BotStateSingleChoice(
       id: "J",
       messages: () => [
         RichText(
-          text: const TextSpan(children: [
-            TextSpan(text: "Que bom!"),
+          text: TextSpan(children: [
+            TextSpan(text: "Que bom $userName!"),
           ]),
         ),
         RichText(
@@ -582,8 +612,8 @@ class MyChatBot2 {
     );
   }
 
-  BotState _stateK() {
-    return BotState(
+  BotStateSingleChoice _stateK() {
+    return BotStateSingleChoice(
       id: "K",
       messages: () => [
         RichText(
@@ -592,8 +622,8 @@ class MyChatBot2 {
           ]),
         ),
         RichText(
-          text: TextSpan(children: [
-            TextSpan(text: "Obrigado, e tenha um ótimo dia $userName!"),
+          text: const TextSpan(children: [
+            TextSpan(text: "Obrigado, e tenha um ótimo dia!"),
           ]),
         ),
       ],

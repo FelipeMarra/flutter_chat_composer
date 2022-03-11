@@ -21,14 +21,11 @@ class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
   final List<RichText> Function() messages;
 
-  ///Message selected by the user for storage purposes
-  final int? userSelectedMessage;
-
-  ///TODO: Time to wait between showing [messages]
-  //final Duration displayInterval;
   BotState({
+    ///TODO: Time to wait between showing [messages]
+    //final Duration displayInterval;
+
     required this.messages,
-    this.userSelectedMessage,
 
     ///The state's name (it's unique identifier)
     required String id,
@@ -54,6 +51,64 @@ class BotState extends ComposerState<BotTransition> {
               onLeave(machine as ChatBot, nextState as BotState);
             }
           },
+        );
+}
+
+class BotStateSingleChoice extends BotState {
+  ///Message selected by the user for storage purposes
+  int userSelectedMessage;
+
+  BotStateSingleChoice({
+    required final List<RichText> Function() messages,
+    this.userSelectedMessage = -1,
+
+    ///The state's name (it's unique identifier)
+    required String id,
+
+    ///Transitions options to go to the other states
+    List<BotTransition>? transitions,
+
+    ///Function executed when the state is entered
+    Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
+    Function(ChatBot chatBot, BotState nextState)? onLeave,
+  }) : super(
+          id: id,
+          messages: messages,
+          transitions: transitions,
+          onEnter: onEnter,
+          onLeave: onLeave,
+        );
+}
+
+class BotStateImage extends BotState {
+  final Image Function() image;
+
+  ///Images label
+  final List<RichText> Function() label;
+
+  BotStateImage({
+    required this.image,
+    required this.label,
+
+    ///The state's name (it's unique identifier)
+    required String id,
+
+    ///Transition to go to the other state
+    BotTransition? transition,
+
+    ///Function executed when the state is entered
+    Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
+    Function(ChatBot chatBot, BotState nextState)? onLeave,
+  }) : super(
+          id: id,
+          messages: label,
+          transitions: transition != null ? [transition] : [],
+          onEnter: onEnter,
+          onLeave: onLeave,
         );
 }
 
@@ -85,8 +140,8 @@ class BotStateOpenText extends BotState {
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
-          transitions: transitions,
           messages: messages,
+          transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
         );
@@ -124,8 +179,8 @@ class BotStateMultipleChoice extends BotState {
     Function(ChatBot chatBot, BotState nextState)? onLeave,
   }) : super(
           id: id,
-          transitions: transitions,
           messages: messages,
+          transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
         );

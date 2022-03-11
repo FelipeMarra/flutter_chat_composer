@@ -2,6 +2,8 @@ library flutter_chat_composer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/utils/check_box_widget.dart';
+import 'package:flutter_chat_composer/widgets/bot_image_widget.dart';
+import 'package:flutter_chat_composer/widgets/bot_single_choice_widget.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'models/chat_bot_models.dart';
@@ -9,7 +11,7 @@ import 'widgets/bot_message_widget.dart';
 import 'widgets/bot_user_open_text.dart';
 import 'widgets/user_message_widget.dart';
 
-export 'models/chat_bot_models.dart';
+export 'models/chat_bot_models.dart' hide BotState;
 export 'widgets/bot_message_widget.dart';
 export 'widgets/user_message_widget.dart';
 export 'widgets/bot_user_open_text.dart';
@@ -23,7 +25,7 @@ class ChatBotWidget extends StatefulWidget {
   final BotMessageWidget Function(RichText message)? botMessageWidget;
 
   ///Widget that displays the [Message] of each transition option
-  final Widget Function(RichText message) botTransitionWidget;
+  final Widget Function(RichText message)? botSingleChoiceWidget;
 
   ///Widget that displays the [Message] related to the transition choosen by the user
   final Widget Function(RichText message)? userMessageWidget;
@@ -45,7 +47,7 @@ class ChatBotWidget extends StatefulWidget {
     Key? key,
     required this.chatBot,
     this.botMessageWidget,
-    required this.botTransitionWidget,
+    this.botSingleChoiceWidget,
     this.userMessageWidget,
     this.sameUserSpacing,
     this.difUsersSpacing,
@@ -104,18 +106,20 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
 
-    //get message and options data
-    //add them to the messages' list
-    List<RichText> messages = currentState.messages();
-    for (RichText message in messages) {
-      widgets.add(
-        widget.botMessageWidget != null
-            ? widget.botMessageWidget!(message)
-            //default widget
-            : BotMessageWidget(message: message),
-      );
+    if (currentType != BotStateImage) {
+      //get message and options data
+      //add them to the messages' list
+      List<RichText> messages = currentState.messages();
+      for (RichText message in messages) {
+        widgets.add(
+          widget.botMessageWidget != null
+              ? widget.botMessageWidget!(message)
+              //default widget
+              : BotMessageWidget(message: message),
+        );
 
-      widgets.add(SizedBox(height: widget.sameUserSpacing));
+        widgets.add(SizedBox(height: widget.sameUserSpacing));
+      }
     }
 
     if (currentType == BotStateOpenText) {
@@ -124,8 +128,12 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       widgets.addAll(
         _processMultipleChoice(currentState as BotStateMultipleChoice),
       );
+    } else if (currentType == BotStateImage) {
+      widgets.addAll(_processImage(currentState as BotStateImage));
     } else {
-      widgets.addAll(_processSingleChoice(currentState));
+      widgets.addAll(
+        _processSingleChoice(currentState as BotStateSingleChoice),
+      );
     }
 
     return Column(
@@ -162,8 +170,6 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                 for (int index in indexes) {
                   options.add(currentState.options[index]);
                   currentState.optionsSelectedByUser.add(index);
-                  BotStateMultipleChoice a =
-                      history.last as BotStateMultipleChoice;
                 }
 
                 String nextState = currentState.decideTransition(options);
@@ -243,37 +249,60 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     return child;
   }
 
-  List<Widget> _processSingleChoice(currentState) {
+  List<Widget> _processImage(BotStateImage currentState) {
     List<Widget> widgets = [];
+    widgets.add(BotImageWidget(
+      label: currentState.label(),
+      image: currentState.image(),
+    ));
+    return widgets;
+  }
 
-    List<BotTransition> transitions = currentState.transitions;
-    //process & add each bot transition
-    for (var i = 0; i < transitions.length; i++) {
-      BotTransition transition = transitions[i];
+  List<Widget> _processSingleChoice(BotStateSingleChoice currentState) {
+    List<Widget> widgets = [];
+    bool enabled = currentState.userSelectedMessage.isNegative;
 
-      if (transition.message != null) {
-        widgets.add(
-          InkWell(
-            child: widget.botTransitionWidget(transition.message!),
-            onTap: () {
-              //add transition messages a the user's answer
-              widgets.add(
-                widget.userMessageWidget != null
-                    ? widget.userMessageWidget!(transition.message!)
-                    //default widget
-                    : UserMessageWidget(message: transition.message!),
-              );
-              widgets.add(SizedBox(height: widget.difUsersSpacing));
-              //run the transition
-              widget.chatBot.transitionTo(transition.to);
-            },
-          ),
-        );
-        //Add spacing to all but the last transition
-        if (i != transitions.length - 1) {
-          widgets.add(SizedBox(height: widget.sameUserSpacing));
+    if (enabled) {
+      List<BotTransition> transitions = currentState.transitions;
+      //process & add each bot transition
+      for (var i = 0; i < transitions.length; i++) {
+        BotTransition transition = transitions[i];
+
+        if (transition.message != null) {
+          RichText message = transition.message!;
+          Widget child;
+          if (widget.botSingleChoiceWidget != null) {
+            child = widget.botSingleChoiceWidget!(message);
+          } else {
+            child = BotSingleChoiceWidget(
+              message: message,
+              onPress: () {
+                print("ON press chat composer side");
+                //save the answer
+                currentState.userSelectedMessage = i;
+                //run the transition
+                widget.chatBot.transitionTo(transition.to);
+              },
+            );
+          }
+          widgets.add(child);
+          //Add spacing to all but the last transition
+          if (i != transitions.length - 1) {
+            widgets.add(SizedBox(height: widget.sameUserSpacing));
+          }
         }
       }
+    } else {
+      //add transition messages a the user's answer
+      int index = currentState.userSelectedMessage;
+      RichText message = currentState.transitions[index].message!;
+      widgets.add(
+        widget.userMessageWidget != null
+            ? widget.userMessageWidget!(message)
+            //default widget
+            : UserMessageWidget(message: message),
+      );
+      widgets.add(SizedBox(height: widget.difUsersSpacing));
     }
 
     return widgets;
