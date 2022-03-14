@@ -7,7 +7,7 @@
 ## Creating the chat's state machine
 
 A chat bot is composed of states. Let's recreate a simple one that's in our example folder. <br>
-First we'll declare our initial state and functions that we use to create our states isoladed:
+First we'll declare our initial state and functions that we'll use to create our states isoladed:
 
 ``` dart 
 ChatBot(
@@ -23,13 +23,13 @@ ChatBot(
 );
 ```
 ### State Types and Properties
-First you should now general state properties. They will have the id and onEnter/onLeave functions, like in  <a href="https://github.com/FelipeMarra/state-composer">state_composer<a>, and generally something to show to the user and receives it's input in return.<br>
+First you should now general state properties. They will have the id, onEnter/onLeave functions, and transitions like in  <a href="https://github.com/FelipeMarra/state-composer">state_composer<a>, and generally something to show to the user and receive it's input in return.<br>
     
 Currently we have 4 state types, let's add one of each in our bot.<br>
 
 ### Open Text State
 
-State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example"  width="40" height="40">example<a> will run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
+State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
 
 ``` dart 
 
@@ -104,8 +104,7 @@ State A will intruduce our bot to the user, and ask his name back. As you can se
   }
 ```
 
-<img src="https://media.giphy.com/media/mnLsC3qgROE4ClDiBb/giphy.gif" />
-
+<img src="https://media.giphy.com/media/mnLsC3qgROE4ClDiBb/giphy.gif" width="360" height="400" />
 
 ## Creating the UI
 
