@@ -29,7 +29,7 @@ Currently we have 4 state types, let's add one of each in our bot.<br>
 
 ### Open Text State
 
-State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example"  width="360" height="240">example<a> will run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
+State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example"  width="40" height="40">example<a> will run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
 
 ``` dart 
 
