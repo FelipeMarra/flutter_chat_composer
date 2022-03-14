@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 
 class BotUserOpenText extends StatefulWidget {
-  final Icon icon;
-  final Function? onPressed;
-  final TextField? textField;
-  final TextEditingController controller;
-  final Widget Function(Text) userMessageWidget;
+  ///The chatBot beeing used
   final ChatBot chatBot;
-  final bool wasPressed;
+  ///Personalized textField
+  final TextField? textField;
+  ///Icon shown in text fileds right
+  final Icon? icon;
+  ///When the icon button is pressed
+  final Function? onPressed;
+  ///User message widget to be shown when the button is pressed
+  final Widget Function(Text) userMessageWidget;
 
   const BotUserOpenText({
     Key? key,
     required this.chatBot,
-    required this.userMessageWidget,
-    required this.controller,
-    required this.icon,
     this.textField,
+    this.icon,
     this.onPressed,
-    this.wasPressed = false,
+    required this.userMessageWidget,
   }) : super(key: key);
 
   @override
@@ -26,17 +27,26 @@ class BotUserOpenText extends StatefulWidget {
 }
 
 class _BotUserOpenText extends State<BotUserOpenText> {
+  late BotStateOpenText currentState;
   late bool wasPressed;
+  late TextEditingController controller;
 
   @override
   void initState() {
-    wasPressed = widget.wasPressed;
+    currentState = widget.chatBot.currentState as BotStateOpenText;
+
+    wasPressed = currentState.userText.isNotEmpty;
+
+    controller = TextEditingController(
+      text: currentState.userText,
+    );
+    controller.addListener(() => currentState.userText = controller.text);
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -46,7 +56,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
 
     if (wasPressed) {
       child = widget.userMessageWidget(
-        Text.rich(TextSpan(text: widget.controller.text)),
+        Text.rich(TextSpan(text: controller.text)),
       );
     } else {
       child = Row(
@@ -61,7 +71,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                       Flexible(
                         child: widget.textField ??
                             TextField(
-                              controller: widget.controller,
+                              controller: controller,
                             ),
                       ),
                     ],
@@ -81,10 +91,10 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                     BotStateOpenText currentState =
                         widget.chatBot.currentState! as BotStateOpenText;
                     widget.chatBot.transitionTo(
-                      currentState.decideTransition(widget.controller),
+                      currentState.decideTransition(controller),
                     );
                   },
-                  icon: widget.icon,
+                  icon: widget.icon ?? const Icon(Icons.send),
                 )
               ],
             ),

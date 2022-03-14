@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class BotMessageWidget extends StatelessWidget {
+  ///Message to be displayed
   final Text message;
+  ///Personalized boxDecoration widget
   final BoxDecoration? boxDecoration;
 
   const BotMessageWidget({

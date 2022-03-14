@@ -42,27 +42,42 @@ class CheckboxFormField extends FormField<bool> {
         );
 }
 
-//TODO change to multiple choices only
+///A checkbox widget to receive the input when the state is a BotStateMultipleChoice
 class MultipleCheckboxFormField extends StatefulWidget {
-  final List<BotOption> options;
-  CheckboxListTile? checkboxListTile;
-  // TODO Widget? button;
-  void Function(int)? onChangeSelected;
-  bool Function(List<int>)? onFinalize;
-  int? intialValue;
-  void Function(List<int>)? onChangeAll;
-  List<int>? intialValues;
-  bool disabled;
+  ///The key of the form used to validade de chackbox
+  final GlobalKey<FormState> formKey;
 
-  MultipleCheckboxFormField({
+  ///The chatbot beeing used
+  final ChatBot chatBot;
+
+  ///A personalized list tile
+  final CheckboxListTile? checkboxListTile;
+
+  ///A personalized validador for the for the checkboxListTile
+  final FormFieldValidator<bool>? validator;
+
+  ///A personalized widget for the text button
+  final Widget? buttonChild;
+
+  ///Callback for when the selected options changed
+  final void Function(List<int>)? onChangeAll;
+
+  ///Callback for when the button is clicked
+  final bool Function(List<int>)? onFinalize;
+
+  ///Inial values indexes
+  final List<int>? intialValues;
+
+  const MultipleCheckboxFormField({
     Key? key,
-    required this.options,
+    required this.formKey,
+    required this.chatBot,
     this.checkboxListTile,
-    //this.button,
-    required this.onChangeAll,
+    this.validator,
+    this.buttonChild,
+    this.onChangeAll,
     this.onFinalize,
     this.intialValues,
-    this.disabled = false,
   }) : super(key: key);
 
   @override
@@ -71,7 +86,22 @@ class MultipleCheckboxFormField extends StatefulWidget {
 }
 
 class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
+  bool disabled = false;
+  late BotStateMultipleChoice currentState;
+  late List<BotOption> options;
   List<int> selection = [];
+
+  @override
+  void initState() {
+    currentState = widget.chatBot.currentState as BotStateMultipleChoice;
+
+    options = currentState.options;
+
+    if (widget.intialValues != null) {
+      selection = widget.intialValues ?? [];
+    }
+    super.initState();
+  }
 
   void updateSelected(int index, bool isMarked) {
     if (isMarked && !selection.contains(index)) {
@@ -79,20 +109,22 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
     } else if (!isMarked && selection.contains(index)) {
       selection.remove(index);
     }
-    widget.onChangeAll!(selection);
+
+    if (widget.onChangeAll != null) {
+      widget.onChangeAll!(selection);
+    }
+
+    //Call the options onChanege callbacks
+    for (int index in selection) {
+      BotOption currentOption = currentState.options[index];
+      if (currentOption.onChange != null) {
+        currentOption.onChange!(currentOption);
+      }
+    }
   }
 
   bool valueSelection(int index) {
     return selection.contains(index);
-  }
-
-  @override
-  void initState() {
-    if (widget.intialValues != null) {
-      selection = widget.intialValues ?? [];
-    }
-
-    super.initState();
   }
 
   @override
@@ -122,28 +154,29 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
-                  itemCount: widget.options.length,
+                  itemCount: options.length,
                   itemBuilder: (context, index) {
-                    BotOption option = widget.options[index];
+                    BotOption option = options[index];
 
                     return CheckboxFormField(
                       checkboxListTile: widget.checkboxListTile,
                       option: option,
                       value: valueSelection(index),
-                      onChange: widget.disabled
+                      onChange: disabled
                           ? null
                           : (value) {
                               setState(() {
                                 updateSelected(index, value);
                               });
                             },
-                      validator: (value) {
-                        if (selection.isEmpty) {
-                          return "Selecione uma opção";
-                        }
+                      validator: widget.validator ??
+                          (value) {
+                            if (selection.isEmpty) {
+                              return "Selecione uma opção";
+                            }
 
-                        return null;
-                      },
+                            return null;
+                          },
                     );
                   },
                 ),
@@ -152,17 +185,33 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed: widget.disabled
+                        onPressed: disabled
                             ? null
                             : () {
-                                bool isValid = widget.onFinalize!(selection);
-                                if (isValid) {
+                                //validation
+                                if (widget.formKey.currentState!.validate()) {
+                                  List<BotOption> options = [];
+
+                                  for (int index in selection) {
+                                    options.add(currentState.options[index]);
+                                    currentState.optionsSelectedByUser
+                                        .add(index);
+                                    currentState.optionsSelectedByUser.sort();
+                                  }
+
+                                  String nextState =
+                                      currentState.decideTransition(options);
+                                  widget.chatBot.transitionTo(nextState);
                                   setState(() {
-                                    widget.disabled = true;
+                                    disabled = true;
                                   });
+
+                                  if (widget.onFinalize != null) {
+                                    widget.onFinalize!(selection);
+                                  }
                                 }
                               },
-                        child: const Text("Ok"),
+                        child: widget.buttonChild ?? const Text("Ok"),
                       ),
                     ),
                   ],

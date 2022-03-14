@@ -14,17 +14,12 @@ class ChatBot extends StateMachine<BotState> {
         );
 }
 
-//TODO support to async get messages
-///Each state of the [ChatBot] that is composed of predetermined transitions
-///to be displayed in a menu style
+///The base class of the  [ChatBot]'s states
 class BotState extends ComposerState<BotTransition> {
-  ///A message is a list of texts, each messagem is showed separated
+  ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
   final List<Text> Function() messages;
 
   BotState({
-    ///TODO: Time to wait between showing [messages]
-    //final Duration displayInterval;
-
     required this.messages,
 
     ///The state's name (it's unique identifier)
@@ -54,13 +49,17 @@ class BotState extends ComposerState<BotTransition> {
         );
 }
 
+///A state of the [ChatBot] that allows user to choose one option in a menu generated
+///using its transitions list (the option message is the transition message)
 class BotStateSingleChoice extends BotState {
-  ///Message selected by the user for storage purposes
+  ///Message selected by the user, for storage purposes
   int userSelectedMessage;
 
   BotStateSingleChoice({
-    required final List<Text> Function() messages,
     this.userSelectedMessage = -1,
+
+    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
+    required final List<Text> Function() messages,
 
     ///The state's name (it's unique identifier)
     required String id,
@@ -82,10 +81,13 @@ class BotStateSingleChoice extends BotState {
         );
 }
 
+///A state of the [ChatBot] that will display a image and have no user interaction
+///(use onEnter or onLeave to perform some login to go to the next state like a [Future.delayed])
 class BotStateImage extends BotState {
+  ///Image to be displayed
   final Image Function() image;
 
-  ///Images label
+  ///[image]'s label
   final List<Text> Function() label;
 
   BotStateImage({
@@ -118,7 +120,7 @@ class BotStateOpenText extends BotState {
   ///will go
   String Function(TextEditingController textController) decideTransition;
 
-  ///Text typed by the user for storage purposes
+  ///Text typed by the user, for storage purposes
   String userText = "";
 
   BotStateOpenText({
@@ -130,7 +132,7 @@ class BotStateOpenText extends BotState {
     ///Transitions options to go to the other states
     required List<BotTransition> transitions,
 
-    ///A message is a list of texts, each messagem is showed separated
+    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
     required List<Text> Function() messages,
 
     ///Function executed when the state is entered
@@ -156,7 +158,7 @@ class BotStateMultipleChoice extends BotState {
   ///Options that will be displayed
   final List<BotOption> options;
 
-  ///Options the user selected for storage purposes
+  ///Options the user selected, for storage purposes
   List<int> optionsSelectedByUser = [];
 
   BotStateMultipleChoice({
@@ -169,7 +171,7 @@ class BotStateMultipleChoice extends BotState {
     ///Transitions options to go to the other states
     required List<BotTransition> transitions,
 
-    ///A message is a list of texts, each messagem is showed separated
+    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
     required List<Text> Function() messages,
 
     ///Function executed when the state is entered
@@ -186,9 +188,13 @@ class BotStateMultipleChoice extends BotState {
         );
 }
 
+///Represents a [BotStateMultipleChoice] option
 class BotOption {
+  ///Use [Text.rich] for rich text
   final Text? message;
+  ///Call back for when this option is selected or unselected
   final Function(BotOption option)? onChange;
+  ///If the option is currently selected, defaults to false
   bool selected;
 
   BotOption({
@@ -199,7 +205,7 @@ class BotOption {
 }
 
 ///A transition [to] another [BotState]
-///Should receive a message if it's not an [BotStateOpenText]'s transition
+///Should receive a message if it's a [BotStateSingleChoice]'s transition
 class BotTransition extends Transition {
   final Text? message;
 

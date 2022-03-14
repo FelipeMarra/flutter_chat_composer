@@ -15,13 +15,10 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("ChatBot"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ChatBotWidget(
-          chatBot: chatBot,
-          sameUserSpacing: 5,
-          difUsersSpacing: 10,
-        ),
+      body: ChatBotWidget(
+        chatBot: chatBot,
+        sameUserSpacing: 5,
+        difUsersSpacing: 10,
       ),
     );
   }
