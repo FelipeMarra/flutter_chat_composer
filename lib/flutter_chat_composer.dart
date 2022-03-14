@@ -22,13 +22,13 @@ class ChatBotWidget extends StatefulWidget {
 
   ///Widget that displays the [Message]s of the bot, see each group of messages
   ///ass a paragraph
-  final BotMessageWidget Function(RichText message)? botMessageWidget;
+  final BotMessageWidget Function(Text message)? botMessageWidget;
 
   ///Widget that displays the [Message] of each transition option
-  final Widget Function(RichText message)? botSingleChoiceWidget;
+  final Widget Function(Text message)? botSingleChoiceWidget;
 
   ///Widget that displays the [Message] related to the transition choosen by the user
-  final Widget Function(RichText message)? userMessageWidget;
+  final Widget Function(Text message)? userMessageWidget;
 
   ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
   final BotUserOpenText? userOpenTextWidget;
@@ -108,9 +108,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
     if (currentType != BotStateImage) {
       //get message and options data
-      List<RichText> messages = currentState.messages();
+      List<Text> messages = currentState.messages();
       //add them to the messages' list
-      for (RichText message in messages) {
+      for (Text message in messages) {
         widgets.add(
           widget.botMessageWidget != null
               ? widget.botMessageWidget!(message)
@@ -257,7 +257,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         BotTransition transition = transitions[i];
 
         if (transition.message != null) {
-          RichText message = transition.message!;
+          Text message = transition.message!;
           Widget child;
           if (widget.botSingleChoiceWidget != null) {
             child = widget.botSingleChoiceWidget!(message);
@@ -282,7 +282,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     } else {
       //add transition messages a the user's answer
       int index = currentState.userSelectedMessage;
-      RichText message = currentState.transitions[index].message!;
+      Text message = currentState.transitions[index].message!;
       widgets.add(
         widget.userMessageWidget != null
             ? widget.userMessageWidget!(message)

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BotSingleChoiceWidget extends StatelessWidget {
-  final RichText message;
+  final Text message;
   final Function onPress;
   final BoxDecoration? boxDecoration;
 

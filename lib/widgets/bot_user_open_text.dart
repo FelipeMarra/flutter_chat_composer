@@ -6,7 +6,7 @@ class BotUserOpenText extends StatefulWidget {
   final Function? onPressed;
   final TextField? textField;
   final TextEditingController controller;
-  final Widget Function(RichText) userMessageWidget;
+  final Widget Function(Text) userMessageWidget;
   final ChatBot chatBot;
   final bool wasPressed;
 
@@ -46,9 +46,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
 
     if (wasPressed) {
       child = widget.userMessageWidget(
-        RichText(
-          text: TextSpan(text: widget.controller.text),
-        ),
+        Text.rich(TextSpan(text: widget.controller.text)),
       );
     } else {
       child = Row(

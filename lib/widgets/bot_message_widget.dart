@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BotMessageWidget extends StatelessWidget {
-  final RichText message;
+  final Text message;
   final BoxDecoration? boxDecoration;
 
   const BotMessageWidget({

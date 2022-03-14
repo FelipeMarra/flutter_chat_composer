@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserMessageWidget extends StatelessWidget {
-  final RichText message;
+  final Text message;
   final BoxDecoration? boxDecoration;
 
   const UserMessageWidget({Key? key, required this.message, this.boxDecoration})

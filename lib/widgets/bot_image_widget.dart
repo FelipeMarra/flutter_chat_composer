@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BotImageWidget extends StatelessWidget {
-  final List<RichText> label;
+  final List<Text> label;
   final Image image;
   final BoxDecoration? boxDecoration;
 

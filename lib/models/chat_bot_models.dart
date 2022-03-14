@@ -19,7 +19,7 @@ class ChatBot extends StateMachine<BotState> {
 ///to be displayed in a menu style
 class BotState extends ComposerState<BotTransition> {
   ///A message is a list of texts, each messagem is showed separated
-  final List<RichText> Function() messages;
+  final List<Text> Function() messages;
 
   BotState({
     ///TODO: Time to wait between showing [messages]
@@ -59,7 +59,7 @@ class BotStateSingleChoice extends BotState {
   int userSelectedMessage;
 
   BotStateSingleChoice({
-    required final List<RichText> Function() messages,
+    required final List<Text> Function() messages,
     this.userSelectedMessage = -1,
 
     ///The state's name (it's unique identifier)
@@ -86,7 +86,7 @@ class BotStateImage extends BotState {
   final Image Function() image;
 
   ///Images label
-  final List<RichText> Function() label;
+  final List<Text> Function() label;
 
   BotStateImage({
     required this.image,
@@ -131,7 +131,7 @@ class BotStateOpenText extends BotState {
     required List<BotTransition> transitions,
 
     ///A message is a list of texts, each messagem is showed separated
-    required List<RichText> Function() messages,
+    required List<Text> Function() messages,
 
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
@@ -170,7 +170,7 @@ class BotStateMultipleChoice extends BotState {
     required List<BotTransition> transitions,
 
     ///A message is a list of texts, each messagem is showed separated
-    required List<RichText> Function() messages,
+    required List<Text> Function() messages,
 
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
@@ -187,7 +187,7 @@ class BotStateMultipleChoice extends BotState {
 }
 
 class BotOption {
-  final RichText? message;
+  final Text? message;
   final Function(BotOption option)? onChange;
   bool selected;
 
@@ -201,7 +201,7 @@ class BotOption {
 ///A transition [to] another [BotState]
 ///Should receive a message if it's not an [BotStateOpenText]'s transition
 class BotTransition extends Transition {
-  final RichText? message;
+  final Text? message;
 
   BotTransition({
     required String id,

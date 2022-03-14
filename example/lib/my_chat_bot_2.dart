@@ -41,8 +41,8 @@ class MyChatBot2 {
     return BotStateOpenText(
       id: "A",
       messages: () => [
-        RichText(
-          text: const TextSpan(
+        const Text.rich(
+          TextSpan(
             children: [
               TextSpan(text: "Oi, eu sou a "),
               TextSpan(
@@ -52,8 +52,8 @@ class MyChatBot2 {
             ],
           ),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Eu posso te ajudar com a escolha do "),
             TextSpan(
               text: "seu próximo smartphone",
@@ -62,7 +62,7 @@ class MyChatBot2 {
             TextSpan(text: ", mas antes preciso saber alguns detalhes...")
           ]),
         ),
-        RichText(text: const TextSpan(text: "Me conta, qual seu nome?")),
+        const Text.rich(TextSpan(text: "Me conta, qual seu nome?")),
       ],
       transitions: [
         BotTransition(id: "A=>ALoop", to: "ALoop"),
@@ -76,8 +76,8 @@ class MyChatBot2 {
     return BotStateOpenText(
       id: "ALoop",
       messages: () => [
-        RichText(
-          text: const TextSpan(
+        const Text.rich(
+          TextSpan(
             children: [
               TextSpan(text: "Eu realmente preciso saber seu nome... "),
             ],
@@ -103,8 +103,8 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
       id: "B",
       messages: () => [
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
             children: [
               TextSpan(
                   text:
@@ -112,8 +112,8 @@ class MyChatBot2 {
             ],
           ),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Qual das categorias de apps a seguir você faz "),
             TextSpan(
               text: "maior ",
@@ -125,23 +125,23 @@ class MyChatBot2 {
       ],
       options: [
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Jogos"),
+          message: const Text.rich(
+            TextSpan(text: "Jogos"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Redes Sociais"),
+          message: const Text.rich(
+            TextSpan(text: "Redes Sociais"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Edição"),
+          message: const Text.rich(
+            TextSpan(text: "Edição"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Produtividade"),
+          message: const Text.rich(
+            TextSpan(text: "Produtividade"),
           ),
         ),
       ],
@@ -159,8 +159,8 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
       id: "C",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Qual das categorias de apps a seguir você faz "),
             TextSpan(
               text: "menor ",
@@ -172,23 +172,23 @@ class MyChatBot2 {
       ],
       options: [
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Jogos"),
+          message: const Text.rich(
+            TextSpan(text: "Jogos"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Redes Sociais"),
+          message: const Text.rich(
+            TextSpan(text: "Redes Sociais"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Edição"),
+          message: const Text.rich(
+            TextSpan(text: "Edição"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Produtividade"),
+          message: const Text.rich(
+            TextSpan(text: "Produtividade"),
           ),
         ),
       ],
@@ -206,8 +206,8 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
         id: "D",
         messages: () => [
-              RichText(
-                text: const TextSpan(children: [
+              const Text.rich(
+                TextSpan(children: [
                   TextSpan(
                       text:
                           "Legal, agora quero saber um pouco mais sobre seu uso no geral. "),
@@ -219,63 +219,63 @@ class MyChatBot2 {
             ],
         options: [
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Minecraft"),
+            message: const Text.rich(
+              TextSpan(text: "Minecraft"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Free Fire"),
+            message: const Text.rich(
+              TextSpan(text: "Free Fire"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Call of Duty"),
+            message: const Text.rich(
+              TextSpan(text: "Call of Duty"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Fortinite"),
+            message: const Text.rich(
+              TextSpan(text: "Fortinite"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Geshin Impact"),
+            message: const Text.rich(
+              TextSpan(text: "Geshin Impact"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "League of Legends Wild Rift"),
+            message: const Text.rich(
+              TextSpan(text: "League of Legends Wild Rift"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Asphalt 9"),
+            message: const Text.rich(
+              TextSpan(text: "Asphalt 9"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Candy Crush"),
+            message: const Text.rich(
+              TextSpan(text: "Candy Crush"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "PES 2021"),
+            message: const Text.rich(
+              TextSpan(text: "PES 2021"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Minecraft"),
+            message: const Text.rich(
+              TextSpan(text: "Minecraft"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Outros jogos"),
+            message: const Text.rich(
+              TextSpan(text: "Outros jogos"),
             ),
           ),
           BotOption(
-            message: RichText(
-              text: const TextSpan(text: "Nenhuma das opções acima"),
+            message: const Text.rich(
+              TextSpan(text: "Nenhuma das opções acima"),
             ),
           ),
         ],
@@ -292,8 +292,8 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
       id: "E",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text:
                     "Agora, sobre redes sociais, quais dos apps abaixo você faz uso mais frequente? "),
@@ -302,48 +302,48 @@ class MyChatBot2 {
       ],
       options: [
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Instagram"),
+          message: const Text.rich(
+            TextSpan(text: "Instagram"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Facebook"),
+          message: const Text.rich(
+            TextSpan(text: "Facebook"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Whatsapp"),
+          message: const Text.rich(
+            TextSpan(text: "Whatsapp"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Tik Tok"),
+          message: const Text.rich(
+            TextSpan(text: "Tik Tok"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Youtube"),
+          message: const Text.rich(
+            TextSpan(text: "Youtube"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Snapchat"),
+          message: const Text.rich(
+            TextSpan(text: "Snapchat"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Twitter"),
+          message: const Text.rich(
+            TextSpan(text: "Twitter"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Outras Redes Sociais"),
+          message: const Text.rich(
+            TextSpan(text: "Outras Redes Sociais"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Nenhuma das opções acima"),
+          message: const Text.rich(
+            TextSpan(text: "Nenhuma das opções acima"),
           ),
         ),
       ],
@@ -361,13 +361,13 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
       id: "F",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Entendi, interessante"),
           ]),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text:
                     "Para fazer edição pelo smartphone, você faz uso de quais dos apps abaixo?"),
@@ -376,43 +376,43 @@ class MyChatBot2 {
       ],
       options: [
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Tik Tok"),
+          message: const Text.rich(
+            TextSpan(text: "Tik Tok"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Photoshop"),
+          message: const Text.rich(
+            TextSpan(text: "Photoshop"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Canva"),
+          message: const Text.rich(
+            TextSpan(text: "Canva"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Vimeo"),
+          message: const Text.rich(
+            TextSpan(text: "Vimeo"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Inshot"),
+          message: const Text.rich(
+            TextSpan(text: "Inshot"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Capcut"),
+          message: const Text.rich(
+            TextSpan(text: "Capcut"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Outros app de edição"),
+          message: const Text.rich(
+            TextSpan(text: "Outros app de edição"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Nenhuma das opções acima"),
+          message: const Text.rich(
+            TextSpan(text: "Nenhuma das opções acima"),
           ),
         ),
       ],
@@ -430,15 +430,15 @@ class MyChatBot2 {
     return BotStateMultipleChoice(
       id: "G",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text:
                     "Lega, agora só mais uma pergunta antes deu te sugerir um modelo."),
           ]),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text:
                     "Em relação a produtividade, quais dos apps abaixo você utiliza mais?"),
@@ -447,43 +447,43 @@ class MyChatBot2 {
       ],
       options: [
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Adobe Scam"),
+          message: const Text.rich(
+            TextSpan(text: "Adobe Scam"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "CamScanner"),
+          message: const Text.rich(
+            TextSpan(text: "CamScanner"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "PowerPoint"),
+          message: const Text.rich(
+            TextSpan(text: "PowerPoint"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Vimeo"),
+          message: const Text.rich(
+            TextSpan(text: "Vimeo"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Google Docs"),
+          message: const Text.rich(
+            TextSpan(text: "Google Docs"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Google Maps"),
+          message: const Text.rich(
+            TextSpan(text: "Google Maps"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Outros app de produtividade"),
+          message: const Text.rich(
+            TextSpan(text: "Outros app de produtividade"),
           ),
         ),
         BotOption(
-          message: RichText(
-            text: const TextSpan(text: "Nenhuma das opções acima"),
+          message: const Text.rich(
+            TextSpan(text: "Nenhuma das opções acima"),
           ),
         ),
       ],
@@ -501,14 +501,14 @@ class MyChatBot2 {
     return BotStateSingleChoice(
       id: "H",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text: "Prontinho, finalizamos as perguntas, agora é comigo!"),
           ]),
         ),
-        RichText(
-          text: const TextSpan(
+        const Text.rich(
+          TextSpan(
             children: [
               TextSpan(
                   text:
@@ -550,8 +550,8 @@ class MyChatBot2 {
         },
       ),
       label: () => [
-        RichText(
-          text: TextSpan(
+        Text.rich(
+          TextSpan(
             text: smartPhoneModel,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -569,15 +569,15 @@ class MyChatBot2 {
     return BotStateSingleChoice(
       id: "I",
       messages: () => [
-        RichText(
-          text: const TextSpan(
+        const Text.rich(
+          TextSpan(
             children: [
               TextSpan(text: "Adorei convensar com você!"),
             ],
           ),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(
                 text:
                     "Mas me conta, eu consegui te ajudar com o que precisava?"),
@@ -588,12 +588,12 @@ class MyChatBot2 {
         BotTransition(
           id: "I=>J",
           to: "J",
-          message: RichText(text: const TextSpan(text: "Sim")),
+          message: const Text.rich(TextSpan(text: "Sim")),
         ),
         BotTransition(
           id: "I=>K",
           to: "K",
-          message: RichText(text: const TextSpan(text: "Não")),
+          message: const Text.rich(TextSpan(text: "Não")),
         ),
       ],
     );
@@ -603,13 +603,13 @@ class MyChatBot2 {
     return BotStateSingleChoice(
       id: "J",
       messages: () => [
-        RichText(
-          text: TextSpan(children: [
+        Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Que bom $userName!"),
           ]),
         ),
-        RichText(
-          text: TextSpan(children: [
+        Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Obrigado, e tenha um ótimo dia $userName!"),
           ]),
         ),
@@ -621,13 +621,13 @@ class MyChatBot2 {
     return BotStateSingleChoice(
       id: "K",
       messages: () => [
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Ahh que pena..."),
           ]),
         ),
-        RichText(
-          text: const TextSpan(children: [
+        const Text.rich(
+          TextSpan(children: [
             TextSpan(text: "Obrigado, e tenha um ótimo dia!"),
           ]),
         ),
