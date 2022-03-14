@@ -95,7 +95,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
   void initState() {
     currentState = widget.chatBot.currentState as BotStateMultipleChoice;
 
-    options = currentState.options;
+    options = currentState.options();
 
     if (widget.intialValues != null) {
       selection = widget.intialValues ?? [];
@@ -116,7 +116,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
 
     //Call the options onChanege callbacks
     for (int index in selection) {
-      BotOption currentOption = currentState.options[index];
+      BotOption currentOption = currentState.options()[index];
       if (currentOption.onChange != null) {
         currentOption.onChange!(currentOption);
       }
@@ -193,7 +193,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                                   List<BotOption> options = [];
 
                                   for (int index in selection) {
-                                    options.add(currentState.options[index]);
+                                    options.add(currentState.options()[index]);
                                     currentState.optionsSelectedByUser
                                         .add(index);
                                     currentState.optionsSelectedByUser.sort();

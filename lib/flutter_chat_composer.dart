@@ -162,7 +162,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     } else {
       //add selected options messages as the user's answer
       for (int index in currentState.optionsSelectedByUser) {
-        BotOption currentOption = currentState.options[index];
+        BotOption currentOption = currentState.options()[index];
 
         widgets.add(
           widget.userMessageWidget != null

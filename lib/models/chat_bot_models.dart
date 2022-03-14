@@ -156,7 +156,7 @@ class BotStateMultipleChoice extends BotState {
   final String Function(List<BotOption> selectedOptions) decideTransition;
 
   ///Options that will be displayed
-  final List<BotOption> options;
+  final List<BotOption> Function() options;
 
   ///Options the user selected, for storage purposes
   List<int> optionsSelectedByUser = [];

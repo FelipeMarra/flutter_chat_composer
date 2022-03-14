@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
-import 'chat_page.dart';
+import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 
-void main(List<String> args) {
-  runApp(const MyApp());
+import 'my_chat_bot.dart';
+
+void main() {
+  runApp(const ChatBotInteractionApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class ChatBotInteractionApp extends StatelessWidget {
+  const ChatBotInteractionApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: "Chat Example",
-      home: ChatPage(),
+    ChatBot chatBot = MyChatBot().chatBot();
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("My ChatBot"),
+          centerTitle: true,
+        ),
+        body: ChatBotWidget(
+          chatBot: chatBot,
+          sameUserSpacing: 3,
+        ),
+      ),
     );
   }
 }

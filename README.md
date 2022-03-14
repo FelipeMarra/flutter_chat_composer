@@ -6,7 +6,8 @@
 
 ## Creating the chat's state machine
 
-A chat bot is composed of states
+A chat bot is composed of states. Let's recreate a simple one that's in our example folder. <br>
+First we'll declare our initial state and functions that we use to create our states isoladed:
 
 ``` dart 
 ChatBot(
@@ -21,130 +22,117 @@ ChatBot(
     ],
 );
 ```
-### State Properties
-Will have the id and onEnter/onLeave functions, like in  <a href="https://github.com/FelipeMarra/state-composer">state_composer<a>. But also
-a list of messages that will be displayed on enter the state. Each message is a list of texts allowing better personalization.
+### State Types and Properties
+First you should now general state properties. They will have the id and onEnter/onLeave functions, like in  <a href="https://github.com/FelipeMarra/state-composer">state_composer<a>, and generally something to show to the user and receives it's input in return.<br>
     
-### State Types
-Each state can be of open or closed text.<br>
-A closed text one will take transitions with predefined messages to be displayed and when the option is selected user's [ChatBotWidget.userMessageWidget] will
-be displayed. <br>
-A open text one have a function that comes with the text field's controller that will be used to decide the next state <br>
+Currently we have 4 state types, let's add one of each in our bot.<br>
 
-### Open Text Example
+### Open Text State
+
+State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> will run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
+
 ``` dart 
-  BotState _stateA() {
+
+  String _stateADecision(TextEditingController textController) {
+    if (textController.text.isEmpty) {
+      return "ALoop";
+    } else {
+      userName = textController.text;
+      return "B";
+    }
+  }
+
+  BotStateOpenText _stateA() {
     return BotStateOpenText(
       id: "A",
-      messages: [
-        RichText(
-          text: const TextSpan(
+      messages: () => [
+        Text.rich(
+          TextSpan(
             children: [
-              TextSpan(text: "Wellcome to "),
+              const TextSpan(text: "Hi, I'm "),
               TextSpan(
-                text: "State A.",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                      text: botName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      )),
+                ],
+              ),
+              const TextSpan(
+                children: [
+                  TextSpan(text: ", what is your name ?"),
+                ],
               ),
             ],
           ),
         ),
-        RichText(
-          text: const TextSpan(
-              text: "Tell me, what do you think about this state?"),
+      ],
+      transitions: [
+        BotTransition(id: "A=>ALoop", to: "ALoop"),
+        BotTransition(id: "A=>B", to: "B"),
+      ],
+      decideTransition: _stateADecision,
+    );
+  }
+
+  BotStateOpenText _stateALoop() {
+    return BotStateOpenText(
+      id: "ALoop",
+      messages: () => [
+        const Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: "I reaally nedd to know your name... "),
+            ],
+          ),
         ),
       ],
       transitions: [
-        BotTransition(
-          id: "A=>B",
-          to: "B",
-        ),
-        BotTransition(
-          id: "A=>C",
-          to: "C",
-        ),
+        BotTransition(id: "ALoop=>ALoop", to: "ALoop"),
+        BotTransition(id: "ALoop=>B", to: "B"),
       ],
       decideTransition: (textController) {
-        if (textController.text.isNotEmpty) {
-          return "B";
+        if (textController.text.isEmpty) {
+          return "ALoop";
         } else {
-          return "C";
+          userName = textController.text;
+          return "B";
         }
       },
-      onEnter: (machine) {
-        print("Entered ${machine.currentState!.id}");
-      },
-      onLeave: (machine, nextState) {
-        print("Left ${machine.currentState!.id} going to ${nextState.id}");
-      },
     );
   }
 ```
-### Closed Text Example
-``` dart 
-  BotState _stateB() {
-    return BotState(
-      id: "B",
-      messages: [
-        RichText(
-          text: const TextSpan(
-            children: [
-              TextSpan(text: "Ok, so now you're in "),
-              TextSpan(
-                text: "State B!",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        RichText(
-          text: const TextSpan(text: "Where do you wanna go next?"),
-        ),
-      ],
-      transitions: [
-        BotTransition(
-          id: "B=>D",
-          to: "D",
-          message: RichText(
-            text: const TextSpan(text: "Go from B to D"),
-          ),
-        ),
-        BotTransition(
-          id: "B=>E",
-          to: "E",
-          message: RichText(
-            text: const TextSpan(text: "Go from B to E"),
-          ),
-        ),
-      ],
-      onEnter: (machine) {
-        print("Entered ${machine.currentState!.id}");
-      },
-    );
-  }
-```
+
+<img src="https://media.giphy.com/media/mnLsC3qgROE4ClDiBb/giphy.gif" />
+
 
 ## Creating the UI
 
-UI is created using the `ChatBotWidget`, just enter the widgets that will be used to display
-each part of the state machine.
+UI is created using the `ChatBotWidget`, it already comes with predefined widgets to show everything you need, but you can customize all of them.
 
 ``` dart 
-ChatBotWidget(
-    ///Widget that displays the [Message]s of the bot, see each group of messages ass a paragraph
-    botMessageWidget: _botMessageWidget,
-    ///Widget that displays the [Message] of each transition option
-    botTransitionWidget: _botTransitionWidget,
-    ///Widget that displays the [Message] related to the transition choosen by the user
-    userMessageWidget: _userMessageWidget,
-    ///Widget that captures the text the user typed when the state type is [BotStateOpenText]
-    userOpenTextWidget: _userOpenTextWidget,
-    ///SizedBox hight between messages of the same user
-    sameUserSpacing: 1,
-    ///SizedBox hight betweewn messagen of different users
-    difUsersSpacing: 10,
-    ///The [ChatBot] that will generate the chat
-    chatBot: _myChatBot,
-),
-```
+class ChatBotInteractionApp extends StatelessWidget {
+  const ChatBotInteractionApp({Key? key}) : super(key: key);
 
-For a better understandin see the <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a>
+  @override
+  Widget build(BuildContext context) {
+    ChatBot chatBot = MyChatBot().chatBot();
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("My ChatBot"),
+          centerTitle: true,
+        ),
+        body: ChatBotWidget(
+          chatBot: chatBot,
+          sameUserSpacing: 3,
+        ),
+      ),
+    );
+  }
+}
+```
+The parametters are:
+
+...
