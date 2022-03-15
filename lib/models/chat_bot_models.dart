@@ -63,7 +63,7 @@ class BotStateSingleChoice extends BotState {
   int userSelectedOption;
 
   BotStateSingleChoice({
-    required this.options,
+    this.options,
     this.userSelectedOption = -1,
     required this.decideTransition,
 
