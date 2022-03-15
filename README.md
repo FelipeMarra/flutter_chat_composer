@@ -6,7 +6,7 @@
 
 ## Creating the chat's state machine
 
-A chat bot is composed of states. Let's recreate a simple one that's in our example folder. <br>
+A chat bot is composed of states. Let's recreate the simple one that's in our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> folder. <br>
 First we'll declare our initial state and functions that we'll use to create our states isoladed:
 
 ``` dart 
@@ -29,7 +29,7 @@ Currently we have 4 state types, let's add one of each in our bot.<br>
 
 ### Open Text State
 
-State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B. Remember that a state can only transition to another that is inside it's transistion list, otherwise it will throw an error.
+State A will introduce our bot to the user, and ask his name back. As you can see a text state type has a `decideTransition` propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B. Remember that a state can only transition to another that is inside it's transistion list, otherwise it will throw an error.
 
 ``` dart 
   String _stateADecision(TextEditingController textController) {
