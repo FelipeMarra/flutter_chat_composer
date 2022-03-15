@@ -106,6 +106,44 @@ State A will intruduce our bot to the user, and ask his name back. As you can se
 
 <img src="https://media.giphy.com/media/mnLsC3qgROE4ClDiBb/giphy.gif" width="360" height="400" />
 
+### Single Choice State
+
+``` dart 
+  BotStateSingleChoice _stateB() {
+    return BotStateSingleChoice(
+      id: "B",
+      messages: () => [
+        Text.rich(
+          TextSpan(text: "Ok, $userName what pokemon would you choose"),
+        )
+      ],
+      transitions: [
+        BotTransition(
+          id: "B=>C",
+          to: "C",
+          message: const Text("Squirtle"),
+        ),
+        BotTransition(
+          id: "B=>D",
+          to: "D",
+          message: const Text("Bulbassaur"),
+        ),
+        BotTransition(
+          id: "B=>E",
+          to: "E",
+          message: const Text("Charmander"),
+        ),
+      ],
+    );
+  }
+```
+### Image State
+#TODO Show a pokmon gif
+
+### Multiple Choice State ??
+
+#TODO Single Choice sem transição
+
 ## Creating the UI
 
 UI is created using the `ChatBotWidget`, it already comes with predefined widgets to show everything you need, but you can customize all of them.

@@ -67,7 +67,7 @@ class MyChatBot {
         const Text.rich(
           TextSpan(
             children: [
-              TextSpan(text: "I reaally nedd to know your name... "),
+              TextSpan(text: "I reaally need to know your name... "),
             ],
           ),
         ),
@@ -87,21 +87,31 @@ class MyChatBot {
     );
   }
 
-  BotStateMultipleChoice _stateB() {
-    return BotStateMultipleChoice(
+  BotStateSingleChoice _stateB() {
+    return BotStateSingleChoice(
       id: "B",
       messages: () => [
-
-      ],
-      options:  [
-
+        Text.rich(
+          TextSpan(text: "Ok, $userName what pokemon would you choose"),
+        )
       ],
       transitions: [
-        BotTransition(id: "B", to: "C"),
+        BotTransition(
+          id: "B=>C",
+          to: "C",
+          message: const Text("Squirtle"),
+        ),
+        BotTransition(
+          id: "B=>D",
+          to: "D",
+          message: const Text("Bulbassaur"),
+        ),
+        BotTransition(
+          id: "B=>E",
+          to: "E",
+          message: const Text("Charmander"),
+        ),
       ],
-      decideTransition: (List<BotOption> selectedOptions) {
-        return "";
-      },
     );
   }
 }

@@ -52,11 +52,20 @@ class BotState extends ComposerState<BotTransition> {
 ///A state of the [ChatBot] that allows user to choose one option in a menu generated
 ///using its transitions list (the option message is the transition message)
 class BotStateSingleChoice extends BotState {
+  ///Options that will be displayed
+  final List<BotOption> options;
+
+  ///Function that will take the user's selection and return to what state that
+  ///the bot will go to
+  final String Function(BotOption selectedOption) decideTransition;
+
   ///Message selected by the user, for storage purposes
-  int userSelectedMessage;
+  int userSelectedOption;
 
   BotStateSingleChoice({
-    this.userSelectedMessage = -1,
+    required this.options,
+    this.userSelectedOption = -1,
+    required this.decideTransition,
 
     ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
     required final List<Text> Function() messages,
@@ -192,8 +201,10 @@ class BotStateMultipleChoice extends BotState {
 class BotOption {
   ///Use [Text.rich] for rich text
   final Text? message;
+
   ///Call back for when this option is selected or unselected
   final Function(BotOption option)? onChange;
+
   ///If the option is currently selected, defaults to false
   bool selected;
 
@@ -207,12 +218,9 @@ class BotOption {
 ///A transition [to] another [BotState]
 ///Should receive a message if it's a [BotStateSingleChoice]'s transition
 class BotTransition extends Transition {
-  final Text? message;
-
   BotTransition({
     required String id,
     required String to,
-    this.message,
   }) : super(
           id: id,
           to: to,

@@ -213,17 +213,17 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
   List<Widget> _processSingleChoice(BotStateSingleChoice currentState) {
     List<Widget> widgets = [];
-    bool enabled = currentState.userSelectedMessage.isNegative;
+    bool enabled = currentState.userSelectedOption.isNegative;
 
     //if enabled show options for user to select, else show user's answer
     if (enabled) {
-      List<BotTransition> transitions = currentState.transitions;
+      List<BotOption> options = currentState.options;
       //process & add each bot transition
-      for (var i = 0; i < transitions.length; i++) {
-        BotTransition transition = transitions[i];
+      for (var i = 0; i < options.length; i++) {
+        BotOption option = options[i];
 
-        if (transition.message != null) {
-          Text message = transition.message!;
+        if (option.message != null) {
+          Text message = option.message!;
 
           Widget child;
           if (widget.botSingleChoiceWidget != null) {
@@ -241,9 +241,10 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                     highlightColor: Colors.grey[100],
                     onTap: () {
                       //save the answer
-                      currentState.userSelectedMessage = i;
+                      currentState.userSelectedOption = i;
                       //run the transition
-                      widget.chatBot.transitionTo(transition.to);
+                      String state = currentState.decideTransition(option);
+                      widget.chatBot.transitionTo(state);
                     },
                     child: child,
                   ),
@@ -252,15 +253,15 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
             ),
           );
           //Add spacing to all but the last transition
-          if (i != transitions.length - 1) {
+          if (i != options.length - 1) {
             widgets.add(SizedBox(height: widget.sameUserSpacing));
           }
         }
       }
     } else {
       //add transition messages a the user's answer
-      int index = currentState.userSelectedMessage;
-      Text message = currentState.transitions[index].message!;
+      int index = currentState.userSelectedOption;
+      Text message = currentState.options[index].message!;
       widgets.add(
         widget.userMessageWidget != null
             ? widget.userMessageWidget!(message)
