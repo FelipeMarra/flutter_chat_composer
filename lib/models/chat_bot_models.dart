@@ -17,7 +17,7 @@ class ChatBot extends StateMachine<BotState> {
 ///The base class of the  [ChatBot]'s states
 class BotState extends ComposerState<BotTransition> {
   ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
-  final List<Text> Function() messages;
+  final List<Text> Function()? messages;
 
   BotState({
     required this.messages,
@@ -97,11 +97,11 @@ class BotStateImage extends BotState {
   final Image Function() image;
 
   ///[image]'s label
-  final List<Text> Function() label;
+  final List<Text> Function()? label;
 
   BotStateImage({
     required this.image,
-    required this.label,
+    this.label,
 
     ///The state's name (it's unique identifier)
     required String id,

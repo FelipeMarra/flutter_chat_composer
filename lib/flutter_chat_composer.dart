@@ -37,7 +37,7 @@ class ChatBotWidget extends StatefulWidget {
   final BotUserOpenText? userOpenTextWidget;
 
   ///Widget to receive the iamge when displaying [BotStateImage]
-  final Widget Function(Image image, List<Text> label)? botImageWidget;
+  final Widget Function(Image image, List<Text>? label)? botImageWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -111,7 +111,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     List<Widget> widgets = [];
 
     if (currentType != BotStateImage) {
-      List<Text> messages = currentState.messages();
+      List<Text> messages = currentState.messages!();
       //add messages to the widgets list
       for (Text message in messages) {
         widgets.add(
@@ -196,12 +196,12 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     if (widget.botImageWidget != null) {
       child = widget.botImageWidget!(
         currentState.image(),
-        currentState.label(),
+        currentState.label != null ? currentState.label!() : null,
       );
     } else {
       child = BotImageWidget(
         image: currentState.image(),
-        label: currentState.label(),
+        label: currentState.label != null ? currentState.label!() : null,
       );
     }
     widgets.add(child);

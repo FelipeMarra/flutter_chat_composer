@@ -4,6 +4,7 @@ import 'package:flutter_chat_composer/flutter_chat_composer.dart';
 class MyChatBot {
   static String botName = "A COOL BOT";
   static String userName = "";
+  static String choosenPokemoGif = "";
 
   ChatBot chatBot() {
     return ChatBot(
@@ -13,6 +14,7 @@ class MyChatBot {
         _stateA(),
         _stateALoop(),
         _stateB(),
+        _stateC(),
       ],
     );
   }
@@ -95,23 +97,34 @@ class MyChatBot {
           TextSpan(text: "Ok, $userName what pokemon would you choose"),
         )
       ],
-      transitions: [
-        BotTransition(
-          id: "B=>C",
-          to: "C",
-          message: const Text("Squirtle"),
-        ),
-        BotTransition(
-          id: "B=>D",
-          to: "D",
+      options: [
+        BotOption(
           message: const Text("Bulbassaur"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/38wTyIwrukEAAAAC/bulbasaur.gif",
         ),
-        BotTransition(
-          id: "B=>E",
-          to: "E",
+        BotOption(
           message: const Text("Charmander"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/g9g8zfVwElUAAAAM/pokemon-charmander.gif",
+        ),
+        BotOption(
+          message: const Text("Squirtle"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/Ken3eHIfWnAAAAAC/pokemon-squirtle.gif",
         ),
       ],
+      transitions: [
+        BotTransition(id: "B=>C", to: "C"),
+      ],
+      decideTransition: (BotOption selectedOptions) => "C",
+    );
+  }
+
+  BotStateImage _stateC() {
+    return BotStateImage(
+      image: () => Image.network(choosenPokemoGif),
+      id: "C",
     );
   }
 }

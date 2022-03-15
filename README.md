@@ -29,10 +29,9 @@ Currently we have 4 state types, let's add one of each in our bot.<br>
 
 ### Open Text State
 
-State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B.
+State A will intruduce our bot to the user, and ask his name back. As you can see a text state type has a decideTransition propertie, wich will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B. Remember that a state can only transition to another that is inside it's transistion list, otherwise it will throw an error.
 
 ``` dart 
-
   String _stateADecision(TextEditingController textController) {
     if (textController.text.isEmpty) {
       return "ALoop";
@@ -107,7 +106,7 @@ State A will intruduce our bot to the user, and ask his name back. As you can se
 <img src="https://media.giphy.com/media/mnLsC3qgROE4ClDiBb/giphy.gif" width="360" height="400" />
 
 ### Single Choice State
-
+State B will use `BotStateSingleChoice` to make the user choose a pokemon gif that will be shown in state C. When the option is selected `onChange` function will be executed followed by the transition to the next state decided by the `decideTransition` callback, that will give you the selected option and ask a state id in return - that id must me in your transitions list.
 ``` dart 
   BotStateSingleChoice _stateB() {
     return BotStateSingleChoice(
@@ -117,29 +116,35 @@ State A will intruduce our bot to the user, and ask his name back. As you can se
           TextSpan(text: "Ok, $userName what pokemon would you choose"),
         )
       ],
-      transitions: [
-        BotTransition(
-          id: "B=>C",
-          to: "C",
-          message: const Text("Squirtle"),
-        ),
-        BotTransition(
-          id: "B=>D",
-          to: "D",
+      options: [
+        BotOption(
           message: const Text("Bulbassaur"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/38wTyIwrukEAAAAC/bulbasaur.gif",
         ),
-        BotTransition(
-          id: "B=>E",
-          to: "E",
+        BotOption(
           message: const Text("Charmander"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/g9g8zfVwElUAAAAM/pokemon-charmander.gif",
+        ),
+        BotOption(
+          message: const Text("Squirtle"),
+          onChange: (option) => choosenPokemoGif =
+              "https://c.tenor.com/Ken3eHIfWnAAAAAC/pokemon-squirtle.gif",
         ),
       ],
+      transitions: [
+        BotTransition(id: "B=>C", to: "C"),
+      ],
+      decideTransition: (BotOption selectedOptions) => "C",
     );
   }
 ```
 ### Image State
-#TODO Show a pokmon gif
+State C will be like 
+``` dart 
 
+```
 ### Multiple Choice State ??
 
 #TODO Single Choice sem transição

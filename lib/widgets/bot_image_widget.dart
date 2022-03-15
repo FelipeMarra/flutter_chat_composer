@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class BotImageWidget extends StatelessWidget {
-  final List<Text> label;
+  final List<Text>? label;
   final Image image;
   final BoxDecoration? boxDecoration;
 
   const BotImageWidget({
     Key? key,
-    required this.label,
+    this.label,
     required this.image,
     this.boxDecoration,
   }) : super(key: key);
@@ -40,9 +40,11 @@ class BotImageWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 image,
-                Column(
-                  children: label,
-                ),
+                label != null
+                    ? Column(
+                        children: label!,
+                      )
+                    : Container(),
               ],
             ),
           ),
