@@ -54,7 +54,7 @@ class MultipleCheckboxFormField extends StatefulWidget {
   final CheckboxListTile? checkboxListTile;
 
   ///A personalized validador for the for the checkboxListTile
-  final String? Function(List<BotOption>)? validator;
+  final String? Function(List<BotOption> options)? validator;
 
   ///A personalized widget for the text button
   final Widget? buttonChild;
@@ -88,8 +88,19 @@ class MultipleCheckboxFormField extends StatefulWidget {
 class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
   bool disabled = false;
   late BotStateMultipleChoice currentState;
+  //options that come from the state to generate the widget
   late List<BotOption> options;
   List<int> selection = [];
+  //options that are currently selected
+  List<BotOption> get optionsSelection {
+    List<BotOption> optionSelection = [];
+
+    for (int index in selection) {
+      optionSelection.add(currentState.options()[index]);
+    }
+
+    return optionSelection;
+  }
 
   @override
   void initState() {
@@ -171,7 +182,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                             },
                       validator: (value) {
                         if (widget.validator != null) {
-                          return widget.validator!(options);
+                          return widget.validator!(optionsSelection);
                         }
 
                         //Default validator
@@ -194,17 +205,14 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                             : () {
                                 //validation
                                 if (widget.formKey.currentState!.validate()) {
-                                  List<BotOption> options = [];
-
                                   for (int index in selection) {
-                                    options.add(currentState.options()[index]);
                                     currentState.optionsSelectedByUser
                                         .add(index);
                                     currentState.optionsSelectedByUser.sort();
                                   }
 
                                   String nextState =
-                                      currentState.decideTransition(options);
+                                      currentState.decideTransition(optionsSelection);
                                   widget.chatBot.transitionTo(nextState);
                                   setState(() {
                                     disabled = true;

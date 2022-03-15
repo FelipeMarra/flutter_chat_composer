@@ -159,9 +159,36 @@ Ps: had to run `flutter run -d chrome --web-renderer html` so that Image.network
 <img src="https://media.giphy.com/media/ESBP6YjcOjfD8miR0G/giphy.gif" width="360" height="400" />
 
 ### Multiple Choice State
-What about beeing allowed to choose more than one option? Presenting the Multiple Choice State. State D will use it to ask a little bit more about the user's pokemon taste
-``` dart
+What about beeing allowed to choose more than one option? Presenting the Multiple Choice State. State D will use it to ask a little bit more about the user's pokemon taste. You can use a custom validator that gives you the selected options and works like any other form validator. `decideTransition` also give you the selected options so you can return who the next state will be.
 
+``` dart
+  BotStateMultipleChoice _stateD() {
+    return BotStateMultipleChoice(
+      id: "D",
+      messages: () => [
+        const Text("That was a wise choice!"),
+        const Text("What 3 other pokemons you like most?"),
+      ],
+      options: () => [
+        BotOption(message: const Text("Pikachu")),
+        BotOption(message: const Text("Eevee")),
+        BotOption(message: const Text("Charizard")),
+        BotOption(message: const Text("Mewtwo")),
+        BotOption(message: const Text("Gengar")),
+        BotOption(message: const Text("Lucario")),
+      ],
+      validator: (options) {
+        if (options.length != 3) {
+          return "Select 3 options";
+        }
+        return null;
+      },
+      transitions: [
+        BotTransition(id: "D=>E", to: "E"),
+      ],
+      decideTransition: (options) => "E",
+    );
+  }
 ```
 
 ### Single Choice Without Transition

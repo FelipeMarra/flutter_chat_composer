@@ -138,12 +138,28 @@ class MyChatBot {
     return BotStateMultipleChoice(
       id: "D",
       messages: () => [
-        const Text("That whas a wise choice!"),
+        const Text("That was a wise choice!"),
         const Text("What 3 other pokemons you like most?"),
       ],
       options: () => [
-        BotOption(message: const Text("aaaaaaaa")),
+        BotOption(message: const Text("Pikachu")),
+        BotOption(message: const Text("Eevee")),
+        BotOption(message: const Text("Charizard")),
+        BotOption(message: const Text("Mewtwo")),
+        BotOption(message: const Text("Gengar")),
+        BotOption(message: const Text("Lucario")),
       ],
+      validator: (options) {
+        print("RODOUUUUU");
+        if (options.length != 3) {
+          return "Select 3 options";
+        }
+        return null;
+      },
+      transitions: [
+        BotTransition(id: "D=>E", to: "E"),
+      ],
+      decideTransition: (options) => "E",
     );
   }
 }
