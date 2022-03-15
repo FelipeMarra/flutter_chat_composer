@@ -170,9 +170,13 @@ class BotStateMultipleChoice extends BotState {
   ///Options the user selected, for storage purposes
   List<int> optionsSelectedByUser = [];
 
+  ///To validade the options
+  final String? Function(List<BotOption>)? validator;
+
   BotStateMultipleChoice({
     required this.options,
     required this.decideTransition,
+    this.validator,
 
     ///The state's name (it's unique identifier)
     required String id,

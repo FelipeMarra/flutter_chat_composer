@@ -119,17 +119,17 @@ State B will use `BotStateSingleChoice` to make the user choose a pokemon gif th
       options: [
         BotOption(
           message: const Text("Bulbassaur"),
-          onChange: (option) => choosenPokemoGif =
+          onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/62/a6/94/62a694968a8a3a1842c4b9a79d5aa5c1.gif",
         ),
         BotOption(
           message: const Text("Charmander"),
-          onChange: (option) => choosenPokemoGif =
+          onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/37/08/62/370862bbff7f3d3345a3d0e9b45a38c3.gif",
         ),
         BotOption(
           message: const Text("Squirtle"),
-          onChange: (option) => choosenPokemoGif =
+          onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/24/e2/e7/24e2e7c933f4f0f11dac65521a9c4a29.gif",
         ),
       ],
@@ -138,27 +138,33 @@ State B will use `BotStateSingleChoice` to make the user choose a pokemon gif th
       ],
       decideTransition: (BotOption selectedOptions) => "C",
     );
-  }r
+  }
 ```
 ### Image State
 State C will show the image and transition to the next state after 1 second <br>
-Ps: had to run `flutter run -d chrome --web-renderer html` so the image network could display the gifs
+Ps: had to run `flutter run -d chrome --web-renderer html` so that Image.network could display the gifs
 ``` dart 
   BotStateImage _stateC() {
     return BotStateImage(
       id: "C",
-      image: () => Image.network(choosenPokemoGif),
+      image: () => Image.network(choosenPokemonGif),
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
-        //machine.transitionTo("D");
+        machine.transitionTo("D");
       },
       transition: BotTransition(id: "C=>D", to: "D"),
     );
   }
 ```
-### Multiple Choice State ??
+<img src="https://media.giphy.com/media/ESBP6YjcOjfD8miR0G/giphy.gif" width="360" height="400" />
 
-#TODO Single Choice sem transição
+### Multiple Choice State
+What about beeing allowed to choose more than one option? Presenting the Multiple Choice State. State D will use it to ask a little bit more about the user's pokemon taste
+``` dart
+
+```
+
+### Single Choice Without Transition
 
 ## Creating the UI
 

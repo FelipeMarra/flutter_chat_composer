@@ -7,11 +7,13 @@ import 'check_box_widget.dart';
 class BotMultipleChoiceFormWidget extends StatefulWidget {
   final ChatBot chatBot;
   final MultipleCheckboxFormField? multipleCheckboxFormField;
+  final String? Function(List<BotOption>)? validator;
 
   const BotMultipleChoiceFormWidget({
     Key? key,
     this.multipleCheckboxFormField,
     required this.chatBot,
+    this.validator
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class _BotMultipleChoiceFormWidgetState
           MultipleCheckboxFormField(
             formKey: _formKey,
             chatBot: widget.chatBot,
+            validator: widget.validator,
           ),
     );
   }

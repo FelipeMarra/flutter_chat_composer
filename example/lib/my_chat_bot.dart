@@ -15,6 +15,7 @@ class MyChatBot {
         _stateALoop(),
         _stateB(),
         _stateC(),
+        _stateD(),
       ],
     );
   }
@@ -127,9 +128,22 @@ class MyChatBot {
       image: () => Image.network(choosenPokemonGif),
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
-        //machine.transitionTo("D");
+        machine.transitionTo("D");
       },
       transition: BotTransition(id: "C=>D", to: "D"),
+    );
+  }
+
+  BotStateMultipleChoice _stateD() {
+    return BotStateMultipleChoice(
+      id: "D",
+      messages: () => [
+        const Text("That whas a wise choice!"),
+        const Text("What 3 other pokemons you like most?"),
+      ],
+      options: () => [
+        BotOption(message: const Text("aaaaaaaa")),
+      ],
     );
   }
 }

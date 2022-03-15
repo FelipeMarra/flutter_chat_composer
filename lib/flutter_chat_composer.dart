@@ -157,6 +157,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         BotMultipleChoiceFormWidget(
           chatBot: widget.chatBot,
           multipleCheckboxFormField: widget.multipleCheckboxFormField,
+          validator: currentState.validator,
         ),
       );
     } else {

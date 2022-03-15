@@ -54,7 +54,7 @@ class MultipleCheckboxFormField extends StatefulWidget {
   final CheckboxListTile? checkboxListTile;
 
   ///A personalized validador for the for the checkboxListTile
-  final FormFieldValidator<bool>? validator;
+  final String? Function(List<BotOption>)? validator;
 
   ///A personalized widget for the text button
   final Widget? buttonChild;
@@ -169,14 +169,18 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                                 updateSelected(index, value);
                               });
                             },
-                      validator: widget.validator ??
-                          (value) {
-                            if (selection.isEmpty) {
-                              return "Selecione uma opção";
-                            }
+                      validator: (value) {
+                        if (widget.validator != null) {
+                          return widget.validator!(options);
+                        }
 
-                            return null;
-                          },
+                        //Default validator
+                        if (selection.isEmpty) {
+                          return "Selecione uma opção";
+                        }
+
+                        return null;
+                      },
                     );
                   },
                 ),
