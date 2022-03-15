@@ -248,8 +248,10 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                         //save the answer
                         currentState.userSelectedOption = i;
                         //run the transition
-                        String state = currentState.decideTransition(option);
-                        widget.chatBot.transitionTo(state);
+                        if (currentState.decideTransition != null) {
+                          String state = currentState.decideTransition!(option);
+                          widget.chatBot.transitionTo(state);
+                        }
                       },
                       child: child,
                     ),

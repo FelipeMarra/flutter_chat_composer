@@ -165,10 +165,8 @@ class MyChatBot {
     return BotStateSingleChoice(
       id: "B",
       messages: () => [
-        Text("Ok, $userName what pokemon would you choose"),
-      ],
-      transitions: [
-        BotTransition(id: "B=>C", to: "C"),
+        const Text("Very intresting choices!"),
+        Text("Bye bye, $userName, it was nice talking to you!"),
       ],
       decideTransition: (BotOption selectedOptions) => "C",
     );

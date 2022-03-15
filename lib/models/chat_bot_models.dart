@@ -57,7 +57,7 @@ class BotStateSingleChoice extends BotState {
 
   ///Function that will take the user's selection and return to what state that
   ///the bot will go to
-  final String Function(BotOption selectedOption) decideTransition;
+  final String Function(BotOption selectedOption)? decideTransition;
 
   ///Message selected by the user, for storage purposes
   int userSelectedOption;
@@ -65,7 +65,7 @@ class BotStateSingleChoice extends BotState {
   BotStateSingleChoice({
     this.options,
     this.userSelectedOption = -1,
-    required this.decideTransition,
+    this.decideTransition,
 
     ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
     required final List<Text> Function() messages,
