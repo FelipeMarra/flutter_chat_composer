@@ -240,6 +240,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                   child: InkWell(
                     highlightColor: Colors.grey[100],
                     onTap: () {
+                      if (option.onChange != null) {
+                        option.onChange!(option);
+                      }
                       //save the answer
                       currentState.userSelectedOption = i;
                       //run the transition
