@@ -214,67 +214,68 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
   List<Widget> _processSingleChoice(BotStateSingleChoice currentState) {
     List<Widget> widgets = [];
-    bool enabled = currentState.userSelectedOption.isNegative;
+    if (currentState.options != null) {
+      bool enabled = currentState.userSelectedOption.isNegative;
 
-    //if enabled show options for user to select, else show user's answer
-    if (enabled) {
-      List<BotOption> options = currentState.options;
-      //process & add each bot transition
-      for (var i = 0; i < options.length; i++) {
-        BotOption option = options[i];
+      //if enabled show options for user to select, else show user's answer
+      if (enabled) {
+        List<BotOption> options = currentState.options!;
+        //process & add each bot transition
+        for (var i = 0; i < options.length; i++) {
+          BotOption option = options[i];
 
-        if (option.message != null) {
-          Text message = option.message!;
+          if (option.message != null) {
+            Text message = option.message!;
 
-          Widget child;
-          if (widget.botSingleChoiceWidget != null) {
-            child = widget.botSingleChoiceWidget!(message);
-          } else {
-            child = BotSingleChoiceWidget(message);
-          }
+            Widget child;
+            if (widget.botSingleChoiceWidget != null) {
+              child = widget.botSingleChoiceWidget!(message);
+            } else {
+              child = BotSingleChoiceWidget(message);
+            }
 
-          widgets.add(
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Flexible(
-                  child: InkWell(
-                    highlightColor: Colors.grey[100],
-                    onTap: () {
-                      if (option.onChange != null) {
-                        option.onChange!(option);
-                      }
-                      //save the answer
-                      currentState.userSelectedOption = i;
-                      //run the transition
-                      String state = currentState.decideTransition(option);
-                      widget.chatBot.transitionTo(state);
-                    },
-                    child: child,
+            widgets.add(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Flexible(
+                    child: InkWell(
+                      highlightColor: Colors.grey[100],
+                      onTap: () {
+                        if (option.onChange != null) {
+                          option.onChange!(option);
+                        }
+                        //save the answer
+                        currentState.userSelectedOption = i;
+                        //run the transition
+                        String state = currentState.decideTransition(option);
+                        widget.chatBot.transitionTo(state);
+                      },
+                      child: child,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-          //Add spacing to all but the last transition
-          if (i != options.length - 1) {
-            widgets.add(SizedBox(height: widget.sameUserSpacing));
+                ],
+              ),
+            );
+            //Add spacing to all but the last transition
+            if (i != options.length - 1) {
+              widgets.add(SizedBox(height: widget.sameUserSpacing));
+            }
           }
         }
+      } else {
+        //add transition messages a the user's answer
+        int index = currentState.userSelectedOption;
+        Text message = currentState.options![index].message!;
+        widgets.add(
+          widget.userMessageWidget != null
+              ? widget.userMessageWidget!(message)
+              //default widget
+              : UserMessageWidget(message: message),
+        );
+        widgets.add(SizedBox(height: widget.difUsersSpacing));
       }
-    } else {
-      //add transition messages a the user's answer
-      int index = currentState.userSelectedOption;
-      Text message = currentState.options[index].message!;
-      widgets.add(
-        widget.userMessageWidget != null
-            ? widget.userMessageWidget!(message)
-            //default widget
-            : UserMessageWidget(message: message),
-      );
-      widgets.add(SizedBox(height: widget.difUsersSpacing));
     }
-
     return widgets;
   }
 }

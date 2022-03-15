@@ -53,7 +53,7 @@ class BotState extends ComposerState<BotTransition> {
 ///using its transitions list (the option message is the transition message)
 class BotStateSingleChoice extends BotState {
   ///Options that will be displayed
-  final List<BotOption> options;
+  final List<BotOption>? options;
 
   ///Function that will take the user's selection and return to what state that
   ///the bot will go to

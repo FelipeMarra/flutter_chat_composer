@@ -16,6 +16,7 @@ class MyChatBot {
         _stateB(),
         _stateC(),
         _stateD(),
+        _stateE(),
       ],
     );
   }
@@ -94,9 +95,7 @@ class MyChatBot {
     return BotStateSingleChoice(
       id: "B",
       messages: () => [
-        Text.rich(
-          TextSpan(text: "Ok, $userName what pokemon would you choose"),
-        )
+        Text("Ok, $userName what pokemon would you choose"),
       ],
       options: [
         BotOption(
@@ -150,7 +149,6 @@ class MyChatBot {
         BotOption(message: const Text("Lucario")),
       ],
       validator: (options) {
-        print("RODOUUUUU");
         if (options.length != 3) {
           return "Select 3 options";
         }
@@ -160,6 +158,19 @@ class MyChatBot {
         BotTransition(id: "D=>E", to: "E"),
       ],
       decideTransition: (options) => "E",
+    );
+  }
+
+  BotStateSingleChoice _stateE() {
+    return BotStateSingleChoice(
+      id: "B",
+      messages: () => [
+        Text("Ok, $userName what pokemon would you choose"),
+      ],
+      transitions: [
+        BotTransition(id: "B=>C", to: "C"),
+      ],
+      decideTransition: (BotOption selectedOptions) => "C",
     );
   }
 }

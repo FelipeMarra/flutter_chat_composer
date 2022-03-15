@@ -112,9 +112,7 @@ State B will use `BotStateSingleChoice` to make the user choose a pokemon gif th
     return BotStateSingleChoice(
       id: "B",
       messages: () => [
-        Text.rich(
-          TextSpan(text: "Ok, $userName what pokemon would you choose"),
-        )
+        Text("Ok, $userName what pokemon would you choose"),
       ],
       options: [
         BotOption(
@@ -159,7 +157,7 @@ Ps: had to run `flutter run -d chrome --web-renderer html` so that Image.network
 <img src="https://media.giphy.com/media/ESBP6YjcOjfD8miR0G/giphy.gif" width="360" height="400" />
 
 ### Multiple Choice State
-What about beeing allowed to choose more than one option? Presenting the Multiple Choice State. State D will use it to ask a little bit more about the user's pokemon taste. You can use a custom validator that gives you the selected options and works like any other form validator. `decideTransition` also give you the selected options so you can return who the next state will be.
+What about beeing allowed to choose more than one option? Presenting the Multiple Choice State. State D will use it to ask a little bit more about the user's pokemon taste. `BotOption` comes with a `onChange` callback as already shown, and you can also use a custom `validator` that gives you the selected `BotOption`s and works like any other form validator. `decideTransition` also give you the selected options so you can return who the next state will be.
 
 ``` dart
   BotStateMultipleChoice _stateD() {
