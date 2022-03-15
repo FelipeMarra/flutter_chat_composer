@@ -190,6 +190,21 @@ What about beeing allowed to choose more than one option? Presenting the Multipl
 ```
 
 ### Single Choice Without Transition
+If want to say something then just say it! `BotStateSingleChoice` don't need transitions ans options, so you can use just its messages:
+
+``` dart 
+  BotStateSingleChoice _stateE() {
+    return BotStateSingleChoice(
+      id: "E",
+      messages: () => [
+        const Text("Very intresting choices!"),
+        Text("Bye bye, $userName, it was nice talking to you!"),
+      ],
+    );
+  }
+```
+
+<img src="https://media.giphy.com/media/xpuVCjQd6mWmDWrI9j/giphy.gif" width="360" height="400" />
 
 ## Creating the UI
 
@@ -217,6 +232,3 @@ class ChatBotInteractionApp extends StatelessWidget {
   }
 }
 ```
-The parametters are:
-
-...

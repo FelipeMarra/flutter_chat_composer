@@ -163,12 +163,11 @@ class MyChatBot {
 
   BotStateSingleChoice _stateE() {
     return BotStateSingleChoice(
-      id: "B",
+      id: "E",
       messages: () => [
         const Text("Very intresting choices!"),
         Text("Bye bye, $userName, it was nice talking to you!"),
       ],
-      decideTransition: (BotOption selectedOptions) => "C",
     );
   }
 }
