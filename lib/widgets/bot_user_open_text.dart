@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class BotUserOpenText extends StatefulWidget {
   ///The chatBot beeing used
@@ -11,7 +12,7 @@ class BotUserOpenText extends StatefulWidget {
   ///When the icon button is pressed
   final Function? onPressed;
   ///User message widget to be shown when the button is pressed
-  final Widget Function(Text) userMessageWidget;
+  final Widget Function(MarkdownBody message) userMessageWidget;
 
   const BotUserOpenText({
     Key? key,
@@ -56,7 +57,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
 
     if (wasPressed) {
       child = widget.userMessageWidget(
-        Text.rich(TextSpan(text: controller.text)),
+        MarkdownBody(data: controller.text),
       );
     } else {
       child = Row(

@@ -15,7 +15,9 @@ dependencies:
     git:
       url: https://github.com/FelipeMarra/state-composer
       ref: main
+
   scrollable_positioned_list: ^0.2.3
+  flutter_markdown: ^0.6.9
 
 dev_dependencies:
   flutter_test:

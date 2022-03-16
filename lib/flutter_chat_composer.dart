@@ -5,6 +5,7 @@ import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/bot_
 import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/check_box_widget.dart';
 import 'package:flutter_chat_composer/widgets/bot_image_widget.dart';
 import 'package:flutter_chat_composer/widgets/default_widgets/bot_single_choice_widget.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'models/chat_bot_models.dart';
@@ -12,7 +13,7 @@ import 'widgets/default_widgets/bot_message_widget.dart';
 import 'widgets/bot_user_open_text.dart';
 import 'widgets/default_widgets/user_message_widget.dart';
 
-export 'models/chat_bot_models.dart' hide BotState;
+export 'models/chat_bot_models.dart';
 export 'widgets/default_widgets/bot_message_widget.dart';
 export 'widgets/default_widgets/user_message_widget.dart';
 export 'widgets/bot_user_open_text.dart';
@@ -22,13 +23,13 @@ class ChatBotWidget extends StatefulWidget {
   final ChatBot chatBot;
 
   ///Widget that displays a bot message
-  final BotMessageWidget Function(Text message)? botMessageWidget;
+  final BotMessageWidget Function(MarkdownBody message)? botMessageWidget;
 
   ///Widget that displays a user message
-  final Widget Function(Text message)? userMessageWidget;
+  final Widget Function(MarkdownBody message)? userMessageWidget;
 
   ///Widget that displays a option from [BotStateSingleChoice]
-  final Widget Function(Text message)? botSingleChoiceWidget;
+  final Widget Function(MarkdownBody message)? botSingleChoiceWidget;
 
   ///Widget to recive user's selection when displaying [BotStateMultipleChoice]
   final MultipleCheckboxFormField? multipleCheckboxFormField;
@@ -37,7 +38,7 @@ class ChatBotWidget extends StatefulWidget {
   final BotUserOpenText? userOpenTextWidget;
 
   ///Widget to receive the iamge when displaying [BotStateImage]
-  final Widget Function(Image image, List<Text>? label)? botImageWidget;
+  final Widget Function(Image image, List<MarkdownBody>? label)? botImageWidget;
 
   ///SizedBox hight between messages of the same user
   final double? sameUserSpacing;
@@ -64,13 +65,13 @@ class ChatBotWidget extends StatefulWidget {
 
 class _ChatBotWidgetState extends State<ChatBotWidget> {
   final ItemScrollController _scrollController = ItemScrollController();
-  List<BotState> history = [];
+  List<BotStateBase> history = [];
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: widget.chatBot.stateStream,
-      builder: (context, AsyncSnapshot<BotState> snapshot) {
+      builder: (context, AsyncSnapshot snapshot) {
         bool conection = snapshot.connectionState == ConnectionState.active;
         if (conection && snapshot.hasData) {
           history.add(snapshot.data!);
@@ -106,14 +107,14 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
   }
 
   Column _itemBuilder(context, index) {
-    BotState currentState = history[index];
+    dynamic currentState = history[index];
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
 
     if (currentType != BotStateImage) {
-      List<Text> messages = currentState.messages!();
+      List<MarkdownBody> messages = currentState.messages!();
       //add messages to the widgets list
-      for (Text message in messages) {
+      for (MarkdownBody message in messages) {
         widgets.add(
           widget.botMessageWidget != null
               ? widget.botMessageWidget!(message)
@@ -225,7 +226,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           BotOption option = options[i];
 
           if (option.message != null) {
-            Text message = option.message!;
+            MarkdownBody message = option.message!;
 
             Widget child;
             if (widget.botSingleChoiceWidget != null) {
@@ -268,7 +269,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       } else {
         //add transition messages a the user's answer
         int index = currentState.userSelectedOption;
-        Text message = currentState.options![index].message!;
+        MarkdownBody message = currentState.options![index].message!;
         widgets.add(
           widget.userMessageWidget != null
               ? widget.userMessageWidget!(message)

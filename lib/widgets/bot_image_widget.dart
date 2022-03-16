@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class BotImageWidget extends StatelessWidget {
-  final List<Text>? label;
+  final List<MarkdownBody>? label;
   final Image image;
   final BoxDecoration? boxDecoration;
 

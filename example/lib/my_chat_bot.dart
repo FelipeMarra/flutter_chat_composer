@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class MyChatBot {
   static String botName = "A COOL BOT";
@@ -34,27 +35,7 @@ class MyChatBot {
     return BotStateOpenText(
       id: "A",
       messages: () => [
-        Text.rich(
-          TextSpan(
-            children: [
-              const TextSpan(text: "Hi, I'm "),
-              TextSpan(
-                children: [
-                  TextSpan(
-                      text: botName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              ),
-              const TextSpan(
-                children: [
-                  TextSpan(text: ", what is your name ?"),
-                ],
-              ),
-            ],
-          ),
-        ),
+        MarkdownBody(data: "Hi, I'm *$botName*, what is your name?"),
       ],
       transitions: [
         BotTransition(id: "A=>ALoop", to: "ALoop"),
@@ -68,13 +49,7 @@ class MyChatBot {
     return BotStateOpenText(
       id: "ALoop",
       messages: () => [
-        const Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: "I reeeally  need to know your name..."),
-            ],
-          ),
-        ),
+        const MarkdownBody(data: "I reeeally  need to know your name..."),
       ],
       transitions: [
         BotTransition(id: "ALoop=>ALoop", to: "ALoop"),
@@ -95,21 +70,21 @@ class MyChatBot {
     return BotStateSingleChoice(
       id: "B",
       messages: () => [
-        Text("Ok, $userName what pokemon would you choose"),
+        MarkdownBody(data: "Ok, $userName what pokemon would you choose"),
       ],
       options: [
         BotOption(
-          message: const Text("Bulbassaur"),
+          message: const MarkdownBody(data: "Bulbassaur"),
           onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/62/a6/94/62a694968a8a3a1842c4b9a79d5aa5c1.gif",
         ),
         BotOption(
-          message: const Text("Charmander"),
+          message: const MarkdownBody(data: "Charmander"),
           onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/37/08/62/370862bbff7f3d3345a3d0e9b45a38c3.gif",
         ),
         BotOption(
-          message: const Text("Squirtle"),
+          message: const MarkdownBody(data: "Squirtle"),
           onChange: (option) => choosenPokemonGif =
               "https://i.pinimg.com/originals/24/e2/e7/24e2e7c933f4f0f11dac65521a9c4a29.gif",
         ),
@@ -121,15 +96,20 @@ class MyChatBot {
     );
   }
 
-  BotStateImage _stateC() {
-    return BotStateImage(
+  BotStateSingleChoice _stateC() {
+    return BotStateSingleChoice(
       id: "C",
-      image: () => Image.network(choosenPokemonGif),
+      messages: () => [
+        MarkdownBody(data: "![foo](/$choosenPokemonGif 'The Best Stater Pokemon')"),
+      ],
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
         machine.transitionTo("D");
       },
-      transition: BotTransition(id: "C=>D", to: "D"),
+      transitions: [
+        BotTransition(id: "C=>D", to: "D"),
+      ],
+      decideTransition: (option) => "D",
     );
   }
 
@@ -137,16 +117,16 @@ class MyChatBot {
     return BotStateMultipleChoice(
       id: "D",
       messages: () => [
-        const Text("That was a wise choice!"),
-        const Text("What 3 other pokemons you like most?"),
+        const MarkdownBody(data: "That was a wise choice!"),
+        const MarkdownBody(data: "What *3 other* pokemons you like most?"),
       ],
       options: () => [
-        BotOption(message: const Text("Pikachu")),
-        BotOption(message: const Text("Eevee")),
-        BotOption(message: const Text("Charizard")),
-        BotOption(message: const Text("Mewtwo")),
-        BotOption(message: const Text("Gengar")),
-        BotOption(message: const Text("Lucario")),
+        BotOption(message: const MarkdownBody(data: "Pikachu")),
+        BotOption(message: const MarkdownBody(data: "Eevee")),
+        BotOption(message: const MarkdownBody(data: "Charizard")),
+        BotOption(message: const MarkdownBody(data: "Mewtwo")),
+        BotOption(message: const MarkdownBody(data: "Gengar")),
+        BotOption(message: const MarkdownBody(data: "Lucario")),
       ],
       validator: (options) {
         if (options.length != 3) {
@@ -165,8 +145,8 @@ class MyChatBot {
     return BotStateSingleChoice(
       id: "E",
       messages: () => [
-        const Text("Very interesting choices!"),
-        Text("Bye bye, $userName, it was nice talking to you!"),
+        const MarkdownBody(data: "Very interesting choices!"),
+        MarkdownBody(data: "Bye bye, $userName, it was nice talking to you!"),
       ],
     );
   }

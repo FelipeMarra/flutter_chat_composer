@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class BotMessageWidget extends StatelessWidget {
   ///Message to be displayed
-  final Text message;
+  final MarkdownBody message;
   ///Personalized boxDecoration widget
   final BoxDecoration? boxDecoration;
 

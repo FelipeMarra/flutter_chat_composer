@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:state_composer/state_composer.dart';
 
 ///A [StateMachine] that represents the chat bot
-class ChatBot extends StateMachine<BotState> {
+class ChatBot extends StateMachine<BotStateBase> {
   ChatBot({
     required String id,
-    required List<BotState> states,
+    required List<BotStateBase> states,
     required String initialStateId,
   }) : super(
           id: id,
@@ -15,11 +16,55 @@ class ChatBot extends StateMachine<BotState> {
 }
 
 ///The base class of the  [ChatBot]'s states
-class BotState extends ComposerState<BotTransition> {
-  ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
-  final List<Text> Function()? messages;
+class BotStateBase extends ComposerState<BotTransition> {
+  BotStateBase({
+    ///The state's name (it's unique identifier)
+    required String id,
 
-  BotState({
+    ///Transitions options to go to the other states
+    List<BotTransition>? transitions,
+
+    ///Function executed when the state is entered
+    Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
+  }) : super(
+          id: id,
+          transitions: transitions ?? [],
+          onEnter: (machine) {
+            if (onEnter != null) {
+              onEnter(machine as ChatBot);
+            }
+          },
+          onLeave: (machine, nextState) {
+            if (onLeave != null) {
+              onLeave(machine as ChatBot, nextState as BotStateBase);
+            }
+          },
+        );
+}
+
+///A state of the [ChatBot] that allows user to choose one option in a menu generated
+///using its transitions list (the option message is the transition message)
+class BotStateSingleChoice extends BotStateBase {
+  ///Options that will be displayed
+  final List<BotOption>? options;
+
+  ///Function that will take the user's selection and return to what state that
+  ///the bot will go to
+  final String Function(BotOption selectedOption)? decideTransition;
+
+  ///Message selected by the user, for storage purposes
+  int userSelectedOption;
+
+  ///A a list of [MarkdownBody], each message is showed separated
+  final List<MarkdownBody> Function() messages;
+
+  BotStateSingleChoice({
+    this.options,
+    this.userSelectedOption = -1,
+    this.decideTransition,
     required this.messages,
 
     ///The state's name (it's unique identifier)
@@ -32,58 +77,9 @@ class BotState extends ComposerState<BotTransition> {
     Function(ChatBot stateMachine)? onEnter,
 
     ///Function executed when the state is left
-    Function(ChatBot chatBot, BotState nextState)? onLeave,
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
   }) : super(
           id: id,
-          transitions: transitions ?? [],
-          onEnter: (machine) {
-            if (onEnter != null) {
-              onEnter(machine as ChatBot);
-            }
-          },
-          onLeave: (machine, nextState) {
-            if (onLeave != null) {
-              onLeave(machine as ChatBot, nextState as BotState);
-            }
-          },
-        );
-}
-
-///A state of the [ChatBot] that allows user to choose one option in a menu generated
-///using its transitions list (the option message is the transition message)
-class BotStateSingleChoice extends BotState {
-  ///Options that will be displayed
-  final List<BotOption>? options;
-
-  ///Function that will take the user's selection and return to what state that
-  ///the bot will go to
-  final String Function(BotOption selectedOption)? decideTransition;
-
-  ///Message selected by the user, for storage purposes
-  int userSelectedOption;
-
-  BotStateSingleChoice({
-    this.options,
-    this.userSelectedOption = -1,
-    this.decideTransition,
-
-    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
-    required final List<Text> Function() messages,
-
-    ///The state's name (it's unique identifier)
-    required String id,
-
-    ///Transitions options to go to the other states
-    List<BotTransition>? transitions,
-
-    ///Function executed when the state is entered
-    Function(ChatBot stateMachine)? onEnter,
-
-    ///Function executed when the state is left
-    Function(ChatBot chatBot, BotState nextState)? onLeave,
-  }) : super(
-          id: id,
-          messages: messages,
           transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
@@ -92,12 +88,12 @@ class BotStateSingleChoice extends BotState {
 
 ///A state of the [ChatBot] that will display a image and have no user interaction
 ///(use onEnter or onLeave to perform some login to go to the next state like a [Future.delayed])
-class BotStateImage extends BotState {
+class BotStateImage extends BotStateBase {
   ///Image to be displayed
   final Image Function() image;
 
   ///[image]'s label
-  final List<Text> Function()? label;
+  final List<MarkdownBody> Function()? label;
 
   BotStateImage({
     required this.image,
@@ -113,10 +109,9 @@ class BotStateImage extends BotState {
     Function(ChatBot stateMachine)? onEnter,
 
     ///Function executed when the state is left
-    Function(ChatBot chatBot, BotState nextState)? onLeave,
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
   }) : super(
           id: id,
-          messages: label,
           transitions: transition != null ? [transition] : [],
           onEnter: onEnter,
           onLeave: onLeave,
@@ -124,7 +119,7 @@ class BotStateImage extends BotState {
 }
 
 ///A state of the [ChatBot] that will have a open text as the user's answer
-class BotStateOpenText extends BotState {
+class BotStateOpenText extends BotStateBase {
   ///Function that will take the user's input and return to what state the bot
   ///will go
   String Function(TextEditingController textController) decideTransition;
@@ -132,8 +127,12 @@ class BotStateOpenText extends BotState {
   ///Text typed by the user, for storage purposes
   String userText = "";
 
+  ///A a list of [MarkdownBody], each message is showed separated
+  final List<MarkdownBody> Function() messages;
+
   BotStateOpenText({
     required this.decideTransition,
+    required this.messages,
 
     ///The state's name (it's unique identifier)
     required String id,
@@ -141,17 +140,13 @@ class BotStateOpenText extends BotState {
     ///Transitions options to go to the other states
     required List<BotTransition> transitions,
 
-    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
-    required List<Text> Function() messages,
-
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
 
     ///Function executed when the state is left
-    Function(ChatBot chatBot, BotState nextState)? onLeave,
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
   }) : super(
           id: id,
-          messages: messages,
           transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
@@ -159,7 +154,7 @@ class BotStateOpenText extends BotState {
 }
 
 ///A state of the [ChatBot] that will allow to select multiple choices as the answer
-class BotStateMultipleChoice extends BotState {
+class BotStateMultipleChoice extends BotStateBase {
   ///Function that will take the user's selection and return to what state that
   ///the bot will go to
   final String Function(List<BotOption> selectedOptions) decideTransition;
@@ -173,9 +168,13 @@ class BotStateMultipleChoice extends BotState {
   ///To validade the options
   final String? Function(List<BotOption>)? validator;
 
+  ///A a list of [MarkdownBody], each message is showed separated
+  final List<MarkdownBody> Function() messages;
+
   BotStateMultipleChoice({
     required this.options,
     required this.decideTransition,
+    required this.messages,
     this.validator,
 
     ///The state's name (it's unique identifier)
@@ -184,17 +183,13 @@ class BotStateMultipleChoice extends BotState {
     ///Transitions options to go to the other states
     required List<BotTransition> transitions,
 
-    ///A a list of texts (Use [Text.rich] for rich text), each messagem is showed separated
-    required List<Text> Function() messages,
-
     ///Function executed when the state is entered
     Function(ChatBot stateMachine)? onEnter,
 
     ///Function executed when the state is left
-    Function(ChatBot chatBot, BotState nextState)? onLeave,
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
   }) : super(
           id: id,
-          messages: messages,
           transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
@@ -203,8 +198,8 @@ class BotStateMultipleChoice extends BotState {
 
 ///Represents a [BotStateMultipleChoice] option
 class BotOption {
-  ///Use [Text.rich] for rich text
-  final Text? message;
+  ///Option text
+  final MarkdownBody? message;
 
   ///Call back for when this option is selected or unselected
   final Function(BotOption option)? onChange;

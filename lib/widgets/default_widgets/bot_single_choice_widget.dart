@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class BotSingleChoiceWidget extends StatelessWidget {
-  final Text message;
+  final MarkdownBody message;
   final BoxDecoration? boxDecoration;
 
   const BotSingleChoiceWidget(
