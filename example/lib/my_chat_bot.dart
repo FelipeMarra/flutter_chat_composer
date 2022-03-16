@@ -71,7 +71,7 @@ class MyChatBot {
         const Text.rich(
           TextSpan(
             children: [
-              TextSpan(text: "I reaally need to know your name... "),
+              TextSpan(text: "I reeeally  need to know your name..."),
             ],
           ),
         ),
@@ -165,7 +165,7 @@ class MyChatBot {
     return BotStateSingleChoice(
       id: "E",
       messages: () => [
-        const Text("Very intresting choices!"),
+        const Text("Very interesting choices!"),
         Text("Bye bye, $userName, it was nice talking to you!"),
       ],
     );
