@@ -35,7 +35,7 @@ class MyChatBot {
     return BotStateOpenText(
       id: "A",
       messages: () => [
-        MarkdownBody(data: "Hi, I'm *$botName*, what is your name?"),
+        MarkdownBody(data: "Hi, I'm **$botName**, what is your name?"),
       ],
       transitions: [
         BotTransition(id: "A=>ALoop", to: "ALoop"),
@@ -49,7 +49,7 @@ class MyChatBot {
     return BotStateOpenText(
       id: "ALoop",
       messages: () => [
-        const MarkdownBody(data: "I reeeally  need to know your name..."),
+        const MarkdownBody(data: "I reeeally need to know your name..."),
       ],
       transitions: [
         BotTransition(id: "ALoop=>ALoop", to: "ALoop"),
@@ -96,20 +96,28 @@ class MyChatBot {
     );
   }
 
-  BotStateSingleChoice _stateC() {
-    return BotStateSingleChoice(
+  BotStateImage _stateC() {
+    return BotStateImage(
       id: "C",
-      messages: () => [
-        MarkdownBody(data: "![foo](/$choosenPokemonGif 'The Best Stater Pokemon')"),
-      ],
+      image: () => Image.network(
+        choosenPokemonGif,
+        fit: BoxFit.fill,
+        loadingBuilder: (
+          BuildContext context,
+          Widget child,
+          ImageChunkEvent? loadingProgress,
+        ) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
         machine.transitionTo("D");
       },
-      transitions: [
-        BotTransition(id: "C=>D", to: "D"),
-      ],
-      decideTransition: (option) => "D",
+      transition: BotTransition(id: "C=>D", to: "D"),
     );
   }
 
@@ -118,7 +126,7 @@ class MyChatBot {
       id: "D",
       messages: () => [
         const MarkdownBody(data: "That was a wise choice!"),
-        const MarkdownBody(data: "What *3 other* pokemons you like most?"),
+        const MarkdownBody(data: "What 3 other pokemons you like most?"),
       ],
       options: () => [
         BotOption(message: const MarkdownBody(data: "Pikachu")),

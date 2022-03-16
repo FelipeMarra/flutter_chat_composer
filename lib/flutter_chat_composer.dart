@@ -111,6 +111,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
 
+    //Show states bot message
     if (currentType != BotStateImage) {
       List<MarkdownBody> messages = currentState.messages!();
       //add messages to the widgets list
