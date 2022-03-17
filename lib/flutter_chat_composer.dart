@@ -65,7 +65,8 @@ class ChatBotWidget extends StatefulWidget {
 
 class _ChatBotWidgetState extends State<ChatBotWidget> {
   final ItemScrollController _scrollController = ItemScrollController();
-  List<BotStateBase> history = [];
+
+  List<BotStateBase> get history => widget.chatBot.history;
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +170,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
         widgets.add(
           widget.userMessageWidget != null
-              ? widget.userMessageWidget!(currentOption.message!)
+              ? widget.userMessageWidget!(currentOption.message)
               //default widget
-              : UserMessageWidget(message: currentOption.message!),
+              : UserMessageWidget(message: currentOption.message),
         );
 
         widgets.add(SizedBox(height: widget.sameUserSpacing));
@@ -226,51 +227,49 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         for (var i = 0; i < options.length; i++) {
           BotOption option = options[i];
 
-          if (option.message != null) {
-            MarkdownBody message = option.message!;
+          MarkdownBody message = option.message;
 
-            Widget child;
-            if (widget.botSingleChoiceWidget != null) {
-              child = widget.botSingleChoiceWidget!(message);
-            } else {
-              child = BotSingleChoiceWidget(message);
-            }
+          Widget child;
+          if (widget.botSingleChoiceWidget != null) {
+            child = widget.botSingleChoiceWidget!(message);
+          } else {
+            child = BotSingleChoiceWidget(message);
+          }
 
-            widgets.add(
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: InkWell(
-                      highlightColor: Colors.grey[100],
-                      onTap: () {
-                        if (option.onChange != null) {
-                          option.onChange!(option);
-                        }
-                        //save the answer
-                        currentState.userSelectedOption = i;
-                        //run the transition
-                        if (currentState.decideTransition != null) {
-                          String state = currentState.decideTransition!(option);
-                          widget.chatBot.transitionTo(state);
-                        }
-                      },
-                      child: child,
-                    ),
+          widgets.add(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: InkWell(
+                    highlightColor: Colors.grey[100],
+                    onTap: () {
+                      if (option.onChange != null) {
+                        option.onChange!(option);
+                      }
+                      //save the answer
+                      currentState.userSelectedOption = i;
+                      //run the transition
+                      if (currentState.decideTransition != null) {
+                        String state = currentState.decideTransition!(option);
+                        widget.chatBot.transitionTo(state);
+                      }
+                    },
+                    child: child,
                   ),
-                ],
-              ),
-            );
-            //Add spacing to all but the last transition
-            if (i != options.length - 1) {
-              widgets.add(SizedBox(height: widget.sameUserSpacing));
-            }
+                ),
+              ],
+            ),
+          );
+          //Add spacing to all but the last transition
+          if (i != options.length - 1) {
+            widgets.add(SizedBox(height: widget.sameUserSpacing));
           }
         }
       } else {
         //add transition messages a the user's answer
         int index = currentState.userSelectedOption;
-        MarkdownBody message = currentState.options![index].message!;
+        MarkdownBody message = currentState.options![index].message;
         widgets.add(
           widget.userMessageWidget != null
               ? widget.userMessageWidget!(message)

@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:state_composer/state_composer.dart';
 
 ///A [StateMachine] that represents the chat bot
 class ChatBot extends StateMachine<BotStateBase> {
+  List<BotStateBase> history = [];
+
   ChatBot({
     required String id,
     required List<BotStateBase> states,
@@ -13,6 +19,15 @@ class ChatBot extends StateMachine<BotStateBase> {
           states: states,
           initialStateId: initialStateId,
         );
+
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    Map<String, dynamic> historyMap = {};
+    for (BotStateBase botState in history) {
+      Map<String, dynamic> map = await botState.getMessageHistoryMap();
+      historyMap.addEntries(map.entries);
+    }
+    return historyMap;
+  }
 }
 
 ///The base class of the  [ChatBot]'s states
@@ -43,6 +58,14 @@ class BotStateBase extends ComposerState<BotTransition> {
             }
           },
         );
+
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateBase",
+      "id": id,
+      "messages": [],
+    };
+  }
 }
 
 ///A state of the [ChatBot] that allows user to choose one option in a menu generated
@@ -84,6 +107,18 @@ class BotStateSingleChoice extends BotStateBase {
           onEnter: onEnter,
           onLeave: onLeave,
         );
+
+  @override
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateSingleChoice",
+      "id": id,
+      "botMessages": messages().map((x) => x.data).toList(),
+      "userMessages": userSelectedOption > -1
+          ? [options?[userSelectedOption].message.data]
+          : []
+    };
+  }
 }
 
 ///A state of the [ChatBot] that will display a image and have no user interaction
@@ -116,6 +151,49 @@ class BotStateImage extends BotStateBase {
           onEnter: onEnter,
           onLeave: onLeave,
         );
+
+  Image imageFromBase64String(String base64String) {
+    return Image.memory(base64Decode(base64String));
+  }
+
+  //TODO I dont know if this shit works
+  Future<String> _imageToBase64String(Image image) async {
+    ImageProvider imageProvider = image.image;
+    //AssetImage
+    if (imageProvider.runtimeType == AssetImage) {
+      AssetImage assetImage = imageProvider.runtimeType as AssetImage;
+      ByteData byteData = await rootBundle.load(assetImage.assetName);
+      return base64Encode(Uint8List.view(byteData.buffer));
+    }
+    //FileImage
+    if (imageProvider.runtimeType == FileImage) {
+      FileImage fileImage = imageProvider.runtimeType as FileImage;
+      Uint8List uintList = await fileImage.file.readAsBytes();
+      return base64Encode(uintList.toList());
+    }
+    //NetworkImage
+    if (imageProvider.runtimeType == NetworkImage) {
+      NetworkImage fileImage = imageProvider.runtimeType as NetworkImage;
+      http.Response response = await http.get(
+        Uri.dataFromString(fileImage.url),
+      );
+      final bytes = response.bodyBytes;
+      return base64Encode(bytes);
+    }
+    //MemoryImage
+    MemoryImage fileImage = imageProvider.runtimeType as MemoryImage;
+    return base64Encode(fileImage.bytes);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateSingleChoice",
+      "id": id,
+      "botMessages": await _imageToBase64String(image()),
+      "userMessages": []
+    };
+  }
 }
 
 ///A state of the [ChatBot] that will have a open text as the user's answer
@@ -151,6 +229,16 @@ class BotStateOpenText extends BotStateBase {
           onEnter: onEnter,
           onLeave: onLeave,
         );
+
+  @override
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateSingleChoice",
+      "id": id,
+      "botMessages": messages().map((x) => x.data).toList(),
+      "userMessages": [userText]
+    };
+  }
 }
 
 ///A state of the [ChatBot] that will allow to select multiple choices as the answer
@@ -194,12 +282,24 @@ class BotStateMultipleChoice extends BotStateBase {
           onEnter: onEnter,
           onLeave: onLeave,
         );
+
+  @override
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateSingleChoice",
+      "id": id,
+      "botMessages": messages().map((x) => x.data).toList(),
+      "userMessages": optionsSelectedByUser
+          .map((index) => options()[index].message.data)
+          .toList()
+    };
+  }
 }
 
 ///Represents a [BotStateMultipleChoice] option
 class BotOption {
   ///Option text
-  final MarkdownBody? message;
+  final MarkdownBody message;
 
   ///Call back for when this option is selected or unselected
   final Function(BotOption option)? onChange;
