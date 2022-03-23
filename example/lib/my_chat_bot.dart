@@ -156,11 +156,6 @@ class MyChatBot {
         const MarkdownBody(data: "Very interesting choices!"),
         MarkdownBody(data: "Bye bye, $userName, it was nice talking to you!"),
       ],
-      onEnter: (machine) async {
-        var history = await machine.getMessageHistoryMap();
-        print(history.keys);
-        print(history);
-      },
     );
   }
 }
