@@ -159,21 +159,22 @@ class BotStateImage extends BotStateBase {
   //TODO I dont know if this shit works
   Future<String> _imageToBase64String(Image image) async {
     ImageProvider imageProvider = image.image;
+    var type = imageProvider.runtimeType;
     //AssetImage
-    if (imageProvider.runtimeType == AssetImage) {
-      AssetImage assetImage = imageProvider.runtimeType as AssetImage;
+    if (type == AssetImage) {
+      AssetImage assetImage = imageProvider as AssetImage;
       ByteData byteData = await rootBundle.load(assetImage.assetName);
       return base64Encode(Uint8List.view(byteData.buffer));
     }
     //FileImage
-    if (imageProvider.runtimeType == FileImage) {
-      FileImage fileImage = imageProvider.runtimeType as FileImage;
+    if (type == FileImage) {
+      FileImage fileImage = imageProvider as FileImage;
       Uint8List uintList = await fileImage.file.readAsBytes();
       return base64Encode(uintList.toList());
     }
     //NetworkImage
-    if (imageProvider.runtimeType == NetworkImage) {
-      NetworkImage fileImage = imageProvider.runtimeType as NetworkImage;
+    if (type == NetworkImage) {
+      NetworkImage fileImage = imageProvider as NetworkImage;
       http.Response response = await http.get(
         Uri.dataFromString(fileImage.url),
       );
@@ -181,11 +182,12 @@ class BotStateImage extends BotStateBase {
       return base64Encode(bytes);
     }
     //MemoryImage
-    if (imageProvider.runtimeType == MemoryImage) {
-      MemoryImage fileImage = imageProvider.runtimeType as MemoryImage;
+    if (type == MemoryImage) {
+      MemoryImage fileImage = imageProvider as MemoryImage;
       return base64Encode(fileImage.bytes);
     }
-    return "ERROR: The type is ${imageProvider.runtimeType.toString()}";
+
+    return "ERROR: The type is ${type.toString()}";
   }
 
   @override
