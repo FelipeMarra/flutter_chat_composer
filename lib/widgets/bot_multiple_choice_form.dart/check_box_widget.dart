@@ -50,6 +50,9 @@ class MultipleCheckboxFormField extends StatefulWidget {
   ///The chatbot beeing used
   final ChatBot chatBot;
 
+  ///The state that built this widget
+  final BotStateMultipleChoice botState;
+
   ///A personalized list tile
   final CheckboxListTile? checkboxListTile;
 
@@ -72,6 +75,7 @@ class MultipleCheckboxFormField extends StatefulWidget {
     Key? key,
     required this.formKey,
     required this.chatBot,
+    required this.botState,
     this.checkboxListTile,
     this.validator,
     this.buttonChild,
@@ -87,7 +91,6 @@ class MultipleCheckboxFormField extends StatefulWidget {
 
 class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
   bool disabled = false;
-  late BotStateMultipleChoice currentState;
   //options that come from the state to generate the widget
   late List<BotOption> options;
   List<int> selection = [];
@@ -96,7 +99,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
     List<BotOption> optionSelection = [];
 
     for (int index in selection) {
-      optionSelection.add(currentState.options()[index]);
+      optionSelection.add(widget.botState.options()[index]);
     }
 
     return optionSelection;
@@ -104,9 +107,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
 
   @override
   void initState() {
-    currentState = widget.chatBot.currentState as BotStateMultipleChoice;
-
-    options = currentState.options();
+    options = widget.botState.options();
 
     if (widget.intialValues != null) {
       selection = widget.intialValues ?? [];
@@ -127,7 +128,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
 
     //Call the options onChanege callbacks
     for (int index in selection) {
-      BotOption currentOption = currentState.options()[index];
+      BotOption currentOption = widget.botState.options()[index];
       if (currentOption.onChange != null) {
         currentOption.onChange!(currentOption);
       }
@@ -206,13 +207,14 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                                 //validation
                                 if (widget.formKey.currentState!.validate()) {
                                   for (int index in selection) {
-                                    currentState.optionsSelectedByUser
+                                    widget.botState.optionsSelectedByUser
                                         .add(index);
-                                    currentState.optionsSelectedByUser.sort();
+                                    widget.botState.optionsSelectedByUser
+                                        .sort();
                                   }
 
-                                  String nextState =
-                                      currentState.decideTransition(optionsSelection);
+                                  String nextState = widget.botState
+                                      .decideTransition(optionsSelection,);
                                   widget.chatBot.transitionTo(nextState);
                                   setState(() {
                                     disabled = true;

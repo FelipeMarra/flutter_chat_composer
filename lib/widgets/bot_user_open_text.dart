@@ -5,18 +5,26 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class BotUserOpenText extends StatefulWidget {
   ///The chatBot beeing used
   final ChatBot chatBot;
+
+  ///The bot state that built this widget
+  final BotStateOpenText botState;
+
   ///Personalized textField
   final TextField? textField;
+
   ///Icon shown in text fileds right
   final Icon? icon;
+
   ///When the icon button is pressed
   final Function? onPressed;
+
   ///User message widget to be shown when the button is pressed
   final Widget Function(MarkdownBody message) userMessageWidget;
 
   const BotUserOpenText({
     Key? key,
     required this.chatBot,
+    required this.botState,
     this.textField,
     this.icon,
     this.onPressed,
@@ -28,20 +36,17 @@ class BotUserOpenText extends StatefulWidget {
 }
 
 class _BotUserOpenText extends State<BotUserOpenText> {
-  late BotStateOpenText currentState;
   late bool wasPressed;
   late TextEditingController controller;
 
   @override
   void initState() {
-    currentState = widget.chatBot.currentState as BotStateOpenText;
-
-    wasPressed = currentState.userText.isNotEmpty;
+    wasPressed = widget.botState.userText.isNotEmpty;
 
     controller = TextEditingController(
-      text: currentState.userText,
+      text: widget.botState.userText,
     );
-    controller.addListener(() => currentState.userText = controller.text);
+    controller.addListener(() => widget.botState.userText = controller.text);
     super.initState();
   }
 
@@ -89,10 +94,8 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                       widget.onPressed!();
                     }
                     //transition the machine
-                    BotStateOpenText currentState =
-                        widget.chatBot.currentState! as BotStateOpenText;
                     widget.chatBot.transitionTo(
-                      currentState.decideTransition(controller),
+                      widget.botState.decideTransition(controller),
                     );
                   },
                   icon: widget.icon ?? const Icon(Icons.send),

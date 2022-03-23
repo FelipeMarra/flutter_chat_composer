@@ -130,7 +130,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
     //handle diffent types of states
     if (currentType == BotStateOpenText) {
-      widgets.add(_processOpenText());
+      widgets.add(_processOpenText(currentState as BotStateOpenText));
     } else if (currentType == BotStateMultipleChoice) {
       widgets.addAll(
         _processMultipleChoice(currentState as BotStateMultipleChoice),
@@ -157,8 +157,10 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
     if (enabled) {
       widgets.add(
+        //TODO create to current state
         BotMultipleChoiceFormWidget(
           chatBot: widget.chatBot,
+          botState: currentState,
           multipleCheckboxFormField: widget.multipleCheckboxFormField,
           validator: currentState.validator,
         ),
@@ -181,12 +183,12 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     return widgets;
   }
 
-  Widget _processOpenText() {
-    //add open user's text widget
+  Widget _processOpenText(BotStateOpenText currentState) {
     Widget child = widget.userOpenTextWidget ??
         //default widget
         BotUserOpenText(
           chatBot: widget.chatBot,
+          botState: currentState,
           userMessageWidget: (message) => UserMessageWidget(message: message),
         );
 
