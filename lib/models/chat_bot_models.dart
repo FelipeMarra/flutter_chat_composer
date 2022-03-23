@@ -173,7 +173,7 @@ class BotStateImage extends BotStateBase {
       return base64Encode(uintList.toList());
     }
     //NetworkImage
-    if (type == NetworkImage) {
+    if (type.toString() == "NetworkImage") {
       NetworkImage fileImage = imageProvider as NetworkImage;
       http.Response response = await http.get(
         Uri.dataFromString(fileImage.url),
