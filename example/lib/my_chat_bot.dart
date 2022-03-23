@@ -42,6 +42,10 @@ class MyChatBot {
         BotTransition(id: "A=>B", to: "B"),
       ],
       decideTransition: _stateADecision,
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
+      },
     );
   }
 
@@ -62,6 +66,10 @@ class MyChatBot {
           userName = textController.text;
           return "B";
         }
+      },
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
       },
     );
   }
@@ -93,6 +101,10 @@ class MyChatBot {
         BotTransition(id: "B=>C", to: "C"),
       ],
       decideTransition: (BotOption selectedOptions) => "C",
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
+      },
     );
   }
 
@@ -118,6 +130,10 @@ class MyChatBot {
         machine.transitionTo("D");
       },
       transition: BotTransition(id: "C=>D", to: "D"),
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
+      },
     );
   }
 
@@ -146,6 +162,10 @@ class MyChatBot {
         BotTransition(id: "D=>E", to: "E"),
       ],
       decideTransition: (options) => "E",
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
+      },
     );
   }
 
@@ -156,6 +176,10 @@ class MyChatBot {
         const MarkdownBody(data: "Very interesting choices!"),
         MarkdownBody(data: "Bye bye, $userName, it was nice talking to you!"),
       ],
+      onLeave: (machine, state) async {
+        var history = await machine.getMessageHistoryMap();
+        print(history);
+      },
     );
   }
 }

@@ -181,14 +181,17 @@ class BotStateImage extends BotStateBase {
       return base64Encode(bytes);
     }
     //MemoryImage
-    MemoryImage fileImage = imageProvider.runtimeType as MemoryImage;
-    return base64Encode(fileImage.bytes);
+    if (imageProvider.runtimeType == MemoryImage) {
+      MemoryImage fileImage = imageProvider.runtimeType as MemoryImage;
+      return base64Encode(fileImage.bytes);
+    }
+    return "ERROR: The type is ${imageProvider.runtimeType.toString()}";
   }
 
   @override
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
     return {
-      "type": "BotStateSingleChoice",
+      "type": "BotStateImage",
       "id": id,
       "botMessages": await _imageToBase64String(image()),
       "userMessages": []
@@ -233,7 +236,7 @@ class BotStateOpenText extends BotStateBase {
   @override
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
     return {
-      "type": "BotStateSingleChoice",
+      "type": "BotStateOpenText",
       "id": id,
       "botMessages": messages().map((x) => x.data).toList(),
       "userMessages": [userText]
@@ -286,7 +289,7 @@ class BotStateMultipleChoice extends BotStateBase {
   @override
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
     return {
-      "type": "BotStateSingleChoice",
+      "type": "BotStateMultipleChoice",
       "id": id,
       "botMessages": messages().map((x) => x.data).toList(),
       "userMessages": optionsSelectedByUser

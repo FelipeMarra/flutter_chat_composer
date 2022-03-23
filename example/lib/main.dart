@@ -7,12 +7,18 @@ void main() {
   runApp(const ChatBotInteractionApp());
 }
 
-class ChatBotInteractionApp extends StatelessWidget {
+class ChatBotInteractionApp extends StatefulWidget {
   const ChatBotInteractionApp({Key? key}) : super(key: key);
 
   @override
+  State<ChatBotInteractionApp> createState() => _ChatBotInteractionAppState();
+}
+
+class _ChatBotInteractionAppState extends State<ChatBotInteractionApp> {
+  ChatBot chatBot = MyChatBot().chatBot();
+
+  @override
   Widget build(BuildContext context) {
-    ChatBot chatBot = MyChatBot().chatBot();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
