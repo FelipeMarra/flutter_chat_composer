@@ -24,7 +24,7 @@ class ChatBot extends StateMachine<BotStateBase> {
     Map<String, dynamic> historyMap = {};
     for (BotStateBase botState in history) {
       Map<String, dynamic> map = await botState.getMessageHistoryMap();
-      historyMap.addEntries(map.entries);
+      historyMap[botState.id] = map;
     }
     return historyMap;
   }
