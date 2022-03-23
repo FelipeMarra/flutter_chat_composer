@@ -157,7 +157,6 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
 
     if (enabled) {
       widgets.add(
-        //TODO create to current state
         BotMultipleChoiceFormWidget(
           chatBot: widget.chatBot,
           botState: currentState,
