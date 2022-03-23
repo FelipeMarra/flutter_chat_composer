@@ -161,13 +161,13 @@ class BotStateImage extends BotStateBase {
     ImageProvider imageProvider = image.image;
     var type = imageProvider.runtimeType;
     //AssetImage
-    if (type == AssetImage) {
+    if (type.toString() == "AssetImage") {
       AssetImage assetImage = imageProvider as AssetImage;
       ByteData byteData = await rootBundle.load(assetImage.assetName);
       return base64Encode(Uint8List.view(byteData.buffer));
     }
     //FileImage
-    if (type == FileImage) {
+    if (type.toString() == "FileImage") {
       FileImage fileImage = imageProvider as FileImage;
       Uint8List uintList = await fileImage.file.readAsBytes();
       return base64Encode(uintList.toList());
@@ -182,7 +182,7 @@ class BotStateImage extends BotStateBase {
       return base64Encode(bytes);
     }
     //MemoryImage
-    if (type == MemoryImage) {
+    if (type.toString() == "MemoryImage") {
       MemoryImage fileImage = imageProvider as MemoryImage;
       return base64Encode(fileImage.bytes);
     }
