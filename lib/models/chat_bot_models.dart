@@ -28,6 +28,37 @@ class ChatBot extends StateMachine<BotStateBase> {
     }
     return historyMap;
   }
+
+  ChatBot fromMessageHistoryMap(Map<String, dynamic> map) {
+    List<BotStateBase> history = [];
+
+    map.forEach((key, stateData) {
+      BotStateBase state;
+      switch (stateData["type"]) {
+        case "BotStateSingleChoice":
+          state = BotStateSingleChoice.fromMessageHistoryMap(stateData);
+          break;
+        case "BotStateMultipleChoice":
+          state = BotStateMultipleChoice.fromMessageHistoryMap(stateData);
+          break;
+        case "BotStateImage":
+          state = BotStateImage.fromMessageHistoryMap(stateData);
+          break;
+        case "BotStateOpenText":
+          state = BotStateOpenText.fromMessageHistoryMap(stateData);
+          break;
+        default:
+          state = BotStateBase.fromMessageHistoryMap(stateData);
+      }
+      history.add(state);
+    });
+
+    return ChatBot(
+      id: "id",
+      states: history,
+      initialStateId: "",//TODO E AI MANO
+    );
+  }
 }
 
 ///The base class of the  [ChatBot]'s states
@@ -63,8 +94,11 @@ class BotStateBase extends ComposerState<BotTransition> {
     return {
       "type": "BotStateBase",
       "id": id,
-      "messages": [],
     };
+  }
+
+  static BotStateBase fromMessageHistoryMap(Map<String, dynamic> map) {
+    return BotStateBase(id: map["id"]);
   }
 }
 
@@ -72,21 +106,21 @@ class BotStateBase extends ComposerState<BotTransition> {
 ///using its transitions list (the option message is the transition message)
 class BotStateSingleChoice extends BotStateBase {
   ///Options that will be displayed
-  final List<BotOption>? options;
+  final List<BotOption> Function()? options;
 
   ///Function that will take the user's selection and return to what state that
   ///the bot will go to
   final String Function(BotOption selectedOption)? decideTransition;
 
   ///Message selected by the user, for storage purposes
-  int userSelectedOption;
+  int optionSelectedByUser;
 
   ///A a list of [MarkdownBody], each message is showed separated
   final List<MarkdownBody> Function() messages;
 
   BotStateSingleChoice({
     this.options,
-    this.userSelectedOption = -1,
+    this.optionSelectedByUser = -1,
     this.decideTransition,
     required this.messages,
 
@@ -114,10 +148,118 @@ class BotStateSingleChoice extends BotStateBase {
       "type": "BotStateSingleChoice",
       "id": id,
       "botMessages": messages().map((x) => x.data).toList(),
-      "userMessages": userSelectedOption > -1
-          ? [options?[userSelectedOption].message.data]
+      "userMessages": optionSelectedByUser > -1
+          ? [options!()[optionSelectedByUser].message.data]
           : []
     };
+  }
+
+  static BotStateSingleChoice fromMessageHistoryMap(Map<String, dynamic> map) {
+    List<MarkdownBody> botMessages = [];
+
+    for (String message in map["botMessages"]) {
+      botMessages.add(MarkdownBody(data: message));
+    }
+
+    return BotStateSingleChoice(
+      id: map["id"],
+      messages: () => botMessages,
+      options: () => [
+        BotOption(
+          message: MarkdownBody(data: map["userMessages"][0]),
+        ),
+      ],
+      optionSelectedByUser: 0,
+    );
+  }
+}
+
+///A state of the [ChatBot] that will allow to select multiple choices as the answer
+class BotStateMultipleChoice extends BotStateBase {
+  ///Function that will take the user's selection and return to what state that
+  ///the bot will go to
+  final String Function(List<BotOption> selectedOptions) decideTransition;
+
+  ///Options that will be displayed
+  final List<BotOption> Function() options;
+
+  ///Options the user selected, for storage purposes
+  List<int>? optionsSelectedByUser;
+
+  ///To validade the options
+  final String? Function(List<BotOption>)? validator;
+
+  ///A a list of [MarkdownBody], each message is showed separated
+  final List<MarkdownBody> Function() messages;
+
+  BotStateMultipleChoice({
+    required this.options,
+    required this.decideTransition,
+    required this.messages,
+    this.optionsSelectedByUser,
+    this.validator,
+
+    ///The state's name (it's unique identifier)
+    required String id,
+
+    ///Transitions options to go to the other states
+    required List<BotTransition> transitions,
+
+    ///Function executed when the state is entered
+    Function(ChatBot stateMachine)? onEnter,
+
+    ///Function executed when the state is left
+    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
+  }) : super(
+          id: id,
+          transitions: transitions,
+          onEnter: onEnter,
+          onLeave: onLeave,
+        ) {
+    optionsSelectedByUser ??= [];
+  }
+
+  @override
+  Future<Map<String, dynamic>> getMessageHistoryMap() async {
+    return {
+      "type": "BotStateMultipleChoice",
+      "id": id,
+      "botMessages": messages().map((x) => x.data).toList(),
+      "userMessages": optionsSelectedByUser!
+          .map((index) => options()[index].message.data)
+          .toList()
+    };
+  }
+
+  static BotStateMultipleChoice fromMessageHistoryMap(
+      Map<String, dynamic> map) {
+    List<MarkdownBody> botMessages = [];
+
+    for (String message in map["botMessages"]) {
+      botMessages.add(MarkdownBody(data: message));
+    }
+
+    List<BotOption> options = [];
+    List<int> optionsSelectdByUser = [];
+    int counter = 0;
+    for (String message in map["userMessages"]) {
+      options.add(
+        BotOption(
+          message: MarkdownBody(data: message),
+        ),
+      );
+      optionsSelectdByUser.add(counter);
+      counter++;
+    }
+
+    return BotStateMultipleChoice(
+      id: map["id"],
+      messages: () => botMessages,
+      options: () => options,
+      optionsSelectedByUser: optionsSelectdByUser,
+      transitions: [],
+      decideTransition: (a) => "",
+    );
   }
 }
 
@@ -152,11 +294,7 @@ class BotStateImage extends BotStateBase {
           onLeave: onLeave,
         );
 
-  Image imageFromBase64String(String base64String) {
-    return Image.memory(base64Decode(base64String));
-  }
-
-  //TODO I dont know if this shit works
+  //TODO I dont know if this shit works (network works fine)
   Future<String> _imageToBase64String(Image image) async {
     ImageProvider imageProvider = image.image;
     var type = imageProvider.runtimeType;
@@ -187,7 +325,7 @@ class BotStateImage extends BotStateBase {
       return base64Encode(fileImage.bytes);
     }
 
-    return "ERROR: The type is ${type.toString()}";
+    return "ERROR: The type ${type.toString()} had no match";
   }
 
   @override
@@ -199,6 +337,19 @@ class BotStateImage extends BotStateBase {
       "userMessages": []
     };
   }
+
+  static Image _imageFromBase64String(String base64String) {
+    return Image.memory(base64Decode(base64String));
+  }
+
+  static BotStateImage fromMessageHistoryMap(Map<String, dynamic> map) {
+    String image = map["botMessages"][0];
+
+    return BotStateImage(
+      id: map["id"],
+      image: () => _imageFromBase64String(image),
+    );
+  }
 }
 
 ///A state of the [ChatBot] that will have a open text as the user's answer
@@ -208,7 +359,7 @@ class BotStateOpenText extends BotStateBase {
   String Function(TextEditingController textController) decideTransition;
 
   ///Text typed by the user, for storage purposes
-  String userText = "";
+  String? userText;
 
   ///A a list of [MarkdownBody], each message is showed separated
   final List<MarkdownBody> Function() messages;
@@ -216,6 +367,7 @@ class BotStateOpenText extends BotStateBase {
   BotStateOpenText({
     required this.decideTransition,
     required this.messages,
+    this.userText,
 
     ///The state's name (it's unique identifier)
     required String id,
@@ -233,7 +385,9 @@ class BotStateOpenText extends BotStateBase {
           transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
-        );
+        ) {
+    userText ??= "";
+  }
 
   @override
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
@@ -244,60 +398,23 @@ class BotStateOpenText extends BotStateBase {
       "userMessages": [userText]
     };
   }
-}
 
-///A state of the [ChatBot] that will allow to select multiple choices as the answer
-class BotStateMultipleChoice extends BotStateBase {
-  ///Function that will take the user's selection and return to what state that
-  ///the bot will go to
-  final String Function(List<BotOption> selectedOptions) decideTransition;
+  static BotStateOpenText fromMessageHistoryMap(Map<String, dynamic> map) {
+    List<MarkdownBody> botMessages = [];
 
-  ///Options that will be displayed
-  final List<BotOption> Function() options;
+    for (String message in map["botMessages"]) {
+      botMessages.add(MarkdownBody(data: message));
+    }
 
-  ///Options the user selected, for storage purposes
-  List<int> optionsSelectedByUser = [];
+    String userText = map["userMessages"][0];
 
-  ///To validade the options
-  final String? Function(List<BotOption>)? validator;
-
-  ///A a list of [MarkdownBody], each message is showed separated
-  final List<MarkdownBody> Function() messages;
-
-  BotStateMultipleChoice({
-    required this.options,
-    required this.decideTransition,
-    required this.messages,
-    this.validator,
-
-    ///The state's name (it's unique identifier)
-    required String id,
-
-    ///Transitions options to go to the other states
-    required List<BotTransition> transitions,
-
-    ///Function executed when the state is entered
-    Function(ChatBot stateMachine)? onEnter,
-
-    ///Function executed when the state is left
-    Function(ChatBot chatBot, BotStateBase nextState)? onLeave,
-  }) : super(
-          id: id,
-          transitions: transitions,
-          onEnter: onEnter,
-          onLeave: onLeave,
-        );
-
-  @override
-  Future<Map<String, dynamic>> getMessageHistoryMap() async {
-    return {
-      "type": "BotStateMultipleChoice",
-      "id": id,
-      "botMessages": messages().map((x) => x.data).toList(),
-      "userMessages": optionsSelectedByUser
-          .map((index) => options()[index].message.data)
-          .toList()
-    };
+    return BotStateOpenText(
+      id: map["id"],
+      messages: () => botMessages,
+      userText: userText,
+      transitions: [],
+      decideTransition: (a) => "",
+    );
   }
 }
 

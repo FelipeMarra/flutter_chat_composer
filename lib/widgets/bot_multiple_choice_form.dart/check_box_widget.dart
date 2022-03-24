@@ -207,14 +207,16 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                                 //validation
                                 if (widget.formKey.currentState!.validate()) {
                                   for (int index in selection) {
-                                    widget.botState.optionsSelectedByUser
+                                    widget.botState.optionsSelectedByUser!
                                         .add(index);
-                                    widget.botState.optionsSelectedByUser
+                                    widget.botState.optionsSelectedByUser!
                                         .sort();
                                   }
 
-                                  String nextState = widget.botState
-                                      .decideTransition(optionsSelection,);
+                                  String nextState =
+                                      widget.botState.decideTransition(
+                                    optionsSelection,
+                                  );
                                   widget.chatBot.transitionTo(nextState);
                                   setState(() {
                                     disabled = true;

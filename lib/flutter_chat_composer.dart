@@ -153,7 +153,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     List<Widget> widgets = [];
 
     //if enabled show options for user to select, else show user's answer
-    bool enabled = currentState.optionsSelectedByUser.isEmpty;
+    bool enabled = currentState.optionsSelectedByUser!.isEmpty;
 
     if (enabled) {
       widgets.add(
@@ -166,7 +166,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       );
     } else {
       //add selected options messages as the user's answer
-      for (int index in currentState.optionsSelectedByUser) {
+      for (int index in currentState.optionsSelectedByUser!) {
         BotOption currentOption = currentState.options()[index];
 
         widgets.add(
@@ -219,11 +219,11 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
   List<Widget> _processSingleChoice(BotStateSingleChoice currentState) {
     List<Widget> widgets = [];
     if (currentState.options != null) {
-      bool enabled = currentState.userSelectedOption.isNegative;
+      bool enabled = currentState.optionSelectedByUser.isNegative;
 
       //if enabled show options for user to select, else show user's answer
       if (enabled) {
-        List<BotOption> options = currentState.options!;
+        List<BotOption> options = currentState.options!();
         //process & add each bot transition
         for (var i = 0; i < options.length; i++) {
           BotOption option = options[i];
@@ -249,7 +249,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                         option.onChange!(option);
                       }
                       //save the answer
-                      currentState.userSelectedOption = i;
+                      currentState.optionSelectedByUser = i;
                       //run the transition
                       if (currentState.decideTransition != null) {
                         String state = currentState.decideTransition!(option);
@@ -269,8 +269,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         }
       } else {
         //add transition messages a the user's answer
-        int index = currentState.userSelectedOption;
-        MarkdownBody message = currentState.options![index].message;
+        int index = currentState.optionSelectedByUser;
+        MarkdownBody message = currentState.options!()[index].message;
         widgets.add(
           widget.userMessageWidget != null
               ? widget.userMessageWidget!(message)

@@ -41,7 +41,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
 
   @override
   void initState() {
-    wasPressed = widget.botState.userText.isNotEmpty;
+    wasPressed = widget.botState.userText!.isNotEmpty;
 
     controller = TextEditingController(
       text: widget.botState.userText,
