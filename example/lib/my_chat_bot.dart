@@ -72,7 +72,7 @@ class MyChatBot {
       messages: () => [
         MarkdownBody(data: "Ok, $userName what pokemon would you choose"),
       ],
-      options: [
+      options: () => [
         BotOption(
           message: const MarkdownBody(data: "Bulbassaur"),
           onChange: (option) => choosenPokemonGif =

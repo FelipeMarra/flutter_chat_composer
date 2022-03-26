@@ -14,11 +14,17 @@ class ChatBot extends StateMachine<BotStateBase> {
     required String id,
     required List<BotStateBase> states,
     required String initialStateId,
+    historyMode = false,
   }) : super(
           id: id,
           states: states,
           initialStateId: initialStateId,
-        );
+          historyMode: historyMode,
+        ) {
+    if (historyMode) {
+      history = states;
+    }
+  }
 
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
     Map<String, dynamic> historyMap = {};
@@ -29,8 +35,8 @@ class ChatBot extends StateMachine<BotStateBase> {
     return historyMap;
   }
 
-  ChatBot fromMessageHistoryMap(Map<String, dynamic> map) {
-    List<BotStateBase> history = [];
+  static ChatBot fromMessageHistoryMap(Map<String, dynamic> map) {
+    List<BotStateBase> states = [];
 
     map.forEach((key, stateData) {
       BotStateBase state;
@@ -50,13 +56,14 @@ class ChatBot extends StateMachine<BotStateBase> {
         default:
           state = BotStateBase.fromMessageHistoryMap(stateData);
       }
-      history.add(state);
+      states.add(state);
     });
 
     return ChatBot(
       id: "id",
-      states: history,
-      initialStateId: "",//TODO E AI MANO
+      states: states,
+      historyMode: true,
+      initialStateId: "",
     );
   }
 }
@@ -161,15 +168,22 @@ class BotStateSingleChoice extends BotStateBase {
       botMessages.add(MarkdownBody(data: message));
     }
 
+    bool theresUserMessage = map["userMessages"].isNotEmpty;
+
     return BotStateSingleChoice(
       id: map["id"],
       messages: () => botMessages,
-      options: () => [
-        BotOption(
-          message: MarkdownBody(data: map["userMessages"][0]),
-        ),
-      ],
-      optionSelectedByUser: 0,
+      options: () {
+        if (theresUserMessage) {
+          return [
+            BotOption(
+              message: MarkdownBody(data: map["userMessages"][0]),
+            )
+          ];
+        }
+        return [];
+      },
+      optionSelectedByUser: theresUserMessage ? 0 : -1,
     );
   }
 }
@@ -294,38 +308,53 @@ class BotStateImage extends BotStateBase {
           onLeave: onLeave,
         );
 
-  //TODO I dont know if this shit works (network works fine)
-  Future<String> _imageToBase64String(Image image) async {
-    ImageProvider imageProvider = image.image;
-    var type = imageProvider.runtimeType;
-    //AssetImage
-    if (type.toString() == "AssetImage") {
-      AssetImage assetImage = imageProvider as AssetImage;
-      ByteData byteData = await rootBundle.load(assetImage.assetName);
-      return base64Encode(Uint8List.view(byteData.buffer));
-    }
-    //FileImage
-    if (type.toString() == "FileImage") {
-      FileImage fileImage = imageProvider as FileImage;
-      Uint8List uintList = await fileImage.file.readAsBytes();
-      return base64Encode(uintList.toList());
-    }
-    //NetworkImage
-    if (type.toString() == "NetworkImage") {
-      NetworkImage fileImage = imageProvider as NetworkImage;
-      http.Response response = await http.get(
-        Uri.dataFromString(fileImage.url),
-      );
-      final bytes = response.bodyBytes;
-      return base64Encode(bytes);
-    }
-    //MemoryImage
-    if (type.toString() == "MemoryImage") {
-      MemoryImage fileImage = imageProvider as MemoryImage;
-      return base64Encode(fileImage.bytes);
-    }
+  //TODO only working for network image
+  // Future<String> _imageToBase64String(Image image) async {
+  //   ImageProvider imageProvider = image.image;
+  //   var type = imageProvider.runtimeType;
+  //   //AssetImage
+  //   if (type.toString() == "AssetImage") {
+  //     AssetImage assetImage = imageProvider as AssetImage;
+  //     ByteData byteData = await rootBundle.load(assetImage.assetName);
+  //     return base64Encode(Uint8List.view(byteData.buffer));
+  //   }
+  //   //FileImage
+  //   if (type.toString() == "FileImage") {
+  //     FileImage fileImage = imageProvider as FileImage;
+  //     Uint8List uintList = await fileImage.file.readAsBytes();
+  //     return base64Encode(uintList.toList());
+  //   }
+  //   //NetworkImage
+  //   if (type.toString() == "NetworkImage") {
+  //     NetworkImage fileImage = imageProvider as NetworkImage;
+  //     print("THE URI ${Uri.parse(fileImage.url)}");
+  //     http.Response response = await http.get(
+  //       Uri.parse(fileImage.url),
+  //       headers: {
+  //         "Accept": "application/json",
+  //         "Access-Control_Allow_Origin": "*",
+  //         "Access-Control-Allow-Methods": "*",
+  //         "Access-Control-Allow-Headers":
+  //             "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+  //         //"Access-Control-Allow-Credentials": "true",
+  //       },
+  //     );
+  //     final bytes = response.bodyBytes;
+  //     print("THE BASE64 ${base64Encode(bytes)}");
+  //     return base64Encode(bytes);
+  //   }
+  //   //MemoryImage
+  //   if (type.toString() == "MemoryImage") {
+  //     MemoryImage fileImage = imageProvider as MemoryImage;
+  //     return base64Encode(fileImage.bytes);
+  //   }
 
-    return "ERROR: The type ${type.toString()} had no match";
+  //   return "ERROR: The type ${type.toString()} had no match";
+  // }
+
+  String _imageUrl(Image image) {
+    NetworkImage fileImage = image.image as NetworkImage;
+    return fileImage.url;
   }
 
   @override
@@ -333,13 +362,13 @@ class BotStateImage extends BotStateBase {
     return {
       "type": "BotStateImage",
       "id": id,
-      "botMessages": await _imageToBase64String(image()),
+      "botMessages": [_imageUrl(image())],
       "userMessages": []
     };
   }
 
-  static Image _imageFromBase64String(String base64String) {
-    return Image.memory(base64Decode(base64String));
+  static Image _imageFromBase64String(String imageURL) {
+    return Image.network(imageURL);
   }
 
   static BotStateImage fromMessageHistoryMap(Map<String, dynamic> map) {

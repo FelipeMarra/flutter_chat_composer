@@ -75,7 +75,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       builder: (context, AsyncSnapshot snapshot) {
         bool conection = snapshot.connectionState == ConnectionState.active;
         if (conection && snapshot.hasData) {
-          history.add(snapshot.data!);
+          if (widget.chatBot.historyMode == false) {
+            history.add(snapshot.data!);
+          }
 
           _scrollToLast();
 
