@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:state_composer/state_composer.dart';
 
@@ -28,6 +24,9 @@ class ChatBot extends StateMachine<BotStateBase> {
 
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
     Map<String, dynamic> historyMap = {};
+
+    historyMap["id"] = id;
+
     for (BotStateBase botState in history) {
       Map<String, dynamic> map = await botState.getMessageHistoryMap();
       historyMap[botState.id] = map;
@@ -60,7 +59,7 @@ class ChatBot extends StateMachine<BotStateBase> {
     });
 
     return ChatBot(
-      id: "id",
+      id: map["id"],
       states: states,
       historyMode: true,
       initialStateId: "",
