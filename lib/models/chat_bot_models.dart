@@ -38,24 +38,26 @@ class ChatBot extends StateMachine<BotStateBase> {
     List<BotStateBase> states = [];
 
     map.forEach((key, stateData) {
-      BotStateBase state;
-      switch (stateData["type"]) {
-        case "BotStateSingleChoice":
-          state = BotStateSingleChoice.fromMessageHistoryMap(stateData);
-          break;
-        case "BotStateMultipleChoice":
-          state = BotStateMultipleChoice.fromMessageHistoryMap(stateData);
-          break;
-        case "BotStateImage":
-          state = BotStateImage.fromMessageHistoryMap(stateData);
-          break;
-        case "BotStateOpenText":
-          state = BotStateOpenText.fromMessageHistoryMap(stateData);
-          break;
-        default:
-          state = BotStateBase.fromMessageHistoryMap(stateData);
+      if (key != "id") {
+        BotStateBase state;
+        switch (stateData["type"]) {
+          case "BotStateSingleChoice":
+            state = BotStateSingleChoice.fromMessageHistoryMap(stateData);
+            break;
+          case "BotStateMultipleChoice":
+            state = BotStateMultipleChoice.fromMessageHistoryMap(stateData);
+            break;
+          case "BotStateImage":
+            state = BotStateImage.fromMessageHistoryMap(stateData);
+            break;
+          case "BotStateOpenText":
+            state = BotStateOpenText.fromMessageHistoryMap(stateData);
+            break;
+          default:
+            state = BotStateBase.fromMessageHistoryMap(stateData);
+        }
+        states.add(state);
       }
-      states.add(state);
     });
 
     return ChatBot(
