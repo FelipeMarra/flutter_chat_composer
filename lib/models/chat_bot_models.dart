@@ -38,6 +38,7 @@ class ChatBot extends StateMachine<BotStateBase> {
     List<BotStateBase> states = [];
 
     map.forEach((key, stateData) {
+      //TODO use a metadata proprierty to save stuff like id, user name, etc
       if (key != "id") {
         BotStateBase state;
         switch (stateData["type"]) {

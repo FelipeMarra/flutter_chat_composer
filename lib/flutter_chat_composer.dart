@@ -4,21 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/bot_multiple_choice_form.dart';
 import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/check_box_widget.dart';
 import 'package:flutter_chat_composer/widgets/bot_image_widget.dart';
+import 'package:flutter_chat_composer/widgets/bot_user_open_text/bot_user_open_text_controller.dart';
 import 'package:flutter_chat_composer/widgets/default_widgets/bot_single_choice_widget.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'models/chat_bot_models.dart';
 import 'widgets/default_widgets/bot_message_widget.dart';
-import 'widgets/bot_user_open_text.dart';
+import 'widgets/bot_user_open_text/bot_user_open_text.dart';
 import 'widgets/default_widgets/user_message_widget.dart';
 
 export 'models/chat_bot_models.dart';
 export 'widgets/default_widgets/bot_message_widget.dart';
 export 'widgets/default_widgets/user_message_widget.dart';
-export 'widgets/bot_user_open_text.dart';
+export 'widgets/bot_user_open_text/bot_user_open_text.dart';
 
-class ChatBotWidget extends StatefulWidget {
+//TODO: Add a widget tht can be added at the end of the chat?
+class ChatBotWidget extends StatelessWidget {
   ///The [ChatBot] that will generate the chat
   final ChatBot chatBot;
 
@@ -46,7 +49,7 @@ class ChatBotWidget extends StatefulWidget {
   ///SizedBox hight betweewn messagen of different users
   final double? difUsersSpacing;
 
-  const ChatBotWidget({
+  ChatBotWidget({
     Key? key,
     required this.chatBot,
     this.botMessageWidget,
@@ -59,38 +62,68 @@ class ChatBotWidget extends StatefulWidget {
     this.difUsersSpacing,
   }) : super(key: key);
 
-  @override
-  State<ChatBotWidget> createState() => _ChatBotWidgetState();
-}
-
-class _ChatBotWidgetState extends State<ChatBotWidget> {
   final ItemScrollController _scrollController = ItemScrollController();
 
-  List<BotStateBase> get history => widget.chatBot.history;
+  List<BotStateBase> get history => chatBot.history;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: widget.chatBot.stateStream,
+      stream: chatBot.stateStream,
       builder: (context, AsyncSnapshot snapshot) {
         bool conection = snapshot.connectionState == ConnectionState.active;
         if (conection && snapshot.hasData) {
-          if (widget.chatBot.historyMode == false) {
+          if (chatBot.historyMode == false) {
             history.add(snapshot.data!);
           }
 
           _scrollToLast();
 
           //display the messages
-          return ScrollablePositionedList.separated(
-            padding: const EdgeInsets.all(10),
-            shrinkWrap: true,
-            itemScrollController: _scrollController,
-            itemCount: history.length,
-            itemBuilder: _itemBuilder,
-            separatorBuilder: (BuildContext context, int index) => SizedBox(
-              height: widget.difUsersSpacing,
-            ),
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: ((context) => BotUserOpenTextController()),
+              ),
+            ],
+            child: Builder(builder: (context) {
+              BotUserOpenTextController openTextController = context.read();
+
+              if (history.last.runtimeType == BotStateOpenText) {
+                WidgetsBinding.instance!.addPostFrameCallback((context) async {
+                  openTextController.activate(history.last as BotStateOpenText);
+                });
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: ScrollablePositionedList.separated(
+                        shrinkWrap: true,
+                        itemScrollController: _scrollController,
+                        itemCount: history.length,
+                        itemBuilder: (context, index) =>
+                            _itemBuilder(context, index, openTextController),
+                        separatorBuilder: (BuildContext context, int index) =>
+                            SizedBox(
+                          height: difUsersSpacing,
+                        ),
+                      ),
+                    ),
+                    userOpenTextWidget ??
+                        //default widget
+                        BotUserOpenText(
+                          chatBot: chatBot,
+                          userMessageWidget: (message) =>
+                              UserMessageWidget(message: message),
+                        ),
+                  ],
+                ),
+              );
+            }),
           );
         }
 
@@ -109,7 +142,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     }
   }
 
-  Column _itemBuilder(context, index) {
+  Column _itemBuilder(
+      context, index, BotUserOpenTextController openTextController) {
     dynamic currentState = history[index];
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
@@ -120,19 +154,32 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
       //add messages to the widgets list
       for (MarkdownBody message in messages) {
         widgets.add(
-          widget.botMessageWidget != null
-              ? widget.botMessageWidget!(message)
+          botMessageWidget != null
+              ? botMessageWidget!(message)
               //default widget
               : BotMessageWidget(message: message),
         );
 
-        widgets.add(SizedBox(height: widget.sameUserSpacing));
+        widgets.add(SizedBox(height: sameUserSpacing));
       }
     }
 
     //handle diffent types of states
     if (currentType == BotStateOpenText) {
-      widgets.add(_processOpenText(currentState as BotStateOpenText));
+      BotStateOpenText openTextState = currentState as BotStateOpenText;
+      String userMessage = openTextState.userText ?? "";
+      bool wasPressed = userMessage.isNotEmpty;
+      if (wasPressed) {
+        widgets.add(
+          userMessageWidget != null
+              ? userMessageWidget!(MarkdownBody(data: userMessage))
+              //default widget
+              : UserMessageWidget(message: MarkdownBody(data: userMessage)),
+        );
+      } else {
+        //TODO add post frame
+        //openTextController.activate(openTextState);
+      }
     } else if (currentType == BotStateMultipleChoice) {
       widgets.addAll(
         _processMultipleChoice(currentState as BotStateMultipleChoice),
@@ -160,9 +207,9 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     if (enabled) {
       widgets.add(
         BotMultipleChoiceFormWidget(
-          chatBot: widget.chatBot,
+          chatBot: chatBot,
           botState: currentState,
-          multipleCheckboxFormField: widget.multipleCheckboxFormField,
+          multipleCheckboxFormField: multipleCheckboxFormField,
           validator: currentState.validator,
         ),
       );
@@ -172,36 +219,24 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         BotOption currentOption = currentState.options()[index];
 
         widgets.add(
-          widget.userMessageWidget != null
-              ? widget.userMessageWidget!(currentOption.message)
+          userMessageWidget != null
+              ? userMessageWidget!(currentOption.message)
               //default widget
               : UserMessageWidget(message: currentOption.message),
         );
 
-        widgets.add(SizedBox(height: widget.sameUserSpacing));
+        widgets.add(SizedBox(height: sameUserSpacing));
       }
     }
     return widgets;
-  }
-
-  Widget _processOpenText(BotStateOpenText currentState) {
-    Widget child = widget.userOpenTextWidget ??
-        //default widget
-        BotUserOpenText(
-          chatBot: widget.chatBot,
-          botState: currentState,
-          userMessageWidget: (message) => UserMessageWidget(message: message),
-        );
-
-    return child;
   }
 
   List<Widget> _processImage(BotStateImage currentState) {
     List<Widget> widgets = [];
 
     Widget child;
-    if (widget.botImageWidget != null) {
-      child = widget.botImageWidget!(
+    if (botImageWidget != null) {
+      child = botImageWidget!(
         currentState.image(),
         currentState.label != null ? currentState.label!() : null,
       );
@@ -213,7 +248,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
     }
     widgets.add(child);
 
-    widgets.add(SizedBox(height: widget.sameUserSpacing));
+    widgets.add(SizedBox(height: sameUserSpacing));
 
     return widgets;
   }
@@ -233,8 +268,8 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           MarkdownBody message = option.message;
 
           Widget child;
-          if (widget.botSingleChoiceWidget != null) {
-            child = widget.botSingleChoiceWidget!(message);
+          if (botSingleChoiceWidget != null) {
+            child = botSingleChoiceWidget!(message);
           } else {
             child = BotSingleChoiceWidget(message);
           }
@@ -255,7 +290,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
                       //run the transition
                       if (currentState.decideTransition != null) {
                         String state = currentState.decideTransition!(option);
-                        widget.chatBot.transitionTo(state);
+                        chatBot.transitionTo(state);
                       }
                     },
                     child: child,
@@ -266,7 +301,7 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
           );
           //Add spacing to all but the last transition
           if (i != options.length - 1) {
-            widgets.add(SizedBox(height: widget.sameUserSpacing));
+            widgets.add(SizedBox(height: sameUserSpacing));
           }
         }
       } else {
@@ -274,12 +309,12 @@ class _ChatBotWidgetState extends State<ChatBotWidget> {
         int index = currentState.optionSelectedByUser;
         MarkdownBody message = currentState.options!()[index].message;
         widgets.add(
-          widget.userMessageWidget != null
-              ? widget.userMessageWidget!(message)
+          userMessageWidget != null
+              ? userMessageWidget!(message)
               //default widget
               : UserMessageWidget(message: message),
         );
-        widgets.add(SizedBox(height: widget.difUsersSpacing));
+        widgets.add(SizedBox(height: difUsersSpacing));
       }
     }
     return widgets;

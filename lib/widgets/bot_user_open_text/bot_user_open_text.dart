@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_composer/flutter_chat_composer.dart';
+import 'package:flutter_chat_composer/widgets/bot_user_open_text/bot_user_open_text_controller.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:provider/provider.dart';
 
 class BotUserOpenText extends StatefulWidget {
   ///The chatBot beeing used
   final ChatBot chatBot;
-
-  ///The bot state that built this widget
-  final BotStateOpenText botState;
 
   ///Personalized textField
   final TextField? textField;
@@ -24,7 +23,6 @@ class BotUserOpenText extends StatefulWidget {
   const BotUserOpenText({
     Key? key,
     required this.chatBot,
-    required this.botState,
     this.textField,
     this.icon,
     this.onPressed,
@@ -32,42 +30,18 @@ class BotUserOpenText extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<BotUserOpenText> createState() => _BotUserOpenText();
+  State<BotUserOpenText> createState() => _BotUserOpenTextState();
 }
 
-class _BotUserOpenText extends State<BotUserOpenText> {
-  late bool wasPressed;
-  late TextEditingController controller;
-
-  @override
-  void initState() {
-    wasPressed = widget.botState.userText!.isNotEmpty;
-
-    controller = TextEditingController(
-      text: widget.botState.userText,
-    );
-    controller.addListener(() => widget.botState.userText = controller.text);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
+class _BotUserOpenTextState extends State<BotUserOpenText> {
   @override
   Widget build(BuildContext context) {
+    BotUserOpenTextController stateController = context.watch();
     Widget child;
 
-    if (wasPressed) {
-      child = widget.userMessageWidget(
-        MarkdownBody(data: controller.text),
-      );
-    } else {
+    if (stateController.isActive) {
       child = Row(
         children: [
-          Flexible(child: Container()),
           Flexible(
             child: Row(
               children: [
@@ -77,7 +51,7 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                       Flexible(
                         child: widget.textField ??
                             TextField(
-                              controller: controller,
+                              controller: stateController.editingController!,
                             ),
                       ),
                     ],
@@ -85,18 +59,17 @@ class _BotUserOpenText extends State<BotUserOpenText> {
                 ),
                 IconButton(
                   onPressed: () {
-                    //change to the user text widget
-                    setState(() {
-                      wasPressed = true;
-                    });
                     //run user's on pressed function
                     if (widget.onPressed != null) {
                       widget.onPressed!();
                     }
                     //transition the machine
                     widget.chatBot.transitionTo(
-                      widget.botState.decideTransition(controller),
+                      stateController.currentState!
+                          .decideTransition(stateController.editingController!),
                     );
+                    //change to the user text widget
+                    stateController.deactivate();
                   },
                   icon: widget.icon ?? const Icon(Icons.send),
                 )
@@ -105,6 +78,8 @@ class _BotUserOpenText extends State<BotUserOpenText> {
           ),
         ],
       );
+    } else {
+      child = Container();
     }
 
     return child;
