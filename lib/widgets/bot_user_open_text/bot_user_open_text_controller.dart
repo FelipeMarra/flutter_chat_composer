@@ -8,10 +8,6 @@ class BotUserOpenTextController extends ChangeNotifier {
   ///Wether if the open text widget is active or not
   bool get isActive => currentState != null;
 
-  ///ativo:
-  ///setar como ativo
-  ///ativar o texto
-  ///tem de estar atrelado a um estado?
   void activate(BotStateOpenText newState) {
     currentState = newState;
     editingController = TextEditingController();
@@ -25,7 +21,7 @@ class BotUserOpenTextController extends ChangeNotifier {
 
   void deactivate() {
     currentState = null;
-    editingController!.dispose();
+    //editingController!.dispose();
     notifyListeners();
   }
 }

@@ -203,7 +203,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                       child: TextButton(
                         onPressed: disabled
                             ? null
-                            : () {
+                            : () async {
                                 //validation
                                 if (widget.formKey.currentState!.validate()) {
                                   for (int index in selection) {
@@ -217,7 +217,7 @@ class _MultipleCheckboxFormFieldState extends State<MultipleCheckboxFormField> {
                                       widget.botState.decideTransition(
                                     optionsSelection,
                                   );
-                                  widget.chatBot.transitionTo(nextState);
+                                  await widget.chatBot.transitionTo(nextState);
                                   setState(() {
                                     disabled = true;
                                   });

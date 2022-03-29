@@ -68,26 +68,25 @@ class ChatBotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: chatBot.stateStream,
-      builder: (context, AsyncSnapshot snapshot) {
-        bool conection = snapshot.connectionState == ConnectionState.active;
-        if (conection && snapshot.hasData) {
-          if (chatBot.historyMode == false) {
-            history.add(snapshot.data!);
-          }
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: ((context) => BotUserOpenTextController()),
+        ),
+      ],
+      child: Builder(builder: (context) {
+        BotUserOpenTextController openTextController = context.read();
 
-          _scrollToLast();
+        return StreamBuilder(
+          stream: chatBot.stateStream,
+          builder: (context, AsyncSnapshot snapshot) {
+            bool conection = snapshot.connectionState == ConnectionState.active;
+            if (conection && snapshot.hasData) {
+              if (chatBot.historyMode == false) {
+                history.add(snapshot.data!);
+              }
 
-          //display the messages
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(
-                create: ((context) => BotUserOpenTextController()),
-              ),
-            ],
-            child: Builder(builder: (context) {
-              BotUserOpenTextController openTextController = context.read();
+              _scrollToLast();
 
               if (history.last.runtimeType == BotStateOpenText) {
                 WidgetsBinding.instance!.addPostFrameCallback((context) async {
@@ -95,6 +94,7 @@ class ChatBotWidget extends StatelessWidget {
                 });
               }
 
+              //display the messages
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -123,12 +123,12 @@ class ChatBotWidget extends StatelessWidget {
                   ],
                 ),
               );
-            }),
-          );
-        }
+            }
 
-        return Container();
-      },
+            return Container();
+          },
+        );
+      }),
     );
   }
 
@@ -281,7 +281,7 @@ class ChatBotWidget extends StatelessWidget {
                 Flexible(
                   child: InkWell(
                     highlightColor: Colors.grey[100],
-                    onTap: () {
+                    onTap: () async {
                       if (option.onChange != null) {
                         option.onChange!(option);
                       }
@@ -290,7 +290,7 @@ class ChatBotWidget extends StatelessWidget {
                       //run the transition
                       if (currentState.decideTransition != null) {
                         String state = currentState.decideTransition!(option);
-                        chatBot.transitionTo(state);
+                        await chatBot.transitionTo(state);
                       }
                     },
                     child: child,

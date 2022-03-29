@@ -115,7 +115,7 @@ class MyChatBot {
       ),
       onEnter: (machine) async {
         await Future.delayed(const Duration(seconds: 1));
-        machine.transitionTo("D");
+        await machine.transitionTo("D");
       },
       transition: BotTransition(id: "C=>D", to: "D"),
     );

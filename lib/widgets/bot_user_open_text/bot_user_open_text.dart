@@ -58,13 +58,13 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
+                  onPressed: () async{
                     //run user's on pressed function
                     if (widget.onPressed != null) {
                       widget.onPressed!();
                     }
                     //transition the machine
-                    widget.chatBot.transitionTo(
+                    await widget.chatBot.transitionTo(
                       stateController.currentState!
                           .decideTransition(stateController.editingController!),
                     );
