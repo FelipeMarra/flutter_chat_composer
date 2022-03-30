@@ -42,7 +42,7 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
     if (stateController.isActive) {
       child = Container(
         color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         child: Row(
           children: [
             Expanded(
@@ -58,6 +58,7 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
             IconButton(
               icon: widget.icon ?? const Icon(Icons.send),
               iconSize: 25,
+              splashRadius: 1,
               onPressed: () async {
                 //run user's on pressed function
                 if (widget.onPressed != null) {
