@@ -96,7 +96,7 @@ class ChatBotWidget extends StatelessWidget {
 
               //display the messages
               return Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
