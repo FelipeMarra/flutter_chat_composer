@@ -40,43 +40,41 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
     Widget child;
 
     if (stateController.isActive) {
-      child = Row(
-        children: [
-          Flexible(
-            child: Row(
-              children: [
-                Flexible(
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: widget.textField ??
-                            TextField(
-                              controller: stateController.editingController!,
-                            ),
-                      ),
-                    ],
+      child = Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        height: 70,
+        child: Row(
+          children: [
+            Expanded(
+              child: widget.textField ??
+                  TextField(
+                    controller: stateController.editingController!,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: "Insira sua resposta",
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () async{
-                    //run user's on pressed function
-                    if (widget.onPressed != null) {
-                      widget.onPressed!();
-                    }
-                    //transition the machine
-                    await widget.chatBot.transitionTo(
-                      stateController.currentState!
-                          .decideTransition(stateController.editingController!),
-                    );
-                    //change to the user text widget
-                    stateController.deactivate();
-                  },
-                  icon: widget.icon ?? const Icon(Icons.send),
-                )
-              ],
             ),
-          ),
-        ],
+            IconButton(
+              icon: widget.icon ?? const Icon(Icons.send),
+              iconSize: 25,
+              onPressed: () async {
+                //run user's on pressed function
+                if (widget.onPressed != null) {
+                  widget.onPressed!();
+                }
+                //transition the machine
+                await widget.chatBot.transitionTo(
+                  stateController.currentState!
+                      .decideTransition(stateController.editingController!),
+                );
+                //change to the user text widget
+                stateController.deactivate();
+              },
+            ),
+          ],
+        ),
       );
     } else {
       child = Container();
