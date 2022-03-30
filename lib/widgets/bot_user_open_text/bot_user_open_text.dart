@@ -43,7 +43,6 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
       child = Container(
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        height: 70,
         child: Row(
           children: [
             Expanded(
