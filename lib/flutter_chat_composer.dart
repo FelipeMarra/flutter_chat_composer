@@ -6,6 +6,7 @@ import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/chec
 import 'package:flutter_chat_composer/widgets/bot_image_widget.dart';
 import 'package:flutter_chat_composer/widgets/bot_user_open_text/bot_user_open_text_controller.dart';
 import 'package:flutter_chat_composer/widgets/default_widgets/bot_single_choice_widget.dart';
+import 'package:flutter_chat_composer/widgets/default_widgets/user_open_message_widget.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -116,11 +117,7 @@ class ChatBotWidget extends StatelessWidget {
                     ),
                     userOpenTextWidget ??
                         //default widget
-                        BotUserOpenText(
-                          chatBot: chatBot,
-                          userMessageWidget: (message) =>
-                              UserMessageWidget(message: message),
-                        ),
+                        BotUserOpenText(chatBot: chatBot),
                   ],
                 ),
               );
@@ -144,7 +141,10 @@ class ChatBotWidget extends StatelessWidget {
   }
 
   Column _itemBuilder(
-      context, index, BotUserOpenTextController openTextController) {
+    context,
+    index,
+    BotUserOpenTextController openTextController,
+  ) {
     dynamic currentState = history[index];
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
@@ -168,19 +168,18 @@ class ChatBotWidget extends StatelessWidget {
     //handle diffent types of states
     if (currentType == BotStateOpenText) {
       BotStateOpenText openTextState = currentState as BotStateOpenText;
-      String userMessage = openTextState.userText ?? "";
-      bool wasPressed = userMessage.isNotEmpty;
-      if (wasPressed) {
-        widgets.add(
-          userMessageWidget != null
-              ? userMessageWidget!(MarkdownBody(data: userMessage))
-              //default widget
-              : UserMessageWidget(message: MarkdownBody(data: userMessage)),
-        );
-      } else {
-        //TODO add post frame
-        //openTextController.activate(openTextState);
-      }
+
+      widgets.add(
+        //TODO
+        // userMessageWidget != null
+        //     ? userMessageWidget!(MarkdownBody(data: openTextState.userText!))
+        //     //default widget
+        //     :
+        UserOpenMessageWidget(
+          message: openTextState.userText,
+          openTextController: openTextController,
+        ),
+      );
     } else if (currentType == BotStateMultipleChoice) {
       widgets.addAll(
         _processMultipleChoice(currentState as BotStateMultipleChoice),
@@ -223,7 +222,7 @@ class ChatBotWidget extends StatelessWidget {
           userMessageWidget != null
               ? userMessageWidget!(currentOption.message)
               //default widget
-              : UserMessageWidget(message: currentOption.message),
+              : UserMessageWidget(message: currentOption.message.data),
         );
 
         widgets.add(SizedBox(height: sameUserSpacing));
@@ -313,7 +312,7 @@ class ChatBotWidget extends StatelessWidget {
           userMessageWidget != null
               ? userMessageWidget!(message)
               //default widget
-              : UserMessageWidget(message: message),
+              : UserMessageWidget(message: message.data),
         );
         widgets.add(SizedBox(height: difUsersSpacing));
       }

@@ -26,11 +26,12 @@ class ChatBot extends StateMachine<BotStateBase> {
     Map<String, dynamic> historyMap = {};
 
     historyMap["id"] = id;
-
+    print(history);
     for (BotStateBase botState in history) {
       Map<String, dynamic> map = await botState.getMessageHistoryMap();
       historyMap[botState.id] = map;
     }
+    print(historyMap);
     return historyMap;
   }
 
@@ -416,9 +417,7 @@ class BotStateOpenText extends BotStateBase {
           transitions: transitions,
           onEnter: onEnter,
           onLeave: onLeave,
-        ) {
-    userText ??= "";
-  }
+        );
 
   @override
   Future<Map<String, dynamic>> getMessageHistoryMap() async {
@@ -437,7 +436,7 @@ class BotStateOpenText extends BotStateBase {
       botMessages.add(MarkdownBody(data: message));
     }
 
-    String userText = map["userMessages"][0];
+    String? userText = map["userMessages"][0];
 
     return BotStateOpenText(
       id: map["id"],
