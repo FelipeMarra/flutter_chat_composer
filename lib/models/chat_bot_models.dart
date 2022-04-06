@@ -168,8 +168,9 @@ class BotStateSingleChoice extends BotStateBase {
     for (String message in map["botMessages"]) {
       botMessages.add(MarkdownBody(data: message));
     }
+    
 
-    bool theresUserMessage = map["userMessages"].isNotEmpty;
+    bool theresUserMessage = map["userMessages"] != null && map["userMessages"].isNotEmpty;
 
     return BotStateSingleChoice(
       id: map["id"],
