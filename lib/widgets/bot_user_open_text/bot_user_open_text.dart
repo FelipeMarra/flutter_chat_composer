@@ -31,10 +31,10 @@ class BotUserOpenText extends StatefulWidget {
 class _BotUserOpenTextState extends State<BotUserOpenText> {
   @override
   Widget build(BuildContext context) {
-    BotUserOpenTextController stateController = context.watch();
+    BotUserOpenTextController openTextController = context.watch();
     Widget child;
 
-    if (stateController.isActive) {
+    if (openTextController.isActive) {
       child = Container(
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
@@ -43,7 +43,7 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
             Expanded(
               child: widget.textField ??
                   TextField(
-                    controller: stateController.editingController!,
+                    controller: openTextController.currentController,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: const InputDecoration.collapsed(
                       hintText: "Insira sua resposta",
@@ -55,19 +55,23 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
               iconSize: 25,
               splashRadius: 1,
               onPressed: () async {
+                print("RODOU O ON PRESS");
                 //run user's on pressed function
                 if (widget.onPressed != null) {
-                  widget.onPressed!();
+                  await widget.onPressed!();
                 }
-                //transition the machine
-                if (stateController.isActive) {
-                  await widget.chatBot.transitionTo(
-                    stateController.currentState!
-                        .decideTransition(stateController.editingController!),
-                  );
 
-                  stateController.deactivate();
-                }
+                //transition the machine
+                openTextController.deactivate();
+
+                BotStateOpenText currentState =
+                    widget.chatBot.currentState! as BotStateOpenText;
+
+                currentState.userText = currentState.userText ?? "";
+
+                await widget.chatBot.transitionTo(
+                  currentState.decideTransition(currentState.userText!),
+                );
               },
             ),
           ],

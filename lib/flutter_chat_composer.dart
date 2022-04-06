@@ -6,7 +6,7 @@ import 'package:flutter_chat_composer/widgets/bot_multiple_choice_form.dart/chec
 import 'package:flutter_chat_composer/widgets/bot_image_widget.dart';
 import 'package:flutter_chat_composer/widgets/bot_user_open_text/bot_user_open_text_controller.dart';
 import 'package:flutter_chat_composer/widgets/default_widgets/bot_single_choice_widget.dart';
-import 'package:flutter_chat_composer/widgets/default_widgets/user_open_message_widget.dart';
+import 'package:flutter_chat_composer/widgets/bot_user_open_text/user_open_message_widget.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -91,7 +91,7 @@ class ChatBotWidget extends StatelessWidget {
 
               if (history.last.runtimeType == BotStateOpenText) {
                 WidgetsBinding.instance!.addPostFrameCallback((context) async {
-                  openTextController.activate(history.last as BotStateOpenText);
+                  openTextController.activate();
                 });
               }
 
@@ -107,8 +107,7 @@ class ChatBotWidget extends StatelessWidget {
                         shrinkWrap: true,
                         itemScrollController: _scrollController,
                         itemCount: history.length,
-                        itemBuilder: (context, index) =>
-                            _itemBuilder(context, index, openTextController),
+                        itemBuilder: _itemBuilder,
                         separatorBuilder: (BuildContext context, int index) =>
                             SizedBox(
                           height: difUsersSpacing,
@@ -143,11 +142,11 @@ class ChatBotWidget extends StatelessWidget {
   Column _itemBuilder(
     context,
     index,
-    BotUserOpenTextController openTextController,
   ) {
     dynamic currentState = history[index];
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
+    print("NEW STATE ${currentState.toString()}");
 
     //Show states bot message
     if (currentType != BotStateImage) {
@@ -167,19 +166,29 @@ class ChatBotWidget extends StatelessWidget {
 
     //handle diffent types of states
     if (currentType == BotStateOpenText) {
-      BotStateOpenText openTextState = currentState as BotStateOpenText;
-
-      widgets.add(
-        //TODO
-        // userMessageWidget != null
-        //     ? userMessageWidget!(MarkdownBody(data: openTextState.userText!))
-        //     //default widget
-        //     :
-        UserOpenMessageWidget(
-          message: openTextState.userText,
-          openTextController: openTextController,
-        ),
-      );
+      if (currentState.userText == null) {
+        print("currentState.userText veio null");
+        widgets.add(
+          //TODO
+          // userMessageWidget != null
+          //     ? userMessageWidget!(MarkdownBody(data: openTextState.userText!))
+          //     //default widget
+          //     :
+          UserOpenMessageWidget(
+            currenteState: currentState,
+          ),
+        );
+      } else {
+        print("currentState.userText NAO null ${currentState.userText}");
+        widgets.add(
+          userMessageWidget != null
+              ? userMessageWidget!(MarkdownBody(data: currentState.userText))
+              //default widget
+              : UserMessageWidget(
+                  message: currentState.userText,
+                ),
+        );
+      }
     } else if (currentType == BotStateMultipleChoice) {
       widgets.addAll(
         _processMultipleChoice(currentState as BotStateMultipleChoice),

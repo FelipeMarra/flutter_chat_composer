@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../bot_user_open_text/bot_user_open_text_controller.dart';
+import 'package:flutter_chat_composer/models/chat_bot_models.dart';
+import 'package:provider/provider.dart';
+import 'bot_user_open_text_controller.dart';
 
 class UserOpenMessageWidget extends StatefulWidget {
-  final String? message;
   final BoxDecoration? boxDecoration;
-  final BotUserOpenTextController openTextController;
+  final BotStateOpenText currenteState;
 
   const UserOpenMessageWidget({
     Key? key,
-    this.message,
-    required this.openTextController,
     this.boxDecoration,
+    required this.currenteState,
   }) : super(key: key);
 
   @override
@@ -18,34 +18,29 @@ class UserOpenMessageWidget extends StatefulWidget {
 }
 
 class _UserOpenMessageWidgetState extends State<UserOpenMessageWidget> {
-  TextEditingController? editingController;
+  late TextEditingController editingController;
+  late BotUserOpenTextController controller;
   String message = "";
 
   @override
   void initState() {
-    if (widget.message == null) {
-      editingController = TextEditingController();
-      widget.openTextController.editingController = editingController;
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-        editingController!.addListener(() {
-          setState(() {
-            message = editingController!.text;
-            widget.openTextController.currentState!.userText =
-                editingController!.text;
-          });
-        });
+    print("INIT STATE");
+    controller = context.read();
+    editingController = controller.getEditingController();
+    editingController.addListener(() {
+      setState(() {
+        message = editingController.text;
+        widget.currenteState.userText = editingController.text;
       });
-    } else {
-      message = widget.message!;
-    }
+    });
     super.initState();
   }
 
   @override
   void dispose() {
-    if (editingController != null) {
-      editingController!.dispose();
-    }
+    //editingController.removeListener(() {});
+    //controller.removeEditingController(editingController);
+    //editingController.dispose();
     super.dispose();
   }
 

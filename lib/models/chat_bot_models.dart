@@ -386,7 +386,7 @@ class BotStateImage extends BotStateBase {
 class BotStateOpenText extends BotStateBase {
   ///Function that will take the user's input and return to what state the bot
   ///will go
-  String Function(TextEditingController textController) decideTransition;
+  String Function(String userText) decideTransition;
 
   ///Text typed by the user, for storage purposes
   String? userText;

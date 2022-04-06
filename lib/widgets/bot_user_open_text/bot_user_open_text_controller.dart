@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_composer/models/chat_bot_models.dart';
 
 class BotUserOpenTextController extends ChangeNotifier {
-  BotStateOpenText? currentState;
-  TextEditingController? editingController;
+  final List<TextEditingController> _textEditingControllers = [];
 
   ///Wether if the open text widget is active or not
-  bool get isActive => currentState != null && editingController != null;
+  bool _isActive = false;
+  bool get isActive => _isActive;
 
-  void activate(BotStateOpenText newState) {
-    currentState = newState;
+  TextEditingController get currentController => _textEditingControllers.last;
+
+  TextEditingController getEditingController() {
+    print("NEW CONTROLLER");
+    TextEditingController newController = TextEditingController();
+    _textEditingControllers.add(newController);
+    return newController;
+  }
+
+  void removeEditingController(TextEditingController controller) {
+    _textEditingControllers.removeWhere((element) => element == controller);
+  }
+
+  void activate() {
+    print("ACTIVATE");
+    _isActive = true;
     notifyListeners();
   }
 
   void deactivate() {
-    currentState = null;
-    editingController = null;
+    _isActive = false;
     notifyListeners();
   }
 }
