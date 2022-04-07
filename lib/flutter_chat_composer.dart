@@ -169,6 +169,7 @@ class ChatBotWidget extends StatelessWidget {
 
         messagesColum.add(SizedBox(height: sameUserSpacing));
       }
+
       if (botFace != null) {
         widgets.add(
           Column(
@@ -183,10 +184,12 @@ class ChatBotWidget extends StatelessWidget {
                   children: messagesColum,
                 ),
               ),
-              SizedBox(
-                height: 30,
-                child: botFace!,
-              ),
+              history.length - 1 == index
+                  ? SizedBox(
+                      height: 30,
+                      child: botFace!,
+                    )
+                  : Container(),
             ],
           ),
         );
