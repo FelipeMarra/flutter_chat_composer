@@ -55,6 +55,7 @@ class _ChatBotInteractionAppState extends State<ChatBotInteractionApp> {
       body: ChatBotWidget(
         chatBot: chatBot,
         sameUserSpacing: 3,
+        botFace: Image.network("https://e7.pngegg.com/pngimages/753/243/png-clipart-cartoon-female-drawing-nose-child-face.png"),
       ),
     );
   }

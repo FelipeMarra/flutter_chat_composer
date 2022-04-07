@@ -50,6 +50,10 @@ class ChatBotWidget extends StatelessWidget {
   ///SizedBox hight betweewn messagen of different users
   final double? difUsersSpacing;
 
+  //TODO add to metadata
+  ///The bot avatar that appears bellow the messages
+  Image? botFace;
+
   ChatBotWidget({
     Key? key,
     required this.chatBot,
@@ -61,6 +65,7 @@ class ChatBotWidget extends StatelessWidget {
     this.botImageWidget,
     this.sameUserSpacing,
     this.difUsersSpacing,
+    this.botFace,
   }) : super(key: key);
 
   final ItemScrollController _scrollController = ItemScrollController();
@@ -150,23 +155,56 @@ class ChatBotWidget extends StatelessWidget {
 
     //Show states bot message
     if (currentType != BotStateImage) {
-      List<MarkdownBody> messages = currentState.messages!();
+      List<Widget> messagesColum = [];
+
+      List<MarkdownBody> messages = currentState.messages();
       //add messages to the widgets list
       for (MarkdownBody message in messages) {
-        widgets.add(
+        messagesColum.add(
           botMessageWidget != null
               ? botMessageWidget!(message)
               //default widget
               : BotMessageWidget(message: message),
         );
 
-        widgets.add(SizedBox(height: sameUserSpacing));
+        messagesColum.add(SizedBox(height: sameUserSpacing));
+      }
+      if (botFace != null) {
+        widgets.add(
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: messagesColum,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+                child: botFace!,
+              ),
+            ],
+          ),
+        );
+      } else {
+        widgets.add(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: messagesColum,
+          ),
+        );
       }
     }
 
     //handle diffent types of states
     if (currentType == BotStateOpenText) {
-      if (currentState.userText == null) {
+      BotStateOpenText currentOpenText = currentState as BotStateOpenText;
+      if (currentOpenText.userText == null) {
         print("currentState.userText veio null");
         widgets.add(
           //TODO
@@ -175,17 +213,18 @@ class ChatBotWidget extends StatelessWidget {
           //     //default widget
           //     :
           UserOpenMessageWidget(
-            currenteState: currentState,
+            currenteState: currentOpenText,
           ),
         );
       } else {
         print("currentState.userText NAO null ${currentState.userText}");
         widgets.add(
           userMessageWidget != null
-              ? userMessageWidget!(MarkdownBody(data: currentState.userText))
+              ? userMessageWidget!(
+                  MarkdownBody(data: currentOpenText.userText!))
               //default widget
               : UserMessageWidget(
-                  message: currentState.userText,
+                  message: currentOpenText.userText!,
                 ),
         );
       }
@@ -255,7 +294,33 @@ class ChatBotWidget extends StatelessWidget {
         label: currentState.label != null ? currentState.label!() : null,
       );
     }
-    widgets.add(child);
+
+    if (botFace != null) {
+      widgets.add(
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: child,
+            ),
+            currentState == history.last
+                ? Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                        child: botFace!,
+                      ),
+                    ],
+                  )
+                : Container(),
+          ],
+        ),
+      );
+    } else {
+      widgets.add(child);
+    }
 
     widgets.add(SizedBox(height: sameUserSpacing));
 
