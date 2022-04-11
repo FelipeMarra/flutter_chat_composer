@@ -52,7 +52,7 @@ class ChatBotWidget extends StatelessWidget {
 
   //TODO add to metadata
   ///The bot avatar that appears bellow the messages
-  Image? botFace;
+  final Image? botFace;
 
   ChatBotWidget({
     Key? key,
