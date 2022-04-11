@@ -55,7 +55,6 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
               iconSize: 25,
               splashRadius: 1,
               onPressed: () async {
-                print("RODOU O ON PRESS");
                 //run user's on pressed function
                 if (widget.onPressed != null) {
                   await widget.onPressed!();

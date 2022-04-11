@@ -10,7 +10,6 @@ class BotUserOpenTextController extends ChangeNotifier {
   TextEditingController get currentController => _textEditingControllers.last;
 
   TextEditingController getEditingController() {
-    print("NEW CONTROLLER");
     TextEditingController newController = TextEditingController();
     _textEditingControllers.add(newController);
     return newController;
@@ -21,7 +20,6 @@ class BotUserOpenTextController extends ChangeNotifier {
   }
 
   void activate() {
-    print("ACTIVATE");
     _isActive = true;
     notifyListeners();
   }

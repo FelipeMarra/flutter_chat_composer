@@ -24,7 +24,6 @@ class _UserOpenMessageWidgetState extends State<UserOpenMessageWidget> {
 
   @override
   void initState() {
-    print("INIT STATE");
     controller = context.read();
     editingController = controller.getEditingController();
     editingController.addListener(() {

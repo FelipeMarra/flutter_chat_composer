@@ -151,7 +151,6 @@ class ChatBotWidget extends StatelessWidget {
     dynamic currentState = history[index];
     Type currentType = currentState.runtimeType;
     List<Widget> widgets = [];
-    print("NEW STATE ${currentState.toString()}");
 
     //Show states bot message
     if (currentType != BotStateImage) {
@@ -208,7 +207,6 @@ class ChatBotWidget extends StatelessWidget {
     if (currentType == BotStateOpenText) {
       BotStateOpenText currentOpenText = currentState as BotStateOpenText;
       if (currentOpenText.userText == null) {
-        print("currentState.userText veio null");
         widgets.add(
           //TODO
           // userMessageWidget != null
@@ -220,7 +218,6 @@ class ChatBotWidget extends StatelessWidget {
           ),
         );
       } else {
-        print("currentState.userText NAO null ${currentState.userText}");
         widgets.add(
           userMessageWidget != null
               ? userMessageWidget!(
