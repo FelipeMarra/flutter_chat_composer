@@ -395,10 +395,14 @@ class BotStateOpenText extends BotStateBase {
   ///A a list of [MarkdownBody], each message is showed separated
   final List<MarkdownBody> Function() messages;
 
+  ///Validadte the text field
+  final String? Function(String value)? validator;
+
   BotStateOpenText({
     required this.decideTransition,
     required this.messages,
     this.userText,
+    this.validator,
 
     ///The state's name (it's unique identifier)
     required String id,

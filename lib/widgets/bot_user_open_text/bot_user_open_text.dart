@@ -29,9 +29,13 @@ class BotUserOpenText extends StatefulWidget {
 }
 
 class _BotUserOpenTextState extends State<BotUserOpenText> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     BotUserOpenTextController openTextController = context.watch();
+    BotStateOpenText currentState =
+        widget.chatBot.currentState! as BotStateOpenText;
     Widget child;
 
     if (openTextController.isActive) {
@@ -40,21 +44,31 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         child: Row(
           children: [
-            Expanded(
-              child: widget.textField ??
-                  TextField(
-                    controller: openTextController.currentController,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration.collapsed(
-                      hintText: "Insira sua resposta",
+            Form(
+              key: _formKey,
+              child: Expanded(
+                child: widget.textField ??
+                    TextFormField(
+                      validator: (value) => currentState.validator != null
+                          ? currentState.validator!(value ?? "")
+                          : null,
+                      controller: openTextController.currentController,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: const InputDecoration.collapsed(
+                        hintText: "Insira sua resposta",
+                      ),
                     ),
-                  ),
+              ),
             ),
             IconButton(
               icon: widget.icon ?? const Icon(Icons.send),
               iconSize: 25,
               splashRadius: 1,
               onPressed: () async {
+                if (_formKey.currentState!.validate() == false) {
+                  return;
+                }
+
                 //run user's on pressed function
                 if (widget.onPressed != null) {
                   await widget.onPressed!();
@@ -62,9 +76,6 @@ class _BotUserOpenTextState extends State<BotUserOpenText> {
 
                 //transition the machine
                 openTextController.deactivate();
-
-                BotStateOpenText currentState =
-                    widget.chatBot.currentState! as BotStateOpenText;
 
                 currentState.userText = currentState.userText ?? "";
 
