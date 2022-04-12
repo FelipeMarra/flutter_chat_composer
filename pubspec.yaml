@@ -11,10 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  state_composer:
-    git:
-      url: https://github.com/FelipeMarra/state-composer
-      ref: main
+  state_composer: ^0.0.0
 
   scrollable_positioned_list: ^0.2.3
   flutter_markdown: ^0.6.9
