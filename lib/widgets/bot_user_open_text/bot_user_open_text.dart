@@ -31,11 +31,12 @@ class BotUserOpenText extends StatefulWidget {
 class _BotUserOpenTextState extends State<BotUserOpenText> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  BotStateOpenText get currentState =>
+      widget.chatBot.currentState! as BotStateOpenText;
+
   @override
   Widget build(BuildContext context) {
     BotUserOpenTextController openTextController = context.watch();
-    BotStateOpenText currentState =
-        widget.chatBot.currentState! as BotStateOpenText;
     Widget child;
 
     if (openTextController.isActive) {
