@@ -7,6 +7,7 @@
 ## Creating the chat's state machine
 
 A chat bot is composed of states. Let's recreate the simple one that's in our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> folder. <br>
+
 First we'll declare our initial state and functions that we'll use to create our states isolated:
 
 ``` dart 
@@ -29,7 +30,7 @@ Currently we have 4 state types, let's add one of each in our bot.<br>
 
 ### Open Text State
 
-State A will introduce our bot to the user, and ask his name back. As you can see `BotStateOpenText` type has a `decideTransition` property, which will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B. Remember that a state can only transition to another that is inside its transition list, otherwise it will throw an error. <br>
+State A will introduce our bot to the user, and ask his name. As you can see `BotStateOpenText` type has a `decideTransition` property, which will give you the text typed by the user so you can decide what transition to make. In our <a href="https://github.com/FelipeMarra/flutter_chat_composer/tree/main/example">example<a> we'll run _stateADecision wich will say to our machine to transition to the state ALoop till the user say his name. When the text is not empty will go to state B. Remember that a state can only transition to another that is inside its transition list, otherwise it will throw an error. <br>
 
 Another very important thing is that instead of text or richText widgets we use `MarkdownBody` from the <a href="https://pub.dev/packages/flutter_markdown">flutter_markdown<a> package. It allows us to render markdown - like the one I'm using right now to write this README.md file - in a very easy way, avoiding all the boilerplate code that would be needed otherwise.
 
