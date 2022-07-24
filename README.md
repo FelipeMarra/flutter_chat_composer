@@ -80,7 +80,7 @@ Another very important thing is that instead of text or richText widgets we use 
   }
 ```
 
-<img src="https://media.giphy.com/media/4DgkE9eCZkVVzGkfNb/giphy.gif" width="360" height="460" />
+<img src="https://media.giphy.com/media/OFIoNoMwjmUnfUKheb/giphy.gif" width="360" height="460" />
 
 ### Single Choice State
 State B will use `BotStateSingleChoice` to make the user choose a pokemon gif that will be shown in state C. When the option is selected `onChange` function will be executed followed by the transition to the next state decided by the `decideTransition` callback, that will give you the selected option and ask a state id in return - that id must me in your transitions list.
@@ -169,7 +169,7 @@ And yes, alternatively, since Markdown supports images you could use something l
   }
 ```
 
-<img src="https://media.giphy.com/media/1xJuY37q9M5ABxfZ5E/giphy.gif" width="360" height="460" />
+<img src="https://media.giphy.com/media/7QaUEutJSBqpwh9bJk/giphy.gif" width="360" height="460" />
 
 Ps: had to run `flutter run -d chrome --web-renderer html` so that Image.network could display the gifs
 
@@ -221,7 +221,7 @@ If you want to say something then just say it! `BotStateSingleChoice` don't need
   }
 ```
 
-<img src="https://media.giphy.com/media/cfLJ5xkYdgFJ3kGNQM/giphy.gif" width="360" height="460" />
+<img src="https://media.giphy.com/media/FKdrNVeGF2QrQMeWvV/giphy.gif" width="360" height="460" />
 
 Ps: Soon there will be a simple state just to display simple markdowns and stop this thing of using `BotStateSingleChoice` for that purpose
 
